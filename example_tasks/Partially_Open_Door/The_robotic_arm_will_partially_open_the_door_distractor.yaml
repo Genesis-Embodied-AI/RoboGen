@@ -1,0 +1,70 @@
+-   all_uid:
+    - aa0337e2f4cf4d2b8acc06921f163df8
+    - 0e70eb664f594c5ab6613d0cf4b6c3ab
+    - f7125e65dd004381aa3e9882ef74e963
+    - d2755944f5c749bf8175cf0471bdd9ae
+    - 266929f6de874c5a87e0b426eb52a5d2
+    - 4fbc3f77c8ec487498bf262794b31349
+    - 2d581c7d6468434aac479c50f87d48d0
+    - 72e821fc75d9473183a63d548959693b
+    - df67fa2a371a483b80be5fb62e5fafce
+    - cb8fc6499d694c789550fe829e573887
+    center: (2.5, 1.5, 0)
+    lang: a wooden coat rack
+    name: Coat Rack
+    on_table: false
+    path: coat_rack.obj
+    size: 1.8
+    type: mesh
+    uid:
+    - aa0337e2f4cf4d2b8acc06921f163df8
+    - 0e70eb664f594c5ab6613d0cf4b6c3ab
+    - d2755944f5c749bf8175cf0471bdd9ae
+-   all_uid:
+    - 02ed13ed39814e578032d32cf9908ad9
+    - c14e9d5759a74916bcc4596512cda902
+    - 67bc029c98454971a213c526bc1fbec0
+    - 9febf58b63d04a45b6e25e2e38ea1a61
+    - c97432ffbe97469694f2ee4364aabf30
+    - a558a207a39a44119d2cf6b22a952e2d
+    - 08045f47cdba4206b6895e9f18952821
+    - a558a207a39a44119d2cf6b22a952e2d
+    - d5bd5371c96a4667aeee20451b66e438
+    center: (1.0, 2.0, 0)
+    lang: a metal umbrella stand
+    name: Umbrella Stand
+    on_table: false
+    path: umbrella_stand.obj
+    size: 0.5
+    type: mesh
+    uid:
+    - 02ed13ed39814e578032d32cf9908ad9
+    - c14e9d5759a74916bcc4596512cda902
+    - 67bc029c98454971a213c526bc1fbec0
+    - 9febf58b63d04a45b6e25e2e38ea1a61
+    - c97432ffbe97469694f2ee4364aabf30
+    - a558a207a39a44119d2cf6b22a952e2d
+    - 08045f47cdba4206b6895e9f18952821
+    - a558a207a39a44119d2cf6b22a952e2d
+    - d5bd5371c96a4667aeee20451b66e438
+-   all_uid:
+    - e114902be78d434b96b51f4dae8d7a91
+    - 9f439ffb0bca41039cd66f977dbfd94c
+    - a5ab871d3c63486ba347e8fc9c1e4b84
+    - e114902be78d434b96b51f4dae8d7a91
+    - dbd7c3288c234877b40aa01657bc53aa
+    - bdf68af7776543788013d96e0095d090
+    - 4dc75299605348e18f90ffbf0ad0a4ee
+    - 10cc6cfc09db45d5b3ddb76ecd758ef5
+    - 42fac4a7c4be41d783ebda6770f1ef97
+    - caf7b12bd3c141aa93f2520693659521
+    center: (1.5, 0.5, 0)
+    lang: a rectangular welcome mat
+    name: Welcome Mat
+    on_table: false
+    path: welcome_mat.obj
+    size: 0.8
+    type: mesh
+    uid:
+    - 9f439ffb0bca41039cd66f977dbfd94c
+    - dbd7c3288c234877b40aa01657bc53aa

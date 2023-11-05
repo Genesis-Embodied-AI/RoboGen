@@ -1,0 +1,17 @@
+- use_table: true
+- center: (0.5, 0.5, 0)
+  lang: a common globe
+  name: Globe
+  on_table: true
+  path: globe.urdf
+  reward_asset_path: '100750'
+  size: 0.3
+  type: urdf
+- solution_path: example_tasks/Rotate_Globe_Horizontally/task_Rotate_Globe_Horizontally
+- joint_0: random
+  set_joint_angle_object_name: Globe
+- spatial_relationships: []
+- task_description: The robotic arm will rotate the globe horizontally to display
+    various continents and countries on its surface
+  task_name: Rotate Globe Horizontally
+- distractor_config_path: example_tasks/Rotate_Globe_Horizontally/The_robotic_arm_will_rotate_the_globe_horizontally_to_display_various_continents_and_countries_on_its_surface_distractor.yaml

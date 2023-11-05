@@ -1,0 +1,40 @@
+-   all_uid:
+    - dbab301d6a2647cf8b7b3d50c4cec3d7
+    - 1103528bef074721a5a54d1a60ea56ab
+    - cb8f01901fc04d06adae0eb78634317f
+    - 88a18d6c46464b3b8d0d3da1144d339e
+    - eb24676f802c4c1ca680b87c6bf3ea85
+    center: (0.2, 0.2, 0)
+    lang: a common soap dispenser
+    name: Soap Dispenser
+    on_table: true
+    path: soap_dispenser.obj
+    size: 0.15
+    type: mesh
+    uid:
+    - dbab301d6a2647cf8b7b3d50c4cec3d7
+    - cb8f01901fc04d06adae0eb78634317f
+    - 88a18d6c46464b3b8d0d3da1144d339e
+-   center: (0.8, 0.8, 0)
+    lang: a common dish rack
+    name: Dish Rack
+    on_table: true
+    path: dish_rack.obj
+    size: 0.5
+    type: mesh
+    all_uid:
+    - ce69014964624fbb808a028e5c55d88b
+    uid:
+    - ce69014964624fbb808a028e5c55d88b
+-   center: (1.5, 0.5, 0)
+    lang: a kitchen sink
+    name: Sink
+    on_table: false
+    path: sink.obj
+    size: 0.6
+    type: mesh
+    all_uid:
+    - fbe874f7f96f4727981087c1a0c7262e
+    uid:
+    - fbe874f7f96f4727981087c1a0c7262e
+

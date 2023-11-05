@@ -1,0 +1,16 @@
+- use_table: true
+- center: (0.5, 0.5, 0)
+  lang: a common laptop
+  name: Laptop
+  on_table: true
+  path: laptop.urdf
+  reward_asset_path: '9996'
+  size: 0.4
+  type: urdf
+- solution_path: example_tasks/Open_Laptop/task_Open_Laptop
+- joint_0: '0'
+  set_joint_angle_object_name: Laptop
+- spatial_relationships: []
+- task_description: The robotic arm opens the unfolded state of the laptops screen
+  task_name: Open Laptop
+- distractor_config_path: example_tasks/Open_Laptop/The_robotic_arm_opens_the_unfolded_state_of_the_laptops_screen_distractor.yaml

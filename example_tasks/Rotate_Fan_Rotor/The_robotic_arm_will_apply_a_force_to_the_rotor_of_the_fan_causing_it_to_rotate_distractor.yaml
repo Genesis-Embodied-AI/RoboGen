@@ -1,0 +1,57 @@
+-   all_uid:
+    - d52fddca36384814a9b392ff7214d16d
+    - deea01ac295845898524bc459b97ab26
+    - ae78ad4c242b41748ccfab7eed8f59fd
+    - 3a87a55210db4fd9a27565671824f894
+    - c363504df73f4120a81b02c530b477e1
+    center: (0.2, 0.2, 0)
+    lang: a common coffee mug
+    name: coffee mug
+    on_table: true
+    path: coffee_mug.obj
+    size: 0.1
+    type: mesh
+    uid:
+    - d52fddca36384814a9b392ff7214d16d
+    - 3a87a55210db4fd9a27565671824f894
+    - c363504df73f4120a81b02c530b477e1
+-   center: (0.7, 0.7, 0)
+    lang: a common laptop
+    name: Laptop
+    on_table: true
+    path: laptop.obj
+    reward_asset_path: '11030'
+    size: 0.4
+    type: urdf
+-   all_uid:
+    - 7be9e6cbf6e04365a028217a4874730e
+    - d934c6b791c34e0fafc30e9625b4c55c
+    - 7e3b426f6973409fa5d5c5017f15f0cc
+    - b8e13a49528e4231a0512bb5f18f07e5
+    - bf3702fe60514b41865f0c13f2667c05
+    center: (0.2, 0.8, 0)
+    lang: a desk lamp
+    name: desk lamp
+    on_table: true
+    path: desk_lamp.obj
+    size: 0.5
+    type: mesh
+    uid:
+    - 7be9e6cbf6e04365a028217a4874730e
+    - b8e13a49528e4231a0512bb5f18f07e5
+-   all_uid:
+    - 63cf4df0ea36480d80a04c2db6999b32
+    - 648bb74a4e6743b687bf162c7993e87d
+    - 84d0da3255ae47c6a0bbf0457521a546
+    - 33e76c92aca24254b40e14c5dcd69542
+    - 570c9b4a7db44ebaaca514701ef4726f
+    center: (1.5, 0.5, 0)
+    lang: a common bookshelf
+    name: bookshelf
+    on_table: false
+    path: bookshelf.obj
+    size: 1.8
+    type: mesh
+    uid:
+    - 63cf4df0ea36480d80a04c2db6999b32
+    - 33e76c92aca24254b40e14c5dcd69542

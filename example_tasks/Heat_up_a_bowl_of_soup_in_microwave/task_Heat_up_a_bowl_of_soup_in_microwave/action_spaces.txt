@@ -1,0 +1,8 @@
+None
+delta-translation
+None
+normalized-direct-translation
+None
+delta-translation
+None
+delta-translation

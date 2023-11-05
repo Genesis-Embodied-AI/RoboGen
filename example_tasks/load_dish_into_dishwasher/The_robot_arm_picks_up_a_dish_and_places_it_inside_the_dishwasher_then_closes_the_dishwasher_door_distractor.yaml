@@ -1,0 +1,35 @@
+-   all_uid:
+    - d6b4995f8f20461ca5d5bfac045fba7e
+    - 32d5033eb7e7435696369ee300ad16e7
+    - 2e73f018b07948a7a6468b7e218587b7
+    - 795acac93830466682e92f7630e14b67
+    - bc79ef77e8e84c6590d354f31dc10c2e
+    center: (0.2, 0.2, 0)
+    lang: a common kitchen cup
+    name: cup
+    on_table: true
+    path: cup.obj
+    size: 0.1
+    type: mesh
+    uid:
+    - d6b4995f8f20461ca5d5bfac045fba7e
+    - 32d5033eb7e7435696369ee300ad16e7
+-   all_uid:
+    - 695fce9626164a24bbf34f740ad05b54
+    - 1332dcafbe5448a697b27a49797bb1bf
+    - d9f56c6b4938496e94ca04ed61743c64
+    - c181f252549e4da1a4c01fdadf4f77c7
+    - c181f252549e4da1a4c01fdadf4f77c7
+    center: (0.8, 0.8, 0)
+    lang: a common kitchen fork
+    name: fork
+    on_table: true
+    path: fork.obj
+    size: 0.05
+    type: mesh
+    uid:
+    - 695fce9626164a24bbf34f740ad05b54
+    - 1332dcafbe5448a697b27a49797bb1bf
+    - d9f56c6b4938496e94ca04ed61743c64
+    - c181f252549e4da1a4c01fdadf4f77c7
+    - c181f252549e4da1a4c01fdadf4f77c7

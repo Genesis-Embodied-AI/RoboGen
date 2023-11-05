@@ -1,0 +1,3 @@
+ grasp the rotor of the fan
+ rotate the rotor of the fan
+ release the rotor

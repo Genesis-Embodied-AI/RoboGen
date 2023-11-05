@@ -1,0 +1,74 @@
+-   all_uid:
+    - 5389c3f4b64a447f8c06aa6ce1f27e0b
+    - 01c929173d6f4002beeef105e58d52cb
+    - d8d9997bbb4b4a8e9dfdcff91d1920b6
+    - 28ced596039b4c718cd93085f359015f
+    - 31295af706344e358378adbbb3a70290
+    - 4b042979bcd5419da35471a03efdfe6b
+    - 76f136eb0cc949efb91feb5bd6ca4165
+    - a50d4f72f4674d6f9f79e059922f8a96
+    - 5389c3f4b64a447f8c06aa6ce1f27e0b
+    - 874aa3112f52454a8aebd6d52c3f0380
+    center: (2.5, 1.5, 0)
+    lang: a standard office desk
+    name: Desk
+    on_table: false
+    path: desk.obj
+    size: 1.2
+    type: mesh
+    uid:
+    - d8d9997bbb4b4a8e9dfdcff91d1920b6
+    - 31295af706344e358378adbbb3a70290
+    - 76f136eb0cc949efb91feb5bd6ca4165
+    - a50d4f72f4674d6f9f79e059922f8a96
+    - 874aa3112f52454a8aebd6d52c3f0380
+-   center: (0.5, 0.5, 0)
+    lang: a standard laptop
+    name: Laptop
+    on_table: true
+    path: laptop.obj
+    reward_asset_path: '10243'
+    size: 0.3
+    type: urdf
+-   all_uid:
+    - 244a639e6ece4777b1ca836e40ffe3be
+    - aeb1f500d93947338cbd9f2feaf5eecf
+    - e9e391bc0c5f40deb78649531c03daa4
+    - 9491f3d076904d18b763117bff1ea9a3
+    - cdf6ac4153834dbe93252b51b449e1d9
+    - 4ef0c3249b5f462eb395c65ec6ce9774
+    - a0a6a7c44ea24821b117ad6271eddddf
+    - 7a94425ceb6d488a91c835885843b77a
+    - d9d3492329574774902a53c26054ec3b
+    - 9eb8bde2b59f443d8454eb4f17543489
+    center: (1.5, 2.5, 0)
+    lang: a standard bookshelf
+    name: Bookshelf
+    on_table: false
+    path: bookshelf.obj
+    size: 1.8
+    type: mesh
+    uid:
+    - 244a639e6ece4777b1ca836e40ffe3be
+    - aeb1f500d93947338cbd9f2feaf5eecf
+    - e9e391bc0c5f40deb78649531c03daa4
+    - cdf6ac4153834dbe93252b51b449e1d9
+    - a0a6a7c44ea24821b117ad6271eddddf
+    - 7a94425ceb6d488a91c835885843b77a
+-   all_uid:
+    - d52fddca36384814a9b392ff7214d16d
+    - 1ddf0e1fc752455b8bc78d0980436ea8
+    - 246975ac25734b8282ee020dd86b2607
+    - 246975ac25734b8282ee020dd86b2607
+    - c6f14d58bae44d7b82bfceb759925197
+    center: (0.7, 0.3, 0)
+    lang: a standard coffee mug
+    name: Coffee Mug
+    on_table: true
+    path: coffee_mug.obj
+    size: 0.12
+    type: mesh
+    uid:
+    - d52fddca36384814a9b392ff7214d16d
+    - 246975ac25734b8282ee020dd86b2607
+    - 246975ac25734b8282ee020dd86b2607

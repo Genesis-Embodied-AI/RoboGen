@@ -1,0 +1,18 @@
+- use_table: false
+- center: (1.5, 1.5, 0)
+  lang: a standard bucket
+  movable: true
+  name: Bucket
+  on_table: false
+  path: bucket.urdf
+  reward_asset_path: '100444'
+  size: 0.3
+  type: urdf
+- solution_path: example_tasks/Carry_Bucket/task_Carry_Bucket
+- joint_0: '0'
+  set_joint_angle_object_name: Bucket
+- spatial_relationships: []
+- task_description: The robotic arm will lift and carry the bucket from one location
+    to another
+  task_name: Carry Bucket
+- distractor_config_path: example_tasks/Carry_Bucket/The_robotic_arm_will_lift_and_carry_the_bucket_from_one_location_to_another_distractor.yaml

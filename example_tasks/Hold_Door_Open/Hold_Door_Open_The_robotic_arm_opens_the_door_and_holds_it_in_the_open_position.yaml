@@ -1,0 +1,15 @@
+- use_table: false
+- center: (1.5, 0, 0)
+  lang: a common wooden door
+  name: Door
+  on_table: false
+  path: door.urdf
+  reward_asset_path: '9288'
+  size: 2.0
+  type: urdf
+- solution_path: example_tasks/Hold_Door_Open/task_Hold_Door_Open
+- set_joint_angle_object_name: Door
+- spatial_relationships: []
+- task_description: The robotic arm opens the door and holds it in the open position
+  task_name: Hold Door Open
+- distractor_config_path: example_tasks/Hold_Door_Open/The_robotic_arm_opens_the_door_and_holds_it_in_the_open_position_distractor.yaml

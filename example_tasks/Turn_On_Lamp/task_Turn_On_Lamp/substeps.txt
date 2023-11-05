@@ -1,0 +1,3 @@
+ grasp the toggle button of the lamp
+ press the toggle button to turn on the lamp
+ release the toggle button

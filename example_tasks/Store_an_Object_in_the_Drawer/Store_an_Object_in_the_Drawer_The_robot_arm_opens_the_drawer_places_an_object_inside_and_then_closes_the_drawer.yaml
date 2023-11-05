@@ -1,0 +1,38 @@
+- use_table: false
+- center: (1.5, 0.5, 0)
+  lang: a common storage furniture with doors and a drawer
+  name: StorageFurniture
+  on_table: false
+  path: storage_furniture.urdf
+  reward_asset_path: '46981'
+  size: 1.2
+  type: urdf
+- all_uid:
+  - fa8da62e190d437cb72b0dd9f0192200
+  - 7a6b072634564c4d8ab56e4e86137e59
+  - c850e5d630e9420d85b8d23a2efae4d5
+  - 92d65d6c85e34cb9895fbdb85d81038f
+  - d84e5a3e4d9a48d8aaed93b7183235e2
+  - b5860a78f1a44302a25788bb4213f406
+  - 93c7823382044a6489aa8e2cd160ae9f
+  - d6ca51e05b9a4d52b6dc6092cb71093f
+  - 3e995809ef6b4f0a9bfbc89f84566c67
+  - 55ff02e48cc8496fa919d827b7ee3233
+  center: (0.5, 0.5, 0)
+  lang: a small book
+  name: Object
+  on_table: true
+  path: book.obj
+  size: 0.13
+  type: mesh
+  uid:
+  - 7a6b072634564c4d8ab56e4e86137e59
+  - 92d65d6c85e34cb9895fbdb85d81038f
+  - d84e5a3e4d9a48d8aaed93b7183235e2
+- solution_path: example_tasks/Store_an_Object_in_the_Drawer/task_Store_an_Object_in_the_Drawer
+- set_joint_angle_object_name: StorageFurniture
+- spatial_relationships: []
+- task_description: The robot arm opens the drawer, places an object inside, and then
+    closes the drawer
+  task_name: Store an Object in the Drawer
+- distractor_config_path: example_tasks/Store_an_Object_in_the_Drawer/The_robot_arm_opens_the_drawer_places_an_object_inside_and_then_closes_the_drawer_distractor.yaml

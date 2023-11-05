@@ -1,0 +1,53 @@
+-   all_uid:
+    - a9d652b044a64f88ab476a552fde41b1
+    - e4545fa4b1664a0282816734dccdca30
+    - ef6e151655ad4d64bb55aeedbff17b63
+    - 5464c5f6f7be418eb1c469d18d9db9a8
+    - 2661b18596534962ac08879972721c00
+    center: (1.8, 1.8, 0)
+    lang: a common household broom
+    name: broom
+    on_table: false
+    path: broom.obj
+    size: 1.2
+    type: mesh
+    uid:
+    - a9d652b044a64f88ab476a552fde41b1
+    - e4545fa4b1664a0282816734dccdca30
+    - ef6e151655ad4d64bb55aeedbff17b63
+    - 5464c5f6f7be418eb1c469d18d9db9a8
+    - 2661b18596534962ac08879972721c00
+-   all_uid:
+    - 0a777a8128da42e48c46e574c952ab75
+    - 91875925d6e649bc9c824983ddeca6be
+    - 0c5dce73a0504e2eb7544d2ec1f260c8
+    - 8651da3e2fe54aa182374edcc09d3b48
+    - 4e7dda412106450dae27e1d8b9ce91c8
+    center: (1.2, 1.8, 0)
+    lang: a common household mop
+    name: mop
+    on_table: false
+    path: mop.obj
+    size: 1.2
+    type: mesh
+    uid:
+    - 0a777a8128da42e48c46e574c952ab75
+    - 0c5dce73a0504e2eb7544d2ec1f260c8
+-   all_uid:
+    - b503ccdc06534fdf874ad472f1537809
+    - 243cd310d1f14a32be4e051b33bd63ac
+    - 84ceed6e18b448bb84cb221805b3e085
+    - 62e3b74bd72644c3b30396d9de8b5a1a
+    - b503ccdc06534fdf874ad472f1537809
+    - 62e3b74bd72644c3b30396d9de8b5a1a
+    center: (1.8, 1.2, 0)
+    lang: a standard dustbin
+    name: dustbin
+    on_table: false
+    path: dustbin.obj
+    size: 0.75
+    type: mesh
+    uid:
+    - b503ccdc06534fdf874ad472f1537809
+    - 84ceed6e18b448bb84cb221805b3e085
+    - b503ccdc06534fdf874ad472f1537809

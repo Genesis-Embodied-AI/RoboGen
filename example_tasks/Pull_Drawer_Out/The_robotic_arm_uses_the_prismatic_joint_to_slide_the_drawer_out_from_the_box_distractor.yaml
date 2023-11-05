@@ -1,0 +1,33 @@
+-   all_uid:
+    - fb1546c32f1b49e9ae1b28fdfeb74713
+    - 7f21a2ea951746a3ad4353c857b3cef0
+    - 2490aa1120cf4db5aeff0ea21bab77ed
+    - 5182049f5e6e48c89282287c0c9bf13e
+    - b7d498a138f343c7910ea169ed1c2a3f
+    center: (0.2, 0.2, 0)
+    lang: a common spiral notebook
+    name: Notebook
+    on_table: true
+    path: notebook.obj
+    size: 0.3
+    type: mesh
+    uid:
+    - 2490aa1120cf4db5aeff0ea21bab77ed
+    - 5182049f5e6e48c89282287c0c9bf13e
+    - b7d498a138f343c7910ea169ed1c2a3f
+-   center: (0.2, 0.8, 0)
+    lang: a common ballpoint pen
+    name: Pen
+    on_table: true
+    path: pen.obj
+    reward_asset_path: '102922'
+    size: 0.15
+    type: urdf
+-   center: (1.5, 0.5, 0)
+    lang: a desk lamp
+    name: Lamp
+    on_table: false
+    path: lamp.obj
+    reward_asset_path: '15879'
+    size: 0.5
+    type: urdf

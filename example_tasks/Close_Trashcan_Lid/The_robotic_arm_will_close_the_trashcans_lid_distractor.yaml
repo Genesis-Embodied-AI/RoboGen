@@ -1,0 +1,41 @@
+-   all_uid:
+    - a9d652b044a64f88ab476a552fde41b1
+    - e4545fa4b1664a0282816734dccdca30
+    - ef6e151655ad4d64bb55aeedbff17b63
+    - 5464c5f6f7be418eb1c469d18d9db9a8
+    - 2c93790c136f4581912100a865e83c63
+    center: (1.5, 1.0, 0)
+    lang: a common broom
+    name: broom
+    on_table: false
+    path: broom.obj
+    size: 1.2
+    type: mesh
+    uid:
+    - e4545fa4b1664a0282816734dccdca30
+    - a9d652b044a64f88ab476a552fde41b1
+    - ef6e151655ad4d64bb55aeedbff17b63
+    - 2c93790c136f4581912100a865e83c63
+-   center: (1.4, 1.4, 0)
+    lang: a common dustpan
+    name: dustpan
+    on_table: false
+    path: dustpan.obj
+    size: 0.4
+    type: mesh
+    all_uid:
+    - 85e03bbaf084488ea66c11df8d009fd5
+    uid:
+    - 85e03bbaf084488ea66c11df8d009fd5
+-   center: (1.7, 1.7, 0)
+    lang: a common mop
+    name: mop
+    on_table: false
+    path: mop.obj
+    size: 1.2
+    type: mesh
+    all_uid:
+    - 060a981e59ce41f495beb277270cc9be
+    uid:
+    - 060a981e59ce41f495beb277270cc9be
+

@@ -1,0 +1,15 @@
+- use_table: true
+- center: (0.5, 0.5, 0)
+  lang: a pair of common scissors
+  name: Scissors
+  on_table: true
+  path: scissors.urdf
+  reward_asset_path: '10902'
+  size: 0.23
+  type: urdf
+- solution_path: example_tasks/Open_Scissors/task_Open_Scissors
+- set_joint_angle_object_name: Scissors
+- spatial_relationships: []
+- task_description: The robotic arm will open the scissors
+  task_name: Open Scissors
+- distractor_config_path: example_tasks/Open_Scissors/The_robotic_arm_will_open_the_scissors_distractor.yaml

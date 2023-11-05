@@ -1,0 +1,16 @@
+- use_table: false
+- center: (1.2, 1.2, 0)
+  lang: a common trashcan
+  name: TrashCan
+  on_table: false
+  path: trashcan.urdf
+  reward_asset_path: '102210'
+  size: 0.7
+  type: urdf
+- solution_path: example_tasks/Close_Trashcan_Lid/task_Close_Trashcan_Lid
+- joint_2: '1'
+  set_joint_angle_object_name: TrashCan
+- spatial_relationships: []
+- task_description: The robotic arm will close the trashcans lid
+  task_name: Close Trashcan Lid
+- distractor_config_path: example_tasks/Close_Trashcan_Lid/The_robotic_arm_will_close_the_trashcans_lid_distractor.yaml

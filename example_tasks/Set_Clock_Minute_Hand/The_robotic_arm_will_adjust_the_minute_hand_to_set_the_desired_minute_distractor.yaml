@@ -1,0 +1,89 @@
+-   center: (0.7, 0.7, 0)
+    lang: a common ballpoint pen
+    name: Pen
+    on_table: true
+    path: pen.obj
+    reward_asset_path: '102917'
+    size: 0.05
+    type: urdf
+-   all_uid:
+    - 51362cadfb8d4f669ba525d6605b9a8e
+    - 01f2ac903ca44a43be6500c7b71559f9
+    - 51362cadfb8d4f669ba525d6605b9a8e
+    - b09de807134b49eeb6e752ac2dc4e853
+    - cee4802cafe3483c9d72f27d6f3e06d1
+    - 51362cadfb8d4f669ba525d6605b9a8e
+    - 5ef52ba1906847a28b2d32c880df492d
+    - b09de807134b49eeb6e752ac2dc4e853
+    - cee4802cafe3483c9d72f27d6f3e06d1
+    - f9157e6aa40d43579e34267b77a62f91
+    center: (0.2, 0.2, 0)
+    lang: a common notepad
+    name: Notepad
+    on_table: true
+    path: notepad.obj
+    size: 0.15
+    type: mesh
+    uid:
+    - 01f2ac903ca44a43be6500c7b71559f9
+    - b09de807134b49eeb6e752ac2dc4e853
+    - b09de807134b49eeb6e752ac2dc4e853
+-   all_uid:
+    - 7be9e6cbf6e04365a028217a4874730e
+    - d934c6b791c34e0fafc30e9625b4c55c
+    - 7e3b426f6973409fa5d5c5017f15f0cc
+    - b8e13a49528e4231a0512bb5f18f07e5
+    - bf3702fe60514b41865f0c13f2667c05
+    center: (0.8, 0.2, 0)
+    lang: a desk lamp
+    name: Desk Lamp
+    on_table: true
+    path: desk_lamp.obj
+    size: 0.4
+    type: mesh
+    uid:
+    - 7be9e6cbf6e04365a028217a4874730e
+    - b8e13a49528e4231a0512bb5f18f07e5
+-   all_uid:
+    - 1fce2b8798ff4a3d8186106e40b3bc13
+    - f69b1b20c14349028f3844ae991ca39f
+    - 4f3edd9bf5fb4b6ab11433cbd9e19c74
+    - 901718e881cf4a11a61cf2f810e666d5
+    - ee3288583dbe4984b058c04930753f08
+    center: (0.3, 0.8, 0)
+    lang: a coffee mug
+    name: Coffee Mug
+    on_table: true
+    path: coffee_mug.obj
+    size: 0.12
+    type: mesh
+    uid:
+    - 1fce2b8798ff4a3d8186106e40b3bc13
+    - 4f3edd9bf5fb4b6ab11433cbd9e19c74
+    - ee3288583dbe4984b058c04930753f08
+-   all_uid:
+    - 0955cad81e7645de80f2fd2873614ad3
+    - 3a1109b74f4a485bbe4a54ebdf23957e
+    - efe2a35b92c443519fab5a5b515e92ab
+    - 51d928b33e5549898cc86cbdaf966d83
+    - 73aa74778d3943b8856c84d8978d352f
+    - eae19856cb164b0cb2abddcc2e3ae3e9
+    - 9ecd80af3b7e4cd59efb4c141511a55b
+    - 538b37a154974ab395ecc836fb90d2cc
+    - 39de8d3ccc0b449f9aa2d446ab4e58e3
+    - a6f2dbb501974c8eac4978fb4ee9cf36
+    center: (1.5, 0.5, 0)
+    lang: a bookshelf
+    name: Bookshelf
+    on_table: false
+    path: bookshelf.obj
+    size: 1.8
+    type: mesh
+    uid:
+    - 0955cad81e7645de80f2fd2873614ad3
+    - 3a1109b74f4a485bbe4a54ebdf23957e
+    - efe2a35b92c443519fab5a5b515e92ab
+    - 51d928b33e5549898cc86cbdaf966d83
+    - eae19856cb164b0cb2abddcc2e3ae3e9
+    - 538b37a154974ab395ecc836fb90d2cc
+    - a6f2dbb501974c8eac4978fb4ee9cf36

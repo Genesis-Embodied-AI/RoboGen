@@ -1,0 +1,48 @@
+-   all_uid:
+    - 526c1ef296c244e18041349abe09f307
+    - cadcac35568444ea95a634c0311bf117
+    - 56e06be4967c4b73b990f54c17020502
+    - e826c513779149d7ab3bde944647573f
+    - edde959e46bd48258121233098066a7a
+    - be5940bde1ec4c4d99e0f79effe22336
+    - 223b88421efe417481361482b02eee80
+    - f5d7450599314a82845e97195353af00
+    - d9b3709b79264a9a9d26b32e532b7171
+    - 41bc96fef75c499fac670d2557401f5a
+    center: (1.5, 2, 0)
+    lang: a common window curtain
+    name: Curtain
+    on_table: false
+    path: curtain.obj
+    size: 1.5
+    type: mesh
+    uid:
+    - 56e06be4967c4b73b990f54c17020502
+    - e826c513779149d7ab3bde944647573f
+    - be5940bde1ec4c4d99e0f79effe22336
+    - 41bc96fef75c499fac670d2557401f5a
+-   all_uid:
+    - bf7720f20a8847aca47c7fff9a2d3cd7
+    - 77f583d186284075990c7929d0827520
+    - 26efdac237554714a924fecfeacf5e78
+    - a375d17ef7e5407d8a59f6de0ce0f4fd
+    - 2082a08bf5654100a54f597e849e23ae
+    center: (2, 1.5, 0)
+    lang: a common indoor plant
+    name: Plant
+    on_table: false
+    path: plant.obj
+    size: 0.3
+    type: mesh
+    uid:
+    - 26efdac237554714a924fecfeacf5e78
+    - bf7720f20a8847aca47c7fff9a2d3cd7
+    - a375d17ef7e5407d8a59f6de0ce0f4fd
+-   center: (1, 1.5, 0)
+    lang: a common chair
+    name: Chair
+    on_table: false
+    path: chair.obj
+    reward_asset_path: '40982'
+    size: 1.0
+    type: urdf

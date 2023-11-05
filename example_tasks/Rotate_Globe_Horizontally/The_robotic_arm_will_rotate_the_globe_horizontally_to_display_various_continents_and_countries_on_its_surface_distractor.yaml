@@ -1,0 +1,42 @@
+-   all_uid:
+    - 7be9e6cbf6e04365a028217a4874730e
+    - d934c6b791c34e0fafc30e9625b4c55c
+    - b4da62f24b3c48fda15568dccd41d0d1
+    - 21f904d8fc844c25a4cc177eee214921
+    - 680c05d16e9b473bb123ba935d9a358c
+    center: (0.8, 0.2, 0)
+    lang: a common desk lamp
+    name: desk_lamp
+    on_table: true
+    path: desk_lamp.obj
+    size: 0.4
+    type: mesh
+    uid:
+    - 7be9e6cbf6e04365a028217a4874730e
+    - b4da62f24b3c48fda15568dccd41d0d1
+    - 21f904d8fc844c25a4cc177eee214921
+-   all_uid:
+    - fa8da62e190d437cb72b0dd9f0192200
+    - 28e028e981604aacb25766852aa279ed
+    - 7a6b072634564c4d8ab56e4e86137e59
+    - c850e5d630e9420d85b8d23a2efae4d5
+    - 92d65d6c85e34cb9895fbdb85d81038f
+    center: (0.2, 0.8, 0)
+    lang: a common book
+    name: book
+    on_table: true
+    path: book.obj
+    size: 0.25
+    type: mesh
+    uid:
+    - 28e028e981604aacb25766852aa279ed
+    - 7a6b072634564c4d8ab56e4e86137e59
+    - 92d65d6c85e34cb9895fbdb85d81038f
+-   center: (1.5, 0.5, 0)
+    lang: a study chair
+    name: Chair
+    on_table: false
+    path: chair.obj
+    reward_asset_path: '2364'
+    size: 1.1
+    type: urdf

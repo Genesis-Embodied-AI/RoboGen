@@ -1,0 +1,16 @@
+- use_table: false
+- center: (1.2, 0.8, 0)
+  lang: a common dishwasher
+  name: Dishwasher
+  on_table: false
+  path: dishwasher.urdf
+  reward_asset_path: '12428'
+  size: 0.85
+  type: urdf
+- solution_path: example_tasks/Press_Start_Button/task_Press_Start_Button
+- set_joint_angle_object_name: DishWasher
+- spatial_relationships: []
+- task_description: The robot will press the start button on the dishwasher to begin
+    the washing cycle
+  task_name: Press Start Button
+- distractor_config_path: example_tasks/Press_Start_Button/The_robot_will_press_the_start_button_on_the_dishwasher_to_begin_the_washing_cycle_distractor.yaml

@@ -1,0 +1,32 @@
+- use_table: true
+- center: (1.0, 0.2, 0)
+  lang: a common dishwasher
+  name: Dishwasher
+  on_table: false
+  path: dishwasher.urdf
+  reward_asset_path: '12594'
+  size: 0.85
+  type: urdf
+- all_uid:
+  - 02fe84d18f7949f39e0d7c7adc127d41
+  - 723c6d41d9bc48079979bfc1192a3d11
+  - ae28a1d3f0f242c7b43c0972b3b33db3
+  - c2cb0b75e57b4f12bc8dd4e359defe0e
+  - 47f62d57ab28490eb1f52c32cb69fbc0
+  center: (0.5, 0.5, 0)
+  lang: a common dish
+  name: Dish
+  on_table: true
+  path: dish.obj
+  size: 0.28
+  type: mesh
+  uid:
+  - 47f62d57ab28490eb1f52c32cb69fbc0
+- solution_path: example_tasks/load_dish_into_dishwasher/task_load_dish_into_dishwasher
+- joint_1: '0'
+  set_joint_angle_object_name: Dishwasher
+- spatial_relationships: []
+- task_description: The robot arm picks up a dish and places it inside the dishwasher,
+    then closes the dishwasher door
+  task_name: load dish into dishwasher
+- distractor_config_path: example_tasks/load_dish_into_dishwasher/The_robot_arm_picks_up_a_dish_and_places_it_inside_the_dishwasher_then_closes_the_dishwasher_door_distractor.yaml

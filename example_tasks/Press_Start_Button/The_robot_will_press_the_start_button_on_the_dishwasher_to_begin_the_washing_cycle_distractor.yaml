@@ -1,0 +1,34 @@
+-   center: (1.5, 0.5, 0)
+    lang: a common kitchen trash can
+    name: TrashCan
+    on_table: false
+    path: trashcan.obj
+    reward_asset_path: '102194'
+    size: 0.6
+    type: urdf
+-   all_uid:
+    - 1cd21db57daf46789d98cf95d50a6aad
+    - ff322c82af1948e5889d038a1d477857
+    - 219a7d42b2c34523a6e79f033074a943
+    - 217ba4d1e4644e659a279f5e8f360e3d
+    - 4e8ce1e067b6426494cf724dbe4e0f71
+    center: (0.8, 0.8, 0)
+    lang: a common kitchen sink
+    name: Sink
+    on_table: false
+    path: sink.obj
+    size: 0.7
+    type: mesh
+    uid:
+    - 1cd21db57daf46789d98cf95d50a6aad
+    - 219a7d42b2c34523a6e79f033074a943
+    - 217ba4d1e4644e659a279f5e8f360e3d
+    - 4e8ce1e067b6426494cf724dbe4e0f71
+-   center: (1.8, 1.2, 0)
+    lang: a common kitchen fridge
+    name: Refrigerator
+    on_table: false
+    path: fridge.obj
+    reward_asset_path: '10655'
+    size: 1.8
+    type: urdf

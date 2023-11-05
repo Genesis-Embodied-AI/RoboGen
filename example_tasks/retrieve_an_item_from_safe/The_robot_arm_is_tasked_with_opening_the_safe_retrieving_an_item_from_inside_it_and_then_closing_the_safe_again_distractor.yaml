@@ -1,0 +1,24 @@
+-   center: (0.8, -0.5, 0)
+    lang: a common office chair
+    name: Chair
+    on_table: false
+    path: chair.obj
+    reward_asset_path: '37247'
+    size: 0.8
+    type: urdf
+-   center: (0.5, 0.5, 0)
+    lang: a common laptop
+    name: Laptop
+    on_table: true
+    path: laptop.obj
+    reward_asset_path: '10305'
+    size: 0.3
+    type: urdf
+-   center: (0.7, 0.7, 0)
+    lang: a common desk lamp
+    name: Lamp
+    on_table: true
+    path: lamp.obj
+    reward_asset_path: '14905'
+    size: 0.3
+    type: urdf

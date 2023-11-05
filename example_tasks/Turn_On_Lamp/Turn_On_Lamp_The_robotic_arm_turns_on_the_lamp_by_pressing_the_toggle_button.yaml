@@ -1,0 +1,15 @@
+- use_table: true
+- center: (0.5, 0.5, 0)
+  lang: a common desk lamp with a toggle button
+  name: Lamp
+  on_table: true
+  path: lamp.urdf
+  reward_asset_path: '16032'
+  size: 0.5
+  type: urdf
+- solution_path: example_tasks/Turn_On_Lamp/task_Turn_On_Lamp
+- set_joint_angle_object_name: Lamp
+- spatial_relationships: []
+- task_description: The robotic arm turns on the lamp by pressing the toggle button
+  task_name: Turn On Lamp
+- distractor_config_path: example_tasks/Turn_On_Lamp/The_robotic_arm_turns_on_the_lamp_by_pressing_the_toggle_button_distractor.yaml

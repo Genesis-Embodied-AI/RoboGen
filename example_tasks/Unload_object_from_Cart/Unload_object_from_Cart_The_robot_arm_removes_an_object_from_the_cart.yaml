@@ -1,0 +1,34 @@
+- use_table: false
+- center: (1.5, 1.5, 0)
+  lang: a common cart
+  name: Cart
+  on_table: false
+  path: cart.urdf
+  reward_asset_path: '102989'
+  size: 0.6
+  type: urdf
+- all_uid:
+  - 86a06237b9ab4ca2b86df9745c641917
+  - da5ea39836fe4c33b790bcea31645bec
+  - 3559d42f00484de099ff539bc61c1966
+  - 86a06237b9ab4ca2b86df9745c641917
+  - 74c7a0fb3f0f4c488aeb734d7c0d44d2
+  center: (1.5, 1.5, 0.3)
+  lang: a common box
+  name: Box
+  on_table: false
+  path: box.obj
+  size: 0.15
+  type: mesh
+  uid:
+  - 86a06237b9ab4ca2b86df9745c641917
+  - da5ea39836fe4c33b790bcea31645bec
+  - 3559d42f00484de099ff539bc61c1966
+  - 74c7a0fb3f0f4c488aeb734d7c0d44d2
+- solution_path: example_tasks/Unload_object_from_Cart/task_Unload_object_from_Cart
+- set_joint_angle_object_name: Cart
+- spatial_relationships:
+  - in, box, cart, link_2
+- task_description: The robot arm removes an object from the cart
+  task_name: Unload object from Cart
+- distractor_config_path: example_tasks/Unload_object_from_Cart/The_robot_arm_removes_an_object_from_the_cart_distractor.yaml

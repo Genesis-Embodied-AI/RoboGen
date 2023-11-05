@@ -1,0 +1,68 @@
+-   center: (2.0, 0.5, 0)
+    lang: a common wooden chair
+    name: Chair
+    on_table: false
+    path: chair.obj
+    reward_asset_path: '38368'
+    size: 0.8
+    type: urdf
+-   center: (1.0, 0.2, 0)
+    lang: a table lamp
+    name: Lamp
+    on_table: true
+    path: lamp.obj
+    reward_asset_path: '15082'
+    size: 0.5
+    type: urdf
+-   all_uid:
+    - a302fcadc7e14f41ac5e924e950463ad
+    - b39aa933c816440f972076a678acdd0c
+    - 60ed66c45c9046b1a47b49d81eab98bb
+    - c2207e3e18ba454f8ceb43f208d0927c
+    - 3061b27af9d24a4e94fc2ac345a7ba39
+    - 9a97830fd9d34892a2945f9fc3c90d8e
+    - aae3a509b9d541f890fb69b913822679
+    - 1632deaa5d4b403cae954f95647375d9
+    - d9ab6ad870bc4356833cf2ed8efa6589
+    - ba0911be208b41919933417f82dc3fc4
+    center: (1.0, 0.8, 0)
+    lang: a small potted plant
+    name: plant
+    on_table: true
+    path: plant.obj
+    size: 0.6
+    type: mesh
+    uid:
+    - a302fcadc7e14f41ac5e924e950463ad
+    - b39aa933c816440f972076a678acdd0c
+    - 60ed66c45c9046b1a47b49d81eab98bb
+    - c2207e3e18ba454f8ceb43f208d0927c
+    - 3061b27af9d24a4e94fc2ac345a7ba39
+    - 9a97830fd9d34892a2945f9fc3c90d8e
+    - aae3a509b9d541f890fb69b913822679
+    - 1632deaa5d4b403cae954f95647375d9
+    - d9ab6ad870bc4356833cf2ed8efa6589
+    - ba0911be208b41919933417f82dc3fc4
+-   all_uid:
+    - cb93079485a6483fbbac67aaa7c84364
+    - 4453f2ee9aa444d0a0538065ea2246b7
+    - bf8d737431654692b690e3c3c00b9751
+    - 0d49c685abf449f68da8af0bf980b244
+    - 663e90d06ea7447ab5d55afac46b2fc7
+    - 43b311e5a2714126bf0134e8555d40cc
+    - 98472d7b0cb74298bbc10907d2da5e57
+    - fa968bf5d57a4265bedb233293870dc2
+    - ac4906ce4d6745c3bd6a4d50110300ae
+    - 852814ab7b6b47eea28099bfe4aabb66
+    center: (1.5, 1.5, 0)
+    lang: a small area rug
+    name: rug
+    on_table: false
+    path: rug.obj
+    size: 1.5
+    type: mesh
+    uid:
+    - 4453f2ee9aa444d0a0538065ea2246b7
+    - 43b311e5a2714126bf0134e8555d40cc
+    - 98472d7b0cb74298bbc10907d2da5e57
+    - fa968bf5d57a4265bedb233293870dc2

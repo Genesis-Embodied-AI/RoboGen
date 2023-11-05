@@ -1,0 +1,56 @@
+-   all_uid:
+    - 6b07befeed6f45c08bc02fad72bccb21
+    - 992750b0df674378989fa915b0688ce1
+    - 76dc9266150b4dbb81c732990d6e060f
+    - 28a80998cde44de4a735e4e345aab77e
+    - d6420d281fcd49318fe68bbf60950484
+    - f493f76a46c94d36a3e98d7e97e99a1b
+    - 726b3328f213437dbfb4de89eedfd9e5
+    - 1f0f5637b5af4311a218b6ac6e491834
+    - 992750b0df674378989fa915b0688ce1
+    - b6241cc7e323410bbf1e1ac71ab1fd0c
+    center: (0.2, 0.2, 0)
+    lang: a common coffee cup
+    name: Cup
+    on_table: true
+    path: cup.obj
+    size: 0.1
+    type: mesh
+    uid:
+    - 6b07befeed6f45c08bc02fad72bccb21
+    - 992750b0df674378989fa915b0688ce1
+    - 76dc9266150b4dbb81c732990d6e060f
+    - 28a80998cde44de4a735e4e345aab77e
+    - d6420d281fcd49318fe68bbf60950484
+    - 726b3328f213437dbfb4de89eedfd9e5
+    - 1f0f5637b5af4311a218b6ac6e491834
+    - 992750b0df674378989fa915b0688ce1
+-   all_uid:
+    - b5d6b4a1b468493bb7de6646ed3b7530
+    - 761d90601ff0457786d74f1c549bf57c
+    - 0f2e024bbea44007a1b7e1c96a3d5e6c
+    - f7799baf56fb46918fde5553da579a81
+    - b5d6b4a1b468493bb7de6646ed3b7530
+    - b5d6b4a1b468493bb7de6646ed3b7530
+    - 1e5534d5bd2d4e60ba18201b895c2704
+    - 8e6f343354a64f9a877ba0d2ae14690e
+    - a1b7ef43c49e40a09ff7b0b746f32042
+    - c47bbf11407043b6938fa638a68c2851
+    center: (0.8, 0.8, 0)
+    lang: a common sugar container
+    name: SugarContainer
+    on_table: true
+    path: sugar_container.obj
+    size: 0.15
+    type: mesh
+    uid:
+    - f7799baf56fb46918fde5553da579a81
+    - 8e6f343354a64f9a877ba0d2ae14690e
+-   center: (1.8, 0.5, 0)
+    lang: a kitchen fridge
+    name: Refrigerator
+    on_table: false
+    path: fridge.obj
+    reward_asset_path: '12252'
+    size: 1.7
+    type: urdf

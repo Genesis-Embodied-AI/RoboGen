@@ -1,0 +1,56 @@
+-   center: (0.2, 0.2, 0)
+    lang: a common office pen
+    name: Pen
+    on_table: true
+    path: pen.obj
+    reward_asset_path: '101748'
+    size: 0.05
+    type: urdf
+-   all_uid:
+    - f4299cc43d0a48859ad4079ebd2a61ed
+    - aa10df4fe46d40ef8521c2d9fb3a50b7
+    - bee4e61fc496405f893d6931b9291bea
+    - 80a2664b660840cda8cf3ca3d0977aa6
+    - 7f21a2ea951746a3ad4353c857b3cef0
+    center: (0.8, 0.8, 0)
+    lang: a common office notebook
+    name: Notebook
+    on_table: true
+    path: notebook.obj
+    size: 0.2
+    type: mesh
+    uid:
+    - bee4e61fc496405f893d6931b9291bea
+-   all_uid:
+    - b46c1630ac9a406688e36a4b798cab75
+    - d52fddca36384814a9b392ff7214d16d
+    - 09d94736e44a460c8f3ed2b240b82915
+    - 3d42c50b9d6b4fe8ab04bff47ed9e676
+    - 747a3a8feb854143bc88a72cfc6b1a69
+    center: (0.7, 0.3, 0)
+    lang: a common office coffee mug
+    name: Coffee Mug
+    on_table: true
+    path: coffee_mug.obj
+    size: 0.12
+    type: mesh
+    uid:
+    - b46c1630ac9a406688e36a4b798cab75
+    - d52fddca36384814a9b392ff7214d16d
+    - 09d94736e44a460c8f3ed2b240b82915
+    - 747a3a8feb854143bc88a72cfc6b1a69
+-   all_uid:
+    - 6a7b0147890242418a49f6db26657ab4
+    - 9fe20e96ea6e4de5b2775d40a25e30ff
+    - d61d0514dd70422596a3f15c3dae5682
+    - d2655c4255ae417cb7c00abd775b5eb2
+    - 7831f14447a34bada16a02ba6375c797
+    center: (0.2, 0.3, 0)
+    lang: a common office computer monitor
+    name: Computer Monitor
+    on_table: True
+    path: monitor.obj
+    size: 0.6
+    type: mesh
+    uid:
+    - d61d0514dd70422596a3f15c3dae5682

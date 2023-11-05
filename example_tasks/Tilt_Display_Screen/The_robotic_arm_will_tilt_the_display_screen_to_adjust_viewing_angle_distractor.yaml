@@ -1,0 +1,58 @@
+-   center: (0.3, 0.2, 0)
+    lang: a standard computer keyboard
+    name: Keyboard
+    on_table: true
+    path: keyboard.obj
+    reward_asset_path: '12996'
+    size: 0.45
+    type: urdf
+-   center: (0.7, 0.2, 0)
+    lang: a standard computer mouse
+    name: Mouse
+    on_table: true
+    path: mouse.obj
+    reward_asset_path: '101416'
+    size: 0.1
+    type: urdf
+-   all_uid:
+    - d52fddca36384814a9b392ff7214d16d
+    - 1ddf0e1fc752455b8bc78d0980436ea8
+    - 246975ac25734b8282ee020dd86b2607
+    - 246975ac25734b8282ee020dd86b2607
+    - c6f14d58bae44d7b82bfceb759925197
+    center: (0.8, 0.8, 0)
+    lang: a standard coffee mug
+    name: coffee_mug
+    on_table: true
+    path: coffee_mug.obj
+    size: 0.12
+    type: mesh
+    uid:
+    - d52fddca36384814a9b392ff7214d16d
+    - 246975ac25734b8282ee020dd86b2607
+    - 246975ac25734b8282ee020dd86b2607
+-   all_uid:
+    - 7be9e6cbf6e04365a028217a4874730e
+    - d934c6b791c34e0fafc30e9625b4c55c
+    - 7377ec591df04445a1aae370017aaa13
+    - de02363e5b084234b0bedeb0da5755d1
+    - 7acd3bfd3d1e42d0932059fc815ab248
+    - c6ef0e7196d343739629c7a026d57f2d
+    - b37a3d92d35445f3a8dba72a0b7c708a
+    - 8ed0daf3fc7b4b4bb9c2fa69ffb83a7c
+    - 54602080c9d14d5ab052cf9fa7403ce9
+    - 2e49520dd9794994b0001b59050700e4
+    center: (0.1, 0.8, 0)
+    lang: a standard desk lamp
+    name: desk_lamp
+    on_table: true
+    path: desk_lamp.obj
+    size: 0.3
+    type: mesh
+    uid:
+    - 7be9e6cbf6e04365a028217a4874730e
+    - 7377ec591df04445a1aae370017aaa13
+    - de02363e5b084234b0bedeb0da5755d1
+    - 7acd3bfd3d1e42d0932059fc815ab248
+    - b37a3d92d35445f3a8dba72a0b7c708a
+    - 8ed0daf3fc7b4b4bb9c2fa69ffb83a7c

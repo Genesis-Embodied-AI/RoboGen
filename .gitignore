@@ -1,0 +1,10 @@
+data/
+__pycache__/
+manipulation/gpt_tasks/
+manipulation/gpt_tasks_old/
+manipulation/gpt_rigid_tasks/
+RL_sac/
+primitive_states/
+all_last_state_files_*.txt
+all*.gif
+env_construction/

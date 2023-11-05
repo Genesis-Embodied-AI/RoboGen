@@ -1,0 +1,1 @@
+data/generated_tasks/Lamp_13928_2023-10-05-02-12-48/Change_Lamp_Direction_The_robotic_arm_will_alter_the_lamp’s_light_direction_by_manipulating_the_lamps_head.yaml

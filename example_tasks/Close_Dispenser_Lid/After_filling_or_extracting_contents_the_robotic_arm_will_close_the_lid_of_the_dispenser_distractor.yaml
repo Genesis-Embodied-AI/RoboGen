@@ -1,0 +1,47 @@
+-   all_uid:
+    - 922f4990d2c34b3693a373856bb516bf
+    - 922f4990d2c34b3693a373856bb516bf
+    - 738ddfc31cd94e86b1e3fafe30dc6f84
+    - 4171d02e4e1f40eeb873a462cb978f0c
+    - 0a249638348d4edd8a6c0029d624db95
+    center: (0.7, 0.7, 0)
+    lang: a common ceramic cup
+    name: cup
+    on_table: true
+    path: cup.obj
+    size: 0.1
+    type: mesh
+    uid:
+    - 4171d02e4e1f40eeb873a462cb978f0c
+-   all_uid:
+    - 0faf6eac4115476da70a623de4b2cdba
+    - 5b0042f030eb4181a8e77cacb9d24c9b
+    - e10eb527561048b6bc1786c8c44cd0f5
+    - b46506c71cfc43bcbe99b8cff9c8c3fc
+    - e85ce3ecd52645308f819bfd72f974fd
+    center: (0.2, 0.2, 0)
+    lang: a roll of paper towel
+    name: paper_towel
+    on_table: true
+    path: paper_towel.obj
+    size: 0.03
+    type: mesh
+    uid:
+    - 0faf6eac4115476da70a623de4b2cdba
+    - 5b0042f030eb4181a8e77cacb9d24c9b
+-   all_uid:
+    - 5cb249a66640432d90d2dd6c19a3db1a
+    - 3ee7743485174822973c939854da7c0c
+    - 8951624baf894fe296fc07f5ed8c7cba
+    - a9d7b1569c64442d84cbaccade0fa5e7
+    - ff0bf0e32e024d729db9cd9fed594cce
+    center: (1.5, 0.5, 0)
+    lang: a kitchen trash can
+    name: trash_can
+    on_table: false
+    path: trash_can.obj
+    size: 0.6
+    type: mesh
+    uid:
+    - 3ee7743485174822973c939854da7c0c
+    - 8951624baf894fe296fc07f5ed8c7cba

@@ -1,0 +1,17 @@
+- use_table: true
+- center: (0.5, 0.5, 0)
+  lang: a common faucet with two switches
+  name: Faucet
+  on_table: true
+  path: faucet.urdf
+  reward_asset_path: '2140'
+  size: 0.25
+  type: urdf
+- solution_path: example_tasks/Turn_Off_Faucet/task_Turn_Off_Faucet
+- joint_2: '1'
+  set_joint_angle_object_name: Faucet
+- spatial_relationships: []
+- task_description: The robotic arm turns off the faucet by rotating one of the hinge
+    switches
+  task_name: Turn Off Faucet
+- distractor_config_path: example_tasks/Turn_Off_Faucet/The_robotic_arm_turns_off_the_faucet_by_rotating_one_of_the_hinge_switches_distractor.yaml

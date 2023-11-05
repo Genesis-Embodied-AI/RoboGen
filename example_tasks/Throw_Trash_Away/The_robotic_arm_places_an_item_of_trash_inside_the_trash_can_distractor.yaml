@@ -1,0 +1,33 @@
+-   center: (2, 1.5, 0)
+    lang: a common broom
+    name: broom
+    on_table: false
+    path: broom.obj
+    size: 1.2
+    type: mesh
+    uid: 
+    - fd007cd7f27648678e263c137f30a6c8
+    all_uid: 
+    - fd007cd7f27648678e263c137f30a6c8
+-   center: (1.1, 0.8, 0)
+    lang: a common dustpan
+    name: dustpan
+    on_table: false
+    path: dustpan.obj
+    size: 0.3
+    type: mesh
+    uid: 
+    - d91eae20c02a4741aeb889246b417ae4
+    all_uid: 
+    - d91eae20c02a4741aeb889246b417ae4
+-   center: (0.9, 1.4, 0)
+    lang: a common soda can
+    name: soda_can
+    on_table: true
+    path: soda_can.obj
+    size: 0.1
+    type: mesh
+    uid: 
+    - ffdbc5a9ae654f49977a1ca2fc626c24
+    all_uid: 
+    - ffdbc5a9ae654f49977a1ca2fc626c24

@@ -1,0 +1,15 @@
+# File produced by Open Asset Import Library (http://www.assimp.sf.net)
+# (assimp v4.0.190497352)
+
+newmtl drc_torso_head_diffuse
+Kd 1 1 1
+Ka 1 1 1
+Ks 0 0 0
+Ke 0.800000011920929 0.800000011920929 0.800000011920929
+Tf 1 1 1
+d 1
+Ni 1
+Ns 2
+illum 2
+map_Kd ../materials/textures/drc_torso_head_diffuse.png
+

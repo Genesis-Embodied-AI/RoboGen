@@ -1,0 +1,55 @@
+-   all_uid:
+    - ea25712f7f394b428ebb3bebd590ccab
+    - afefb58e84bf4d2bbc282096392c0f70
+    - 8ddbcf0cec5149deb3df42718e043f99
+    - 365bf0300db94ede85f9336b38a1ff4a
+    - 1557268d1464411caf9f71062e410885
+    center: (1.5, 2.5, 0)
+    lang: a common bathroom sink
+    name: sink
+    on_table: false
+    path: sink.obj
+    size: 0.6
+    type: mesh
+    uid:
+    - afefb58e84bf4d2bbc282096392c0f70
+    - 365bf0300db94ede85f9336b38a1ff4a
+    - 1557268d1464411caf9f71062e410885
+-   all_uid:
+    - 3ea166bb3d2540e3be01ed2b9771ea2b
+    - c208c44759d64cea9b111be83c128600
+    - b91e5ec369a741fcb5432698e7bef812
+    - 89a99925b1754746910ee364ace35564
+    - 35b76b90614d49a3aa92eeeb6afec60f
+    center: (2, 1.5, 0)
+    lang: a common bathroom towel
+    name: towel
+    on_table: false
+    path: towel.obj
+    size: 0.15
+    type: mesh
+    uid:
+    - 89a99925b1754746910ee364ace35564
+-   center: (1, 1, 0)
+    lang: a common bath mat
+    name: bath mat
+    on_table: false
+    path: bath_mat.obj
+    size: 0.8
+    type: mesh
+    all_uid:
+    - 2da99ed95c684f069509e8f12c012311
+    uid:
+    - 2da99ed95c684f069509e8f12c012311
+-   center: (2.5, 2.5, 0)
+    lang: a common shower curtain
+    name: shower curtain
+    on_table: false
+    path: shower_curtain.obj
+    size: 2.0
+    type: mesh
+    all_uid:
+    - 61b448368b3b439a80937048b3f9bb42
+    uid:
+    - 61b448368b3b439a80937048b3f9bb42
+

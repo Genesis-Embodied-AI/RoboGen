@@ -1,0 +1,17 @@
+- use_table: false
+- center: (1.0, 0.2, 0)
+  lang: a common oven
+  name: Oven
+  on_table: false
+  path: oven.urdf
+  reward_asset_path: '101940'
+  size: 0.9
+  type: urdf
+- solution_path: example_tasks/close_the_oven_door/task_close_the_oven_door
+- joint_0: '1'
+  set_joint_angle_object_name: Oven
+- spatial_relationships: []
+- task_description: The robot arm needs to close the oven door after use This task
+    involves moving towards the oven door and applying force to close it
+  task_name: close the oven door
+- distractor_config_path: example_tasks/close_the_oven_door/The_robot_arm_needs_to_close_the_oven_door_after_use_This_task_involves_moving_towards_the_oven_door_and_applying_force_to_close_it_distractor.yaml

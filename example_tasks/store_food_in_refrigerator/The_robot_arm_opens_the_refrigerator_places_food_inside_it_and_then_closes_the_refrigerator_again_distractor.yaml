@@ -1,0 +1,39 @@
+-   all_uid:
+    - 30a40bddb6ea4f1f975f779ef0c8e348
+    - 5a1c3385222a4f35b208faad2837c5c9
+    - 9d45f15fb21f4fc89118b2631eec5fda
+    - 553156446f1044d19139a15d2741e4c2
+    - dbcecddb94c14a929f2b0722e7b118e2
+    center: (0.2, 0.2, 0)
+    lang: a wooden cutting board
+    name: cutting_board
+    on_table: true
+    path: cutting_board.obj
+    size: 0.4
+    type: mesh
+    uid:
+    - 5a1c3385222a4f35b208faad2837c5c9
+    - 9d45f15fb21f4fc89118b2631eec5fda
+-   center: (0.2, 0.4, 0)
+    lang: a common kitchen knife
+    name: Knife
+    on_table: true
+    path: knife.obj
+    reward_asset_path: '101057'
+    size: 0.2
+    type: urdf
+-   all_uid:
+    - 22701f563c56449f93fed7e6521e9171
+    - 91a3b219ffdf427f8128c85a8d9543f9
+    - c700f944b3eb4604867c4a52b5ebfbea
+    - 1ac1b56978eb45b288c5209d39e973b2
+    - 1b4f37a2fa5e4037a047bd708788b458
+    center: (0.8, 0.8, 0)
+    lang: a common kitchen pot
+    name: pot
+    on_table: true
+    path: pot.obj
+    size: 0.3
+    type: mesh
+    uid:
+    - 1b4f37a2fa5e4037a047bd708788b458

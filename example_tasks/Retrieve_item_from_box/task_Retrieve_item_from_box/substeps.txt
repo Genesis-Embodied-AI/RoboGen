@@ -1,0 +1,6 @@
+ grasp the box lid
+ open the box lid
+ grasp the item
+ move the item out of the box
+ grasp the box lid again
+ close the box lid

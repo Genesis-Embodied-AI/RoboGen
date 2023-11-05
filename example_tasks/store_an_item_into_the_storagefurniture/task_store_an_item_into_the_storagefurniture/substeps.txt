@@ -1,0 +1,6 @@
+ grasp the door of the storage furniture
+ open the door of the storage furniture
+ grasp the item
+ put the item into the storage furniture
+ grasp the door of the storage furniture again
+ close the door of the storage furniture

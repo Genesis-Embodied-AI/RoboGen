@@ -1,0 +1,45 @@
+-   all_uid:
+    - e7dc65bbf189461d89899b42082a802c
+    - ada85d776ae24ad29f273a14bf897387
+    - 8e209036fef94b74a0865526067481cb
+    - 2ad86321197a49feb54b7726743d7fd0
+    - 2a21162b6c47416fb9b0094a7a3fe9e8
+    center: (1.5, 0.8, 0)
+    lang: a common travel backpack
+    name: Backpack
+    on_table: false
+    path: backpack.obj
+    size: 0.5
+    type: mesh
+    uid:
+    - 2a21162b6c47416fb9b0094a7a3fe9e8
+-   all_uid:
+    - f1c26b1d151f4c9680022a68f889d2e4
+    - f1c26b1d151f4c9680022a68f889d2e4
+    - 4273af0191904a1793cbb73440f9ad93
+    - 877658e8ec83457d9c3673c651ac1395
+    - aef6e94e4b6649a58e5d89053e0c7955
+    center: (0.8, 1.4, 0)
+    lang: a common travel pillow
+    name: Travel Pillow
+    on_table: false
+    path: travel_pillow.obj
+    size: 0.3
+    type: mesh
+    uid:
+    - f1c26b1d151f4c9680022a68f889d2e4
+-   all_uid:
+    - d603df609698459a98d797b5a7618845
+    - 59811011a1f94f0babdc370bfeb481f2
+    - c976c7342d0849d2bb66a66ed07192c5
+    - d603df609698459a98d797b5a7618845
+    - d603df609698459a98d797b5a7618845
+    center: (1.7, 1.7, 0)
+    lang: a common luggage cart
+    name: Luggage Cart
+    on_table: false
+    path: luggage_cart.obj
+    size: 1.2
+    type: mesh
+    uid:
+    - 59811011a1f94f0babdc370bfeb481f2

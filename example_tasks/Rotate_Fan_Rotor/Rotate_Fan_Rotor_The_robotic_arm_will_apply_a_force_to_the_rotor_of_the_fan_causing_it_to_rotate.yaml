@@ -1,0 +1,17 @@
+- use_table: true
+- center: (0.5, 0.5, 0)
+  lang: a common table fan
+  name: Fan
+  on_table: true
+  path: fan.urdf
+  reward_asset_path: '101450'
+  size: 0.4
+  type: urdf
+- solution_path: example_tasks/Rotate_Fan_Rotor/task_Rotate_Fan_Rotor
+- joint_0: '0'
+  set_joint_angle_object_name: Fan
+- spatial_relationships: []
+- task_description: The robotic arm will apply a force to the rotor of the fan, causing
+    it to rotate
+  task_name: Rotate Fan Rotor
+- distractor_config_path: example_tasks/Rotate_Fan_Rotor/The_robotic_arm_will_apply_a_force_to_the_rotor_of_the_fan_causing_it_to_rotate_distractor.yaml

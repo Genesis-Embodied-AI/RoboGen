@@ -1,0 +1,6 @@
+ grasp the drawer
+ open the drawer
+ grasp the object
+ put the object into the drawer
+ grasp the drawer again
+ close the drawer

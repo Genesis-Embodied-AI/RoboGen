@@ -1,0 +1,2 @@
+ grasp the lamps head
+ change the lamps light direction

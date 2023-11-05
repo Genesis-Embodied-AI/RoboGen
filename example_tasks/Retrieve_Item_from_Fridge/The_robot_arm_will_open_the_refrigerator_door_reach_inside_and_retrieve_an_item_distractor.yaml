@@ -1,0 +1,67 @@
+-   all_uid:
+    - 2464ac1432da47b29a2c60766e416f05
+    - 0224d9084cf94596b514a64800382454
+    - a548ec65b43844fb90f570ba132a0391
+    - 4742dbd74d3f4ead9cbb6d08679c040c
+    - 3add621802554a7ba93197dde5568fe7
+    - 16aa280daffc4606aa332e731ec3b642
+    - 8b521e0e9fc247a38b0e0cfbe142319d
+    - 9c642d742fcc4cdfb9724cd45f94e0e3
+    - d4da354a6703493f8b11a8def0e14c3a
+    - 81c1fe8557f74983b723383b34b8675c
+    center: (0.7, 0.7, 0)
+    lang: a common kitchen fruit basket
+    name: fruit_basket
+    on_table: true
+    path: fruit_basket.obj
+    size: 0.3
+    type: mesh
+    uid:
+    - 0224d9084cf94596b514a64800382454
+    - a548ec65b43844fb90f570ba132a0391
+    - d4da354a6703493f8b11a8def0e14c3a
+-   all_uid:
+    - 6784e4f16a7248518cd5ef1118a2198a
+    - bab05bc7805d4b0dbc2cdcbb48441956
+    - xMxME6aWu7xdU1EsMl1Pn0OdXAp
+    - b2b3622f96464f23bf3c3c0b10950194
+    - 62e99b3760e84e4193857f0d7c1bafdb
+    - b7abf4a1377b4fad9058dfc80ea1d534
+    - 1edb9e7ab933491b9081db8c514cbba2
+    - 850790d81ba1492594525d23d96c3a87
+    - 6009282663524d1597f3f44074c75a7f
+    - 03a9521a07184167bb4dbc9c4cf8fbb1
+    center: (0.3, 0.3, 0)
+    lang: a common kitchen coffee machine
+    name: coffee_machine
+    on_table: true
+    path: coffee_machine.obj
+    size: 0.4
+    type: mesh
+    uid:
+    - 6784e4f16a7248518cd5ef1118a2198a
+    - bab05bc7805d4b0dbc2cdcbb48441956
+    - xMxME6aWu7xdU1EsMl1Pn0OdXAp
+    - 62e99b3760e84e4193857f0d7c1bafdb
+    - 1edb9e7ab933491b9081db8c514cbba2
+    - 850790d81ba1492594525d23d96c3a87
+    - 03a9521a07184167bb4dbc9c4cf8fbb1
+-   all_uid:
+    - 504248ed68e3480a807aced6f002b2d5
+    - c5636343a43d48758325e8890035c872
+    - 018bbdc009304621b157087f8e63ae68
+    - f9f6703bbf834987af2da5772fdb18b5
+    - 5a7229d68d66455087205806af4b4558
+    center: (2.5, 0.5, 0)
+    lang: a kitchen sink
+    name: kitchen_sink
+    on_table: false
+    path: kitchen_sink.obj
+    size: 0.5
+    type: mesh
+    uid:
+    - 504248ed68e3480a807aced6f002b2d5
+    - c5636343a43d48758325e8890035c872
+    - 018bbdc009304621b157087f8e63ae68
+    - f9f6703bbf834987af2da5772fdb18b5
+    - 5a7229d68d66455087205806af4b4558

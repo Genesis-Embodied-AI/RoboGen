@@ -1,0 +1,17 @@
+- use_table: false
+- center: (1.2, 1.2, 0)
+  lang: a common suitcase with wheels and extendable handle
+  name: Suitcase
+  on_table: false
+  path: suitcase.urdf
+  reward_asset_path: '100837'
+  size: 0.7
+  type: urdf
+- solution_path: example_tasks/Extend_Suitcase_Handle/task_Extend_Suitcase_Handle
+- joint_0: '0'
+  set_joint_angle_object_name: Suitcase
+- spatial_relationships: []
+- task_description: The robotic arm will extend the suitcases handle in order to pull
+    or push the suitcase
+  task_name: Extend Suitcase Handle
+- distractor_config_path: example_tasks/Extend_Suitcase_Handle/The_robotic_arm_will_extend_the_suitcases_handle_in_order_to_pull_or_push_the_suitcase_distractor.yaml

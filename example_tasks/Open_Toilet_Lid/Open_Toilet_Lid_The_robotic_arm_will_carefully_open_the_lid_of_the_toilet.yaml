@@ -1,0 +1,16 @@
+- use_table: false
+- center: (1.5, 1.5, 0)
+  lang: a common toilet
+  name: Toilet
+  on_table: false
+  path: toilet.urdf
+  reward_asset_path: '102652'
+  size: 0.55
+  type: urdf
+- solution_path: example_tasks/Open_Toilet_Lid/task_Open_Toilet_Lid
+- joint_0: '0'
+  set_joint_angle_object_name: Toilet
+- spatial_relationships: []
+- task_description: The robotic arm will carefully open the lid of the toilet
+  task_name: Open Toilet Lid
+- distractor_config_path: example_tasks/Open_Toilet_Lid/The_robotic_arm_will_carefully_open_the_lid_of_the_toilet_distractor.yaml

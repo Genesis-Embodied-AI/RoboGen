@@ -1,0 +1,58 @@
+-   all_uid:
+    - e96769051078452bba7057473eceb587
+    - 4faff5a8276041d8bb5d2435b172ac8b
+    - 58b1498d53fc4a69a06a6618ae0c2b05
+    - b65b216ffece4811afccf02497693501
+    - 67cc4558a0e74bb6be61a1af1eb13b66
+    - 140aec173636494db49e63141b47ad06
+    center: (2.0, 0, 0)
+    lang: a wooden office desk with drawers
+    name: Desk
+    on_table: false
+    path: desk.obj
+    size: 1.5
+    type: mesh
+    uid:
+    - 4faff5a8276041d8bb5d2435b172ac8b
+    - 58b1498d53fc4a69a06a6618ae0c2b05
+    - 67cc4558a0e74bb6be61a1af1eb13b66
+    - 140aec173636494db49e63141b47ad06
+-   center: (0.5, 0.5, 0)
+    lang: a modern laptop with a slim design
+    name: Laptop
+    on_table: true
+    path: laptop.obj
+    reward_asset_path: '9912'
+    size: 0.3
+    type: urdf
+-   all_uid:
+    - 53420893c98d4de992dea72a94110fe5
+    - 216de5761a4a4384bb8f34404af603a1
+    - 2c03fc90a4b34d54bc125f5109f60e17
+    - 3729cf312d054b9db8767c934ed13215
+    - 2cb9f4ffe72749c5841c164a857e7d78
+    - e9e3272375de41f1909faddc53de7d11
+    center: (0.8, 0.2, 0)
+    lang: a ceramic coffee mug with a handle
+    name: Coffee Mug
+    on_table: true
+    path: coffee_mug.obj
+    size: 0.12
+    type: mesh
+    uid:
+    - e9e3272375de41f1909faddc53de7d11
+-   all_uid: &id001
+    - 282fa83278294570a515454bc28bdf54
+    - d9df68998c8f4f33b05e6bb0dd27df02
+    - 5d2bbb90101e4f059f92e7cbb86f1114
+    - b46240bc8d63423e9db25e55fb571642
+    - 179192b9d1a84719bf14fcdee5a86d1b
+    - b9a5e64f22174bcf8216008833e08e68
+    center: (1.5, 1.5, 0)
+    lang: a wooden bookshelf with multiple shelves
+    name: Bookshelf
+    on_table: false
+    path: bookshelf.obj
+    size: 2.0
+    type: mesh
+    uid: *id001

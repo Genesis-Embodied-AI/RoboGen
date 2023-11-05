@@ -1,0 +1,3 @@
+ grasp the door
+ open the door
+ hold the door open

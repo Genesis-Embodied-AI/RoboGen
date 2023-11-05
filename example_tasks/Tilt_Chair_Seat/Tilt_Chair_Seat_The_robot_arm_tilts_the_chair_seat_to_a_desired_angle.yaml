@@ -1,0 +1,17 @@
+- use_table: false
+- center: (1.0, 0, 0)
+  lang: an office chair with wheels and adjustable seat
+  movable: false
+  name: Chair
+  on_table: false
+  path: chair.urdf
+  reward_asset_path: '41045'
+  size: 0.9
+  type: urdf
+- solution_path: example_tasks/Tilt_Chair_Seat/task_Tilt_Chair_Seat
+- joint_11: random
+  set_joint_angle_object_name: Chair
+- spatial_relationships: []
+- task_description: The robot arm tilts the chair seat to a desired angle
+  task_name: Tilt Chair Seat
+- distractor_config_path: example_tasks/Tilt_Chair_Seat/The_robot_arm_tilts_the_chair_seat_to_a_desired_angle_distractor.yaml

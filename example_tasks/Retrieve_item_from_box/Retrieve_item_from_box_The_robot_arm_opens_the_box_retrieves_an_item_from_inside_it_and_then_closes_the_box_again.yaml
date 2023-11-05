@@ -1,0 +1,34 @@
+- use_table: true
+- center: (0.5, 0.5, 0)
+  lang: a common box
+  name: Box
+  on_table: true
+  path: box.urdf
+  reward_asset_path: '100664'
+  size: 0.45
+  type: urdf
+- all_uid:
+  - 4d4db3dbf0af4051800550dd3e8d77da
+  - 9ba27f991d0d45ef96180483ea03f34c
+  - 2d297eed7b24451a8fb47a9372274778
+  - 1738869517464b20a1da4ff7fc6b98a8
+  - 1d411863389742ba8e1f700e8ec3c017
+  center: (0.5, 0.5, 0.15)
+  lang: a small toy car
+  name: Item
+  on_table: true
+  path: toy_car.obj
+  size: 0.1
+  type: mesh
+  uid:
+  - 2d297eed7b24451a8fb47a9372274778
+  - 1d411863389742ba8e1f700e8ec3c017
+  - 4d4db3dbf0af4051800550dd3e8d77da
+- solution_path: example_tasks/Retrieve_item_from_box/task_Retrieve_item_from_box
+- set_joint_angle_object_name: Box
+- spatial_relationships:
+  - in, item, box, link_1
+- task_description: The robot arm opens the box, retrieves an item from inside it,
+    and then closes the box again
+  task_name: Retrieve item from box
+- distractor_config_path: example_tasks/Retrieve_item_from_box/The_robot_arm_opens_the_box_retrieves_an_item_from_inside_it_and_then_closes_the_box_again_distractor.yaml

@@ -1,0 +1,17 @@
+- use_table: false
+- center: (1.8, 2, 0)
+  lang: a standard oven
+  name: Oven
+  on_table: false
+  path: oven.urdf
+  reward_asset_path: '101943'
+  size: 0.9
+  type: urdf
+- solution_path: example_tasks/Adjust_Oven_Temperature/task_Adjust_Oven_Temperature
+- joint_1: random
+  set_joint_angle_object_name: Oven
+- spatial_relationships: []
+- task_description: The robotic arm will turn one of the ovens hinge knobs to set
+    a desired temperature
+  task_name: Adjust Oven Temperature
+- distractor_config_path: example_tasks/Adjust_Oven_Temperature/The_robotic_arm_will_turn_one_of_the_ovens_hinge_knobs_to_set_a_desired_temperature_distractor.yaml

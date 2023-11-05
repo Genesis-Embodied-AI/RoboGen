@@ -1,0 +1,71 @@
+-   all_uid:
+    - f740b39a8d214a4c8e40b1ebde1effc1
+    - 2d0a7516f5904621a563ed93ff70dfee
+    - 70001adc96db49b4811fa97657736617
+    - d3a7c4e50cd6445382ff6503d83b444a
+    - ad8768f522184364af70b56846d10fcf
+    - f2f21a299e114d43a08cfd596383efbe
+    - 521a0a46cf4d4a899dae52fe669f6803
+    - 1bd1626329354b9e8f43b78881bd708b
+    - da68b3ed714b436f9e94c36b0e8171c0
+    - 8438e579f94a4ffb820ebdcec418b98e
+    center: (2.5, 1.5, 0)
+    lang: a wooden pallet commonly used in warehouses
+    name: Pallet
+    on_table: false
+    path: pallet.obj
+    size: 1.2
+    type: mesh
+    uid:
+    - f740b39a8d214a4c8e40b1ebde1effc1
+    - 2d0a7516f5904621a563ed93ff70dfee
+    - 70001adc96db49b4811fa97657736617
+    - d3a7c4e50cd6445382ff6503d83b444a
+    - ad8768f522184364af70b56846d10fcf
+    - f2f21a299e114d43a08cfd596383efbe
+    - da68b3ed714b436f9e94c36b0e8171c0
+    - 8438e579f94a4ffb820ebdcec418b98e
+-   all_uid:
+    - ea5f0b7f149b462d93432daa040fe185
+    - 3b1ee117fa1742aeba97f24b1dee75f6
+    - 634e52c5a33d4226a03ca15085f194ed
+    - 3520cc4960d14ba98c886bb1ed619877
+    - ff335a17a7bd48fbb745baef8ed02e43
+    - 823e98ac4b714b75bb5f43c3ac7a70d4
+    - 085c6332403348469f3e9b450f6c23dd
+    - 304bcb95e181499d93e1fd75551f59f3
+    - 060f3f8bc7de4e6ca2f348d414702e9d
+    - ce761e37e048474d8c40d3c2deafcfa9
+    center: (1, 2.5, 0)
+    lang: a standard forklift used in warehouses
+    name: Forklift
+    on_table: false
+    path: forklift.obj
+    size: 1.5
+    type: mesh
+    uid:
+    - 3520cc4960d14ba98c886bb1ed619877
+    - 823e98ac4b714b75bb5f43c3ac7a70d4
+    - 085c6332403348469f3e9b450f6c23dd
+    - 304bcb95e181499d93e1fd75551f59f3
+    - 060f3f8bc7de4e6ca2f348d414702e9d
+    - ce761e37e048474d8c40d3c2deafcfa9
+-   all_uid: &id001
+    - 2a54e15bb0f24f2299aede92b1a33708
+    - b4a51a074b814fc1ae01aa9354a97fbf
+    - b6f8a164ede84206a02400f229a462cc
+    - e21ffc6d9ab34e759d8633a176f736f2
+    - a940e2977d3b436f95cbfee62031c2b8
+    - 04424177a85045d7907a0ca26d1b05fa
+    - fce249b02ae94608a3f2432d67b4dafe
+    - 64fae157be404bf68cec210a3ce44931
+    - 3f4e8dfb7e8943b48c4f1feb7a51894f
+    - e0587f73ba2a4f8fbfdd0d64ccf6ca4e
+    center: (2, 0.5, 0)
+    lang: a metal shelf used in warehouses
+    name: Shelf
+    on_table: false
+    path: shelf.obj
+    size: 2.0
+    type: mesh
+    uid: *id001

@@ -1,0 +1,46 @@
+- use_table: true
+- center: (1.5, 0.5, 0)
+  lang: a common two-door refrigerator
+  name: Refrigerator
+  on_table: false
+  path: refrigerator.urdf
+  reward_asset_path: '11846'
+  size: 1.8
+  type: urdf
+- all_uid:
+  - 1f1cd422af2044aaa97aa158c18c436d
+  - b322656c5d604f0e9b07050df0815358
+  - 8c0f8088a5d546c886d1b07e3f4eafae
+  - 48fd4f6e90d84d89b5740ee78587d0ff
+  - 2b3717f437ab4bb89796d6fdd44db9ea
+  - d17b8f44d1544364b8ad9fe2554ddfdf
+  - c002e2aa017d49ae8e6dbd295cca3914
+  - 7b8140c140404a9bbba255d322b4f68c
+  - 6fc33cbd0cf54e0d9dfecd52da1b2418
+  - 8165200d339f4f2389a000c42329ae60
+  center: (1.5, 0.5, 0.5)
+  lang: a bottle of water
+  name: Item
+  on_table: false
+  path: water_bottle.obj
+  size: 0.2
+  type: mesh
+  uid:
+  - 1f1cd422af2044aaa97aa158c18c436d
+  - b322656c5d604f0e9b07050df0815358
+  - 48fd4f6e90d84d89b5740ee78587d0ff
+  - 2b3717f437ab4bb89796d6fdd44db9ea
+  - d17b8f44d1544364b8ad9fe2554ddfdf
+  - c002e2aa017d49ae8e6dbd295cca3914
+  - 7b8140c140404a9bbba255d322b4f68c
+  - 6fc33cbd0cf54e0d9dfecd52da1b2418
+  - 8165200d339f4f2389a000c42329ae60
+- solution_path: example_tasks/Retrieve_Item_from_Fridge/task_Retrieve_Item_from_Fridge
+- joint_0: '0'
+  set_joint_angle_object_name: Refrigerator
+- spatial_relationships:
+  - in, item, refrigerator, link_2
+- task_description: The robot arm will open the refrigerator door, reach inside, and
+    retrieve an item
+  task_name: Retrieve Item from Fridge
+- distractor_config_path: example_tasks/Retrieve_Item_from_Fridge/The_robot_arm_will_open_the_refrigerator_door_reach_inside_and_retrieve_an_item_distractor.yaml

@@ -1,0 +1,2 @@
+ grasp the window
+ close the window

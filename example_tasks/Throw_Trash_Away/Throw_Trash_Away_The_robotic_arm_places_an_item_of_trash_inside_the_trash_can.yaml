@@ -1,0 +1,26 @@
+- use_table: false
+- center: (1.5, 1.5, 0)
+  lang: a common trash can
+  name: TrashCan
+  on_table: false
+  path: trashcan.urdf
+  reward_asset_path: '101380'
+  size: 0.6
+  type: urdf
+- all_uid:
+  - 333f89070a2f4d0d8b0b30ebfe67cd06
+  center: (0.8, 1.2, 0)
+  lang: a pile of paper waste
+  name: Trash
+  on_table: true
+  path: paper_waste.obj
+  size: 0.1
+  type: mesh
+  uid:
+  - 333f89070a2f4d0d8b0b30ebfe67cd06
+- solution_path: example_tasks/Throw_Trash_Away/task_Throw_Trash_Away
+- set_joint_angle_object_name: TrashCan
+- spatial_relationships: []
+- task_description: The robotic arm places an item of trash inside the trash can
+  task_name: Throw Trash Away
+- distractor_config_path: example_tasks/Throw_Trash_Away/The_robotic_arm_places_an_item_of_trash_inside_the_trash_can_distractor.yaml

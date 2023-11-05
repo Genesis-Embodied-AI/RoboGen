@@ -1,0 +1,61 @@
+-   all_uid:
+    - 0061788e0741400c82289337a24af4f6
+    - 2c80b3cb53684d9abc46d7ce5a3833c4
+    - 0ea43f7fdcb7411cb1123b987f297d41
+    - 9ae37a30179d40dfaaaf6101f5e376d2
+    - 4b64012837b645fcb1be064bc27f559b
+    center: (0.2, 0.8, 0)
+    lang: a common hardcover book
+    name: Book
+    on_table: true
+    path: book.obj
+    size: 0.2
+    type: mesh
+    uid:
+    - 2c80b3cb53684d9abc46d7ce5a3833c4
+    - 0061788e0741400c82289337a24af4f6
+    - 0ea43f7fdcb7411cb1123b987f297d41
+-   all_uid:
+    - d52fddca36384814a9b392ff7214d16d
+    - deea01ac295845898524bc459b97ab26
+    - ae78ad4c242b41748ccfab7eed8f59fd
+    - 3a87a55210db4fd9a27565671824f894
+    - c363504df73f4120a81b02c530b477e1
+    center: (0.8, 0.2, 0)
+    lang: a common coffee mug
+    name: Coffee Mug
+    on_table: true
+    path: coffee_mug.obj
+    size: 0.1
+    type: mesh
+    uid:
+    - d52fddca36384814a9b392ff7214d16d
+    - 3a87a55210db4fd9a27565671824f894
+    - c363504df73f4120a81b02c530b477e1
+-   center: (0.8, 0.8, 0)
+    lang: a common laptop
+    name: Laptop
+    on_table: true
+    path: laptop.obj
+    reward_asset_path: '11429'
+    size: 0.7
+    type: urdf
+-   all_uid:
+    - 7be9e6cbf6e04365a028217a4874730e
+    - d934c6b791c34e0fafc30e9625b4c55c
+    - b4da62f24b3c48fda15568dccd41d0d1
+    - 21f904d8fc844c25a4cc177eee214921
+    - 680c05d16e9b473bb123ba935d9a358c
+    center: (1.5, 0.5, 0)
+    lang: a common desk lamp
+    name: Desk Lamp
+    on_table: true
+    path: desk_lamp.obj
+    size: 0.3
+    type: mesh
+    uid:
+    - 7be9e6cbf6e04365a028217a4874730e
+    - d934c6b791c34e0fafc30e9625b4c55c
+    - b4da62f24b3c48fda15568dccd41d0d1
+    - 21f904d8fc844c25a4cc177eee214921
+    - 680c05d16e9b473bb123ba935d9a358c

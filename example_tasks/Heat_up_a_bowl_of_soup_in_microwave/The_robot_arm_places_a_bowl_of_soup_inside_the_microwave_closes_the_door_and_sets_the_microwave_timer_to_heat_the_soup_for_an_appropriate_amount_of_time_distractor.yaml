@@ -1,0 +1,43 @@
+-   all_uid:
+    - d6b4995f8f20461ca5d5bfac045fba7e
+    - 32d5033eb7e7435696369ee300ad16e7
+    - 2e73f018b07948a7a6468b7e218587b7
+    - 795acac93830466682e92f7630e14b67
+    - bc79ef77e8e84c6590d354f31dc10c2e
+    center: (0.8, 0.3, 0)
+    lang: a common kitchen cup
+    name: cup
+    on_table: true
+    path: cup.obj
+    size: 0.1
+    type: mesh
+    uid:
+    - d6b4995f8f20461ca5d5bfac045fba7e
+    - 32d5033eb7e7435696369ee300ad16e7
+-   all_uid:
+    - 862ac9fcc4104b5fb828fd5b2c3136a7
+    - e55af322cf8f43fa9b4fb2b368bafd0f
+    - 5ad7058aad1f48ec99adcf8b82bde837
+    - d7ab5d939cd8438aa09f3220eed398dd
+    - 2613c5f24bb3407da2664c410c34d523
+    center: (0.5, 0.2, 0)
+    lang: a common kitchen spoon
+    name: spoon
+    on_table: true
+    path: spoon.obj
+    size: 0.05
+    type: mesh
+    uid:
+    - 862ac9fcc4104b5fb828fd5b2c3136a7
+    - e55af322cf8f43fa9b4fb2b368bafd0f
+    - 5ad7058aad1f48ec99adcf8b82bde837
+    - d7ab5d939cd8438aa09f3220eed398dd
+    - 2613c5f24bb3407da2664c410c34d523
+-   center: (1.8, 0.5, 0)
+    lang: a common kitchen refrigerator
+    name: Refrigerator
+    on_table: false
+    path: refrigerator.obj
+    reward_asset_path: '10347'
+    size: 1.7
+    type: urdf

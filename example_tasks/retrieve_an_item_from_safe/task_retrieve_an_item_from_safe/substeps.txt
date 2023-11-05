@@ -1,0 +1,8 @@
+ grasp the safe door
+ open the safe door
+ grasp the item
+ move the item out of the safe
+ grasp the safe door again
+ close the safe door
+ grasp the safe knob
+ lock the safe by rotating the knob back

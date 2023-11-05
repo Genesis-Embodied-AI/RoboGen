@@ -1,0 +1,34 @@
+- use_table: true
+- center: (0.7, 0.6, 0)
+  lang: a common microwave
+  name: Microwave
+  on_table: true
+  path: microwave.urdf
+  reward_asset_path: '7167'
+  size: 0.6
+  type: urdf
+- all_uid:
+  - a4475b81ba7b4d589faeba319b58b30e
+  - d4502c7e72c44fa2be1257ef7b78cd58
+  - 4888d30103004435b233ea0e5a8eebcb
+  - 5e6edddf49c0419c990f68a78f2a2a22
+  - bc001ab61e0145a2b74fc93181171f0c
+  center: (0.3, 0.2, 0)
+  lang: a bowl of tomato soup
+  name: Bowl of soup
+  on_table: true
+  path: bowl_of_soup.obj
+  size: 0.15
+  type: mesh
+  uid:
+  - 5e6edddf49c0419c990f68a78f2a2a22
+- solution_path: example_tasks/Heat_up_a_bowl_of_soup_in_microwave/task_Heat_up_a_bowl_of_soup_in_microwave
+- joint_0: '0'
+  joint_1: '0'
+  set_joint_angle_object_name: Microwave
+- spatial_relationships: []
+- task_description: The robot arm places a bowl of soup inside the microwave, closes
+    the door, and sets the microwave timer to heat the soup for an appropriate amount
+    of time
+  task_name: Heat up a bowl of soup in microwave
+- distractor_config_path: example_tasks/Heat_up_a_bowl_of_soup_in_microwave/The_robot_arm_places_a_bowl_of_soup_inside_the_microwave_closes_the_door_and_sets_the_microwave_timer_to_heat_the_soup_for_an_appropriate_amount_of_time_distractor.yaml

@@ -1,0 +1,16 @@
+- use_table: false
+- center: (0.5, 0.5, 0)
+  lang: a common table with drawers
+  name: Table
+  on_table: false
+  path: table.urdf
+  reward_asset_path: '32761'
+  size: 0.8
+  type: urdf
+- solution_path: example_tasks/close_the_drawer_of_the_table/task_close_the_drawer_of_the_table
+- joint_0: '1'
+  set_joint_angle_object_name: Table
+- spatial_relationships: []
+- task_description: The robot arm will close the drawer of the table
+  task_name: close the drawer of the table
+- distractor_config_path: example_tasks/close_the_drawer_of_the_table/The_robot_arm_will_close_the_drawer_of_the_table_distractor.yaml

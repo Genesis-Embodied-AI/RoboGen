@@ -1,0 +1,15 @@
+- use_table: false
+- center: (1.5, 1.5, 0)
+  lang: a standard wooden door
+  name: Door
+  on_table: false
+  path: door.urdf
+  reward_asset_path: '9277'
+  size: 2.0
+  type: urdf
+- solution_path: example_tasks/Partially_Open_Door/task_Partially_Open_Door
+- set_joint_angle_object_name: Door
+- spatial_relationships: []
+- task_description: The robotic arm will partially open the door
+  task_name: Partially Open Door
+- distractor_config_path: example_tasks/Partially_Open_Door/The_robotic_arm_will_partially_open_the_door_distractor.yaml

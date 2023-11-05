@@ -1,0 +1,16 @@
+- use_table: true
+- center: (0.5, 0.5, 0)
+  lang: a common office stapler
+  name: Stapler
+  on_table: true
+  path: stapler.urdf
+  reward_asset_path: '103276'
+  size: 0.15
+  type: urdf
+- solution_path: example_tasks/Open_Stapler_Lid/task_Open_Stapler_Lid
+- joint_0: '0'
+  set_joint_angle_object_name: Stapler
+- spatial_relationships: []
+- task_description: The robotic arm will open the lid of the stapler
+  task_name: Open Stapler Lid
+- distractor_config_path: example_tasks/Open_Stapler_Lid/The_robotic_arm_will_open_the_lid_of_the_stapler_distractor.yaml

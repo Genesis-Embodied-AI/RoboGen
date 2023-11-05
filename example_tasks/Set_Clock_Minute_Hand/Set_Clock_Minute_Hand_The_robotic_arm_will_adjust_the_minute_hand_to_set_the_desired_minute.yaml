@@ -1,0 +1,17 @@
+- use_table: true
+- center: (0.5, 0.5, 0)
+  lang: a common analog clock
+  name: Clock
+  on_table: true
+  path: clock.urdf
+  reward_asset_path: '6613'
+  size: 0.3
+  type: urdf
+- solution_path: example_tasks/Set_Clock_Minute_Hand/task_Set_Clock_Minute_Hand
+- joint_1: random
+  set_joint_angle_object_name: Clock
+- spatial_relationships: []
+- task_description: The robotic arm will adjust the minute hand to set the desired
+    minute
+  task_name: Set Clock Minute Hand
+- distractor_config_path: example_tasks/Set_Clock_Minute_Hand/The_robotic_arm_will_adjust_the_minute_hand_to_set_the_desired_minute_distractor.yaml

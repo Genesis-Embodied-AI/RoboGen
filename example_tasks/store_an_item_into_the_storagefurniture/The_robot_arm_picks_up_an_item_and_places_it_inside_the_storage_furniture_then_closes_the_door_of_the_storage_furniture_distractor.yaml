@@ -1,0 +1,52 @@
+-   center: (2.0, 0.1, 0)
+    lang: a common wooden chair
+    name: Chair
+    on_table: false
+    path: chair.obj
+    reward_asset_path: '38994'
+    size: 1.0
+    type: urdf
+-   all_uid:
+    - 9ae37a30179d40dfaaaf6101f5e376d2
+    - 92d65d6c85e34cb9895fbdb85d81038f
+    - c850e5d630e9420d85b8d23a2efae4d5
+    - 7a6b072634564c4d8ab56e4e86137e59
+    - 0061788e0741400c82289337a24af4f6
+    center: (0.7, 0.3, 0)
+    lang: a hardcover book
+    name: Book
+    on_table: true
+    path: book.obj
+    size: 0.3
+    type: mesh
+    uid:
+    - 92d65d6c85e34cb9895fbdb85d81038f
+    - 7a6b072634564c4d8ab56e4e86137e59
+    - 0061788e0741400c82289337a24af4f6
+-   center: (0.2, 0.2, 0)
+    lang: a table lamp
+    name: Lamp
+    on_table: true
+    path: lamp.obj
+    reward_asset_path: '16237'
+    size: 0.3
+    type: urdf
+-   all_uid:
+    - 0d49c685abf449f68da8af0bf980b244
+    - 4453f2ee9aa444d0a0538065ea2246b7
+    - cb93079485a6483fbbac67aaa7c84364
+    - e22e50cd99fe4b7980458e4222f0fbb3
+    - bf8d737431654692b690e3c3c00b9751
+    center: (0, 1.2, 0)
+    lang: a small decorative rug
+    name: Rug
+    on_table: false
+    path: rug.obj
+    size: 1.5
+    type: mesh
+    uid:
+    - 0d49c685abf449f68da8af0bf980b244
+    - 4453f2ee9aa444d0a0538065ea2246b7
+    - cb93079485a6483fbbac67aaa7c84364
+    - e22e50cd99fe4b7980458e4222f0fbb3
+    - bf8d737431654692b690e3c3c00b9751

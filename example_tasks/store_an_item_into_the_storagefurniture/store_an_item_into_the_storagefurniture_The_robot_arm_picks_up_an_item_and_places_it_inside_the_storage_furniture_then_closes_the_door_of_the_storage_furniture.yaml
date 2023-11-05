@@ -1,0 +1,32 @@
+- use_table: true
+- center: (1.5, 0.5, 0)
+  lang: a common storage furniture
+  name: StorageFurniture
+  on_table: false
+  path: storage_furniture.urdf
+  reward_asset_path: '48452'
+  size: 1.2
+  type: urdf
+- all_uid:
+  - 9ad4b05e76864ed4aecad0aad5d26b92
+  - d585b2baf0844007ad0b5abe7bbf93b5
+  - b15149362efd4460b7548caa6661615d
+  - 59e5b6c1fc3444308425c2a9d52de1e1
+  - 0705574f004349ddacdf9eb14049acb8
+  center: (0.4, 0.6, 0)
+  lang: a small toy
+  name: Item
+  on_table: true
+  path: toy.obj
+  size: 0.2
+  type: mesh
+  uid:
+  - d585b2baf0844007ad0b5abe7bbf93b5
+  - 0705574f004349ddacdf9eb14049acb8
+- solution_path: example_tasks/store_an_item_into_the_storagefurniture/task_store_an_item_into_the_storagefurniture
+- set_joint_angle_object_name: StorageFurniture
+- spatial_relationships: []
+- task_description: The robot arm picks up an item and places it inside the storage
+    furniture, then closes the door of the storage furniture
+  task_name: store an item into the storagefurniture
+- distractor_config_path: example_tasks/store_an_item_into_the_storagefurniture/The_robot_arm_picks_up_an_item_and_places_it_inside_the_storage_furniture_then_closes_the_door_of_the_storage_furniture_distractor.yaml

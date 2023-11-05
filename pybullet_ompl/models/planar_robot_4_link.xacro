@@ -1,0 +1,201 @@
+<robot name="my_robot">
+  <!-- <link name="world"/>
+
+  <joint name="joint0" type="planar">
+    <origin rpy="0 0 0" xyz="0 0 0.0"/>
+    <parent link="world"/>
+    <child link="base_link"/>
+    <limit effort="30" velocity="1.0"/>
+  </joint> -->
+
+  <!-- the model -->
+  <link name="base_link">
+    <inertial>
+      <mass value="1000" />
+      <origin xyz="0 0 0.05" />
+      <inertia ixx="50.0" ixy="0.0" ixz="0.0"
+        iyy="50.0" iyz="0.0"
+        izz="50.0" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0.05"/>
+      <geometry>
+        <box size="0.1 0.1 0.1" /> 
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.05"/>
+      <geometry>
+        <box size="0.1 0.1 0.1" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="joint1" type="continuous">
+    <origin rpy="0 1.57079632679 0" xyz="0 0 0.1"/>
+    <parent link="base_link"/>
+    <child link="arm_link1"/>
+    <!-- <limit lower="-2.095" upper="2.095" effort="30" velocity="1.0"/> -->
+  </joint>
+
+  <link name="arm_link1">
+    <inertial>
+        <origin rpy="0 0 0" xyz="-0.05 0.25 0"/>
+        <mass value="0.1"/>
+        <inertia ixx="1.67E-03" ixy="0" ixz="0" iyy="0.02166" iyz="0" izz="0.02166"/>
+    </inertial>
+    <visual>
+        <origin rpy="0 0 0" xyz="-0.05 0.25 0"/>
+        <geometry>
+          <box size="0.1 0.5 0.1" /> <!-- does not need to match collision -->
+        </geometry>
+        <material name="">
+            <color rgba="0 0 1 0.5"/>
+        </material>
+    </visual>
+    <collision>
+        <origin rpy="0 0 0" xyz="-0.05 0.25 0"/>
+        <geometry>
+            <box size="0.1 0.5 0.1" />
+        </geometry>
+    </collision>
+  </link>
+
+  <joint name="joint2" type="continuous">
+    <origin rpy="0 0 0" xyz="-0.1 0.45 0"/>
+    <parent link="arm_link1"/>
+    <child link="arm_link2"/>
+    <!-- <limit effort="30" velocity="1.0"/> -->
+  </joint>
+
+  <link name="arm_link2">
+    <inertial>
+        <origin rpy="0 0 0" xyz="-0.05 0.25 0"/>
+        <mass value="0.1"/>
+        <inertia ixx="1.67E-03" ixy="0" ixz="0" iyy="0.02166" iyz="0" izz="0.02166"/>
+    </inertial>
+    <visual>
+        <origin rpy="0 0 0" xyz="-0.05 0.25 0"/>
+        <geometry>
+          <box size="0.1 0.5 0.1" /> <!-- does not need to match collision -->
+        </geometry>
+        <material name="">
+            <color rgba="0 0 1 0.5"/>
+        </material>
+    </visual>
+    <collision>
+        <origin rpy="0 0 0" xyz="-0.05 0.25 0"/>
+        <geometry>
+            <box size="0.1 0.5 0.1" />
+        </geometry>
+    </collision>
+  </link>
+
+  <joint name="joint3" type="continuous">
+    <origin rpy="0 0 0" xyz="0.1 0.45 0"/>
+    <parent link="arm_link2"/>
+    <child link="arm_link3"/>
+    <!-- <limit effort="30" velocity="1.0"/> -->
+  </joint>
+
+  <link name="arm_link3">
+    <inertial>
+        <origin rpy="0 0 0" xyz="-0.05 0.25 0"/>
+        <mass value="0.1"/>
+        <inertia ixx="1.67E-03" ixy="0" ixz="0" iyy="0.02166" iyz="0" izz="0.02166"/>
+    </inertial>
+    <visual>
+        <origin rpy="0 0 0" xyz="-0.05 0.25 0"/>
+        <geometry>
+          <box size="0.1 0.5 0.1" /> <!-- does not need to match collision -->
+        </geometry>
+        <material name="">
+            <color rgba="0 0 1 0.5"/>
+        </material>
+    </visual>
+    <collision>
+        <origin rpy="0 0 0" xyz="-0.05 0.25 0"/>
+        <geometry>
+            <box size="0.1 0.5 0.1" />
+        </geometry>
+    </collision>
+  </link>
+
+  <joint name="joint4" type="continuous">
+    <origin rpy="0 0 0" xyz="-0.1 0.45 0"/>
+    <parent link="arm_link3"/>
+    <child link="arm_link4"/>
+    <!-- <limit effort="30" velocity="1.0"/> -->
+  </joint>
+
+  <link name="arm_link4">
+    <inertial>
+        <origin rpy="0 0 0" xyz="-0.05 0.25 0"/>
+        <mass value="0.1"/>
+        <inertia ixx="1.67E-03" ixy="0" ixz="0" iyy="0.02166" iyz="0" izz="0.02166"/>
+    </inertial>
+    <visual>
+        <origin rpy="0 0 0" xyz="-0.05 0.25 0"/>
+        <geometry>
+          <box size="0.1 0.5 0.1" /> <!-- does not need to match collision -->
+        </geometry>
+        <material name="">
+            <color rgba="0 0 1 0.5"/>
+        </material>
+    </visual>
+    <collision>
+        <origin rpy="0 0 0" xyz="-0.05 0.25 0"/>
+        <geometry>
+            <box size="0.1 0.5 0.1" />
+        </geometry>
+    </collision>
+  </link>
+
+  <!-- ROS Control plugin for Gazebo -->
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/my_robot</robotNamespace>
+      <legacyModeNS>false</legacyModeNS>
+    </plugin>
+    <plugin name="object_controller" filename="libgazebo_ros_planar_move.so">
+      <commandTopic>cmd_vel</commandTopic>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
+      <odometryRate>20.0</odometryRate>
+      <robotBaseFrame>base_footprint</robotBaseFrame>
+    </plugin>
+  </gazebo>
+
+  <!-- transmission -->
+  <!-- <transmission name="trans_joint0">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="joint0">
+          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="joint0_motor">
+          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+  </transmission> -->
+  <transmission name="trans_joint1">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="joint1">
+          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="joint1_motor">
+          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+  </transmission>
+  <transmission name="trans_joint2">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="joint2">
+          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="joint2_motor">
+          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+  </transmission>
+
+</robot>

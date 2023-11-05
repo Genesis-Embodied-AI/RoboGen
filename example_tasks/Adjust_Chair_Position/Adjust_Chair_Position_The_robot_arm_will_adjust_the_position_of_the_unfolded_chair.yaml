@@ -1,0 +1,16 @@
+- use_table: false
+- center: (1.5, 1.5, 0)
+  lang: a standard folding chair
+  movable: true
+  name: FoldingChair
+  on_table: false
+  path: folding_chair.urdf
+  reward_asset_path: '100609'
+  size: 0.85
+  type: urdf
+- solution_path: example_tasks/Adjust_Chair_Position/task_Adjust_Chair_Position
+- set_joint_angle_object_name: FoldingChair
+- spatial_relationships: []
+- task_description: The robot arm will adjust the position of the unfolded chair
+  task_name: Adjust Chair Position
+- distractor_config_path: example_tasks/Adjust_Chair_Position/The_robot_arm_will_adjust_the_position_of_the_unfolded_chair_distractor.yaml

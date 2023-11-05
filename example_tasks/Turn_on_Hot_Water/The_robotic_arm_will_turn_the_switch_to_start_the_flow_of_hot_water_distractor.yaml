@@ -1,0 +1,51 @@
+-   all_uid:
+    - dbab301d6a2647cf8b7b3d50c4cec3d7
+    - 1103528bef074721a5a54d1a60ea56ab
+    - cb8f01901fc04d06adae0eb78634317f
+    - 88a18d6c46464b3b8d0d3da1144d339e
+    - eb24676f802c4c1ca680b87c6bf3ea85
+    center: (0.3, 0.3, 0)
+    lang: a common soap dispenser
+    name: soap_dispenser
+    on_table: true
+    path: soap_dispenser.obj
+    size: 0.15
+    type: mesh
+    uid:
+    - dbab301d6a2647cf8b7b3d50c4cec3d7
+    - cb8f01901fc04d06adae0eb78634317f
+    - 88a18d6c46464b3b8d0d3da1144d339e
+-   all_uid:
+    - c208c44759d64cea9b111be83c128600
+    - b91e5ec369a741fcb5432698e7bef812
+    - 3ea166bb3d2540e3be01ed2b9771ea2b
+    - 35b76b90614d49a3aa92eeeb6afec60f
+    - e9992561269c4600b4ac09cd2f3e1ac6
+    center: (0.7, 0.7, 0)
+    lang: a common hand towel
+    name: towel
+    on_table: true
+    path: towel.obj
+    size: 0.4
+    type: mesh
+    uid:
+    - e9992561269c4600b4ac09cd2f3e1ac6
+-   all_uid:
+    - 504248ed68e3480a807aced6f002b2d5
+    - c5636343a43d48758325e8890035c872
+    - 018bbdc009304621b157087f8e63ae68
+    - f9f6703bbf834987af2da5772fdb18b5
+    - 5a7229d68d66455087205806af4b4558
+    center: (1.5, 0.5, 0)
+    lang: a kitchen sink
+    name: sink
+    on_table: false
+    path: sink.obj
+    size: 0.8
+    type: mesh
+    uid:
+    - 504248ed68e3480a807aced6f002b2d5
+    - c5636343a43d48758325e8890035c872
+    - 018bbdc009304621b157087f8e63ae68
+    - f9f6703bbf834987af2da5772fdb18b5
+    - 5a7229d68d66455087205806af4b4558

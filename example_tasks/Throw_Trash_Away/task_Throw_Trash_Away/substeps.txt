@@ -1,0 +1,7 @@
+ grasp the trash can lid
+ open the trash can lid
+ grasp the trash
+ put the trash into the trash can
+ release the trash
+ grasp the trash can lid again
+ close the trash can lid

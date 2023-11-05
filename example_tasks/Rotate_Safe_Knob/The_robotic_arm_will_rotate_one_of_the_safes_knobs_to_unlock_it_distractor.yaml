@@ -1,0 +1,59 @@
+-   center: (2.0, 0.5, 0)
+    lang: a common office chair
+    name: Chair
+    on_table: false
+    path: chair.obj
+    reward_asset_path: '39015'
+    size: 0.8
+    type: urdf
+-   all_uid:
+    - 5389c3f4b64a447f8c06aa6ce1f27e0b
+    - 01c929173d6f4002beeef105e58d52cb
+    - d8d9997bbb4b4a8e9dfdcff91d1920b6
+    - 28ced596039b4c718cd93085f359015f
+    - 31295af706344e358378adbbb3a70290
+    - 4b042979bcd5419da35471a03efdfe6b
+    - 76f136eb0cc949efb91feb5bd6ca4165
+    - a50d4f72f4674d6f9f79e059922f8a96
+    - 5389c3f4b64a447f8c06aa6ce1f27e0b
+    - 874aa3112f52454a8aebd6d52c3f0380
+    center: (0.5, 1.5, 0)
+    lang: a standard office desk
+    name: Desk
+    on_table: false
+    path: desk.obj
+    size: 1.2
+    type: mesh
+    uid:
+    - d8d9997bbb4b4a8e9dfdcff91d1920b6
+    - 31295af706344e358378adbbb3a70290
+    - 76f136eb0cc949efb91feb5bd6ca4165
+    - a50d4f72f4674d6f9f79e059922f8a96
+    - 874aa3112f52454a8aebd6d52c3f0380
+-   center: (0.5, 1.8, 0)
+    lang: a desk lamp
+    name: Lamp
+    on_table: false
+    path: lamp.obj
+    reward_asset_path: '14563'
+    size: 0.3
+    type: urdf
+-   all_uid:
+    - e7fec8b453ef4105ace383dde017485c
+    - e7fec8b453ef4105ace383dde017485c
+    - f0742791a0ea432db1f432c24de83867
+    - 3252655f56354cf4923bbbb1bbdf0e5c
+    - 3250b75d03d54caaa6fcebe396166049
+    - 3716f3bbb40e4933b470398e7a8284a3
+    center: (2.0, 2.0, 0)
+    lang: a standard file cabinet
+    name: File Cabinet
+    on_table: false
+    path: file_cabinet.obj
+    size: 1.5
+    type: mesh
+    uid:
+    - e7fec8b453ef4105ace383dde017485c
+    - e7fec8b453ef4105ace383dde017485c
+    - f0742791a0ea432db1f432c24de83867
+    - 3716f3bbb40e4933b470398e7a8284a3

@@ -1,0 +1,51 @@
+-   center: (0.2, 0.2, 0)
+    lang: a standard computer keyboard
+    name: Keyboard
+    on_table: true
+    path: keyboard.obj
+    reward_asset_path: '12886'
+    size: 0.3
+    type: urdf
+-   center: (0.8, 0.2, 0)
+    lang: a standard computer mouse
+    name: Mouse
+    on_table: true
+    path: mouse.obj
+    reward_asset_path: '103025'
+    size: 0.1
+    type: urdf
+-   all_uid:
+    - d52fddca36384814a9b392ff7214d16d
+    - 1ddf0e1fc752455b8bc78d0980436ea8
+    - 246975ac25734b8282ee020dd86b2607
+    - 246975ac25734b8282ee020dd86b2607
+    - c6f14d58bae44d7b82bfceb759925197
+    center: (0.8, 0.8, 0)
+    lang: a standard coffee mug
+    name: coffee_mug
+    on_table: true
+    path: coffee_mug.obj
+    size: 0.12
+    type: mesh
+    uid:
+    - d52fddca36384814a9b392ff7214d16d
+    - 246975ac25734b8282ee020dd86b2607
+    - 246975ac25734b8282ee020dd86b2607
+-   all_uid:
+    - 3ab97073cb804c928a53880cd00572a5
+    - c55d1fbcc0aa4538b31d1acf43cb0825
+    - 15d49aea087a4d438b6e22bd2fee4757
+    - 74c168bec19e4613acbed2ced93da3fd
+    - 74cf655a1d9144a68e1829a473332094
+    center: (1.2, 0.7, 0)
+    lang: a standard office chair
+    name: office_chair
+    on_table: false
+    path: office_chair.obj
+    size: 1.0
+    type: mesh
+    uid:
+    - 3ab97073cb804c928a53880cd00572a5
+    - c55d1fbcc0aa4538b31d1acf43cb0825
+    - 74c168bec19e4613acbed2ced93da3fd
+    - 74cf655a1d9144a68e1829a473332094

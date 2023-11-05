@@ -1,0 +1,6 @@
+ grasp the refrigerator door
+ open the refrigerator door
+ grasp the item
+ move the item out of the refrigerator
+ grasp the refrigerator door again
+ close the refrigerator door

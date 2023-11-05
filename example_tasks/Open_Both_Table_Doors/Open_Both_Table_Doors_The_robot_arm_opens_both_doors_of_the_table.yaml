@@ -1,0 +1,15 @@
+- use_table: false
+- center: (1.2, 1.2, 0)
+  lang: a table with two doors
+  name: Table
+  on_table: false
+  path: table.urdf
+  reward_asset_path: '32086'
+  size: 0.8
+  type: urdf
+- solution_path: example_tasks/Open_Both_Table_Doors/task_Open_Both_Table_Doors
+- set_joint_angle_object_name: Table
+- spatial_relationships: []
+- task_description: The robot arm opens both doors of the table
+  task_name: Open Both Table Doors
+- distractor_config_path: example_tasks/Open_Both_Table_Doors/The_robot_arm_opens_both_doors_of_the_table_distractor.yaml

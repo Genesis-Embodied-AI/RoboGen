@@ -1,0 +1,52 @@
+-   all_uid:
+    - ddbd890309104f0c8a3dc7732bd0a0fe
+    - 98dbdc6beb6546158f2eab5b9d478cca
+    - e7f37b4c687f46f0885a2df302ccb980
+    - 7b31c1186e7d4147aeb9b5f3bbd06d9e
+    - f9939905b39e4c0a91da9e165a191f89
+    - 970daacd2c504430b6d9c45ac8108910
+    center: (0.2, 0.2, 0)
+    lang: a common wooden pencil
+    name: pencil
+    on_table: true
+    path: pencil.obj
+    size: 0.15
+    type: mesh
+    uid:
+    - ddbd890309104f0c8a3dc7732bd0a0fe
+    - e7f37b4c687f46f0885a2df302ccb980
+    - 7b31c1186e7d4147aeb9b5f3bbd06d9e
+    - f9939905b39e4c0a91da9e165a191f89
+    - 970daacd2c504430b6d9c45ac8108910
+-   all_uid: &id001
+    - fb1546c32f1b49e9ae1b28fdfeb74713
+    - 5182049f5e6e48c89282287c0c9bf13e
+    - 7d0ab3bb6ba346c586db6f93ddb14018
+    - 7f21a2ea951746a3ad4353c857b3cef0
+    - 6c7affca797a4bd29edf63c9120248fe
+    - af79a9504f2b44a881de51b09b26ead8
+    center: (0.8, 0.8, 0)
+    lang: a standard spiral-bound notebook
+    name: notebook
+    on_table: true
+    path: notebook.obj
+    size: 0.3
+    type: mesh
+    uid: *id001
+-   all_uid:
+    - 7be9e6cbf6e04365a028217a4874730e
+    - d934c6b791c34e0fafc30e9625b4c55c
+    - b4da62f24b3c48fda15568dccd41d0d1
+    - 21f904d8fc844c25a4cc177eee214921
+    - 680c05d16e9b473bb123ba935d9a358c
+    center: (1.5, 0.5, 0)
+    lang: a common desk lamp
+    name: desk lamp
+    on_table: false
+    path: desk_lamp.obj
+    size: 0.8
+    type: mesh
+    uid:
+    - 7be9e6cbf6e04365a028217a4874730e
+    - b4da62f24b3c48fda15568dccd41d0d1
+    - 21f904d8fc844c25a4cc177eee214921

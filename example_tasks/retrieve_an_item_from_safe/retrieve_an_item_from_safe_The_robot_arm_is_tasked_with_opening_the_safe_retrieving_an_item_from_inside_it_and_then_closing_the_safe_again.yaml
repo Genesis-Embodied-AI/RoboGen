@@ -1,0 +1,34 @@
+- use_table: true
+- center: (1.0, 0.2, 0)
+  lang: a common safe
+  name: Safe
+  on_table: false
+  path: safe.urdf
+  reward_asset_path: '101594'
+  size: 1.0
+  type: urdf
+- all_uid:
+  - eb5e1def6ec34048b22c0ae185d6210e
+  - 377c8cbd9b4d40828782c58d9d86409e
+  - ba2cb0bb5cac4a41be57d0d806485ddd
+  - 8164ce3681f04ec5ae8487529e07129a
+  center: (1.0, 0.2, 0.3)
+  lang: a gold bar
+  name: Item
+  on_table: false
+  path: gold_bar.obj
+  size: 0.15
+  type: mesh
+  uid:
+  - eb5e1def6ec34048b22c0ae185d6210e
+  - ba2cb0bb5cac4a41be57d0d806485ddd
+  - 377c8cbd9b4d40828782c58d9d86409e
+- solution_path: example_tasks/retrieve_an_item_from_safe/task_retrieve_an_item_from_safe
+- joint_1: '0'
+  set_joint_angle_object_name: Safe
+- spatial_relationships:
+  - in, item, safe, link_2
+- task_description: The robot arm is tasked with opening the safe, retrieving an item
+    from inside it, and then closing the safe again
+  task_name: retrieve an item from safe
+- distractor_config_path: example_tasks/retrieve_an_item_from_safe/The_robot_arm_is_tasked_with_opening_the_safe_retrieving_an_item_from_inside_it_and_then_closing_the_safe_again_distractor.yaml

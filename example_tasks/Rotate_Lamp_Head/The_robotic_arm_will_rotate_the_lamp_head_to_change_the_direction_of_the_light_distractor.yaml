@@ -1,0 +1,50 @@
+-   all_uid:
+    - fb1546c32f1b49e9ae1b28fdfeb74713
+    - 7f21a2ea951746a3ad4353c857b3cef0
+    - 2490aa1120cf4db5aeff0ea21bab77ed
+    - 5182049f5e6e48c89282287c0c9bf13e
+    - b7d498a138f343c7910ea169ed1c2a3f
+    center: (0.2, 0.2, 0)
+    lang: a common spiral notebook
+    name: Notebook
+    on_table: true
+    path: notebook.obj
+    size: 0.3
+    type: mesh
+    uid:
+    - 2490aa1120cf4db5aeff0ea21bab77ed
+    - 5182049f5e6e48c89282287c0c9bf13e
+    - b7d498a138f343c7910ea169ed1c2a3f
+-   center: (0.2, 0.7, 0)
+    lang: a common ballpoint pen
+    name: Pen
+    on_table: true
+    path: pen.obj
+    reward_asset_path: '102982'
+    size: 0.01
+    type: urdf
+-   all_uid:
+    - d52fddca36384814a9b392ff7214d16d
+    - deea01ac295845898524bc459b97ab26
+    - ae78ad4c242b41748ccfab7eed8f59fd
+    - 3a87a55210db4fd9a27565671824f894
+    - c363504df73f4120a81b02c530b477e1
+    center: (0.8, 0.8, 0)
+    lang: a common coffee mug
+    name: Coffee Mug
+    on_table: true
+    path: coffee_mug.obj
+    size: 0.12
+    type: mesh
+    uid:
+    - d52fddca36384814a9b392ff7214d16d
+    - 3a87a55210db4fd9a27565671824f894
+    - c363504df73f4120a81b02c530b477e1
+-   center: (1.5, 1.5, 0)
+    lang: a common office chair
+    name: Chair
+    on_table: false
+    path: chair.obj
+    reward_asset_path: '41610'
+    size: 0.8
+    type: urdf

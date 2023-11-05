@@ -1,0 +1,17 @@
+- use_table: true
+- center: (0.3, 0.5, 0)
+  lang: a common dispenser
+  name: Dispenser
+  on_table: true
+  path: dispenser.urdf
+  reward_asset_path: '101528'
+  size: 0.4
+  type: urdf
+- solution_path: example_tasks/Close_Dispenser_Lid/task_Close_Dispenser_Lid
+- joint_0: '1'
+  set_joint_angle_object_name: Dispenser
+- spatial_relationships: []
+- task_description: After filling or extracting contents, the robotic arm will close
+    the lid of the dispenser
+  task_name: Close Dispenser Lid
+- distractor_config_path: example_tasks/Close_Dispenser_Lid/After_filling_or_extracting_contents_the_robotic_arm_will_close_the_lid_of_the_dispenser_distractor.yaml

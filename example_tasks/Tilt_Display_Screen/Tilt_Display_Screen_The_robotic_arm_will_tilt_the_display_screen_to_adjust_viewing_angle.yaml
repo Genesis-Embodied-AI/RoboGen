@@ -1,0 +1,17 @@
+- use_table: true
+- center: (0.5, 0.5, 0)
+  lang: a common display screen
+  name: Display
+  on_table: true
+  path: display.urdf
+  reward_asset_path: '4578'
+  size: 0.5
+  type: urdf
+- solution_path: example_tasks/Tilt_Display_Screen/task_Tilt_Display_Screen
+- joint_0: random
+  set_joint_angle_object_name: Display
+- spatial_relationships: []
+- task_description: The robotic arm will tilt the display screen to adjust viewing
+    angle
+  task_name: Tilt Display Screen
+- distractor_config_path: example_tasks/Tilt_Display_Screen/The_robotic_arm_will_tilt_the_display_screen_to_adjust_viewing_angle_distractor.yaml

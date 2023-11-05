@@ -1,0 +1,76 @@
+-   all_uid:
+    - dbab301d6a2647cf8b7b3d50c4cec3d7
+    - 1103528bef074721a5a54d1a60ea56ab
+    - cb8f01901fc04d06adae0eb78634317f
+    - 88a18d6c46464b3b8d0d3da1144d339e
+    - eb24676f802c4c1ca680b87c6bf3ea85
+    center: (0.7, 0.7, 0)
+    lang: a common soap dispenser
+    name: soap dispenser
+    on_table: true
+    path: soap_dispenser.obj
+    size: 0.2
+    type: mesh
+    uid:
+    - dbab301d6a2647cf8b7b3d50c4cec3d7
+    - cb8f01901fc04d06adae0eb78634317f
+    - 88a18d6c46464b3b8d0d3da1144d339e
+-   all_uid:
+    - c208c44759d64cea9b111be83c128600
+    - b91e5ec369a741fcb5432698e7bef812
+    - 3ea166bb3d2540e3be01ed2b9771ea2b
+    - 35b76b90614d49a3aa92eeeb6afec60f
+    - e9992561269c4600b4ac09cd2f3e1ac6
+    center: (0.3, 0.3, 0)
+    lang: a common hand towel
+    name: towel
+    on_table: true
+    path: towel.obj
+    size: 0.3
+    type: mesh
+    uid:
+    - e9992561269c4600b4ac09cd2f3e1ac6
+-   all_uid:
+    - 504248ed68e3480a807aced6f002b2d5
+    - c5636343a43d48758325e8890035c872
+    - 018bbdc009304621b157087f8e63ae68
+    - f9f6703bbf834987af2da5772fdb18b5
+    - 5a7229d68d66455087205806af4b4558
+    center: (1.5, 1.5, 0)
+    lang: a kitchen sink
+    name: sink
+    on_table: false
+    path: sink.obj
+    size: 0.5
+    type: mesh
+    uid:
+    - 504248ed68e3480a807aced6f002b2d5
+    - c5636343a43d48758325e8890035c872
+    - 018bbdc009304621b157087f8e63ae68
+    - f9f6703bbf834987af2da5772fdb18b5
+    - 5a7229d68d66455087205806af4b4558
+-   all_uid:
+    - a28ada3a10fc48a4ad118e11d8e7c97c
+    - 111f5196be644c43a88294d713e2c8ee
+    - 2145db100b3d4e7fafe737bf1f542bb3
+    - 3bb39bcc176e491bae0932c1a5ed3863
+    - 57c4a28f08754ee99e5a312fdb416f52
+    - a3a2d6300e954690acb64f93462526dd
+    - a940709124194bd5bda4683300610a05
+    - dee27d5a60894a7c91bbee0f705f6dd2
+    - 0553ab9278414f3e8ff686f652b186eb
+    - e1cfbd0c0f2e4cd3acec12b8ab07a81a
+    center: (0.8, 0.2, 0)
+    lang: a common drinking cup
+    name: cup
+    on_table: true
+    path: cup.obj
+    size: 0.1
+    type: mesh
+    uid:
+    - 111f5196be644c43a88294d713e2c8ee
+    - 57c4a28f08754ee99e5a312fdb416f52
+    - a3a2d6300e954690acb64f93462526dd
+    - dee27d5a60894a7c91bbee0f705f6dd2
+    - 0553ab9278414f3e8ff686f652b186eb
+    - e1cfbd0c0f2e4cd3acec12b8ab07a81a

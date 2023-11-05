@@ -1,0 +1,17 @@
+- use_table: true
+- center: (0.5, 0.5, 0)
+  lang: a common coffee machine
+  name: CoffeeMachine
+  on_table: true
+  path: coffee_machine.urdf
+  reward_asset_path: '103118'
+  size: 0.6
+  type: urdf
+- solution_path: example_tasks/Pull_Lever_to_Start_Coffee_Brewing/task_Pull_Lever_to_Start_Coffee_Brewing
+- joint_0: '0'
+  set_joint_angle_object_name: CoffeeMachine
+- spatial_relationships: []
+- task_description: The robot arm pulls a lever to start the brewing process of the
+    coffee machine
+  task_name: Pull Lever to Start Coffee Brewing
+- distractor_config_path: example_tasks/Pull_Lever_to_Start_Coffee_Brewing/The_robot_arm_pulls_a_lever_to_start_the_brewing_process_of_the_coffee_machine_distractor.yaml

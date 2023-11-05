@@ -1,0 +1,8 @@
+ grasp the microwave door
+ open the microwave door
+ grasp the bowl of soup
+ put the bowl of soup into the microwave
+ grasp the microwave door again
+ close the microwave door
+ grasp the microwave timer knob
+ turn the microwave timer knob to set a desired heating time

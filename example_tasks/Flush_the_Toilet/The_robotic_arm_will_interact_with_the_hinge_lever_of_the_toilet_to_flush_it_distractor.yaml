@@ -1,0 +1,44 @@
+-   all_uid:
+    - bf7b82ebb7f948238aefda4339193128
+    - 3877e19c97f64469a4164a17a3911be2
+    - bf7b82ebb7f948238aefda4339193128
+    - f3f8bb47991941ceabf2053c7fa43e91
+    - 5b0042f030eb4181a8e77cacb9d24c9b
+    center: (1.2, 0.4, 0)
+    lang: a roll of toilet paper
+    name: Toilet Paper
+    on_table: false
+    path: toilet_paper.obj
+    size: 0.1
+    type: mesh
+    uid:
+    - ea0cf48616e34708b73c82eb7c7366ca
+    - bf7b82ebb7f948238aefda4339193128
+-   all_uid:
+    - 3ea166bb3d2540e3be01ed2b9771ea2b
+    - c208c44759d64cea9b111be83c128600
+    - b91e5ec369a741fcb5432698e7bef812
+    - 35b76b90614d49a3aa92eeeb6afec60f
+    - b46506c71cfc43bcbe99b8cff9c8c3fc
+    center: (1.5, 0.5, 0)
+    lang: a bathroom towel
+    name: Towel
+    on_table: false
+    path: towel.obj
+    size: 0.3
+    type: mesh
+    uid:
+    - b91e5ec369a741fcb5432698e7bef812
+    - 35b76b90614d49a3aa92eeeb6afec60f
+    - b46506c71cfc43bcbe99b8cff9c8c3fc
+-   center: (0.8, 0.8, 0)
+    lang: a common bath mat
+    name: Bath Mat
+    on_table: false
+    path: bath_mat.obj
+    size: 0.4
+    type: mesh
+    uid:
+    - d412c13ea0d54179af7e734773257ff4
+    all_uid:
+    - 6ab7c0070cae418480d2832e4f0372f3

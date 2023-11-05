@@ -1,0 +1,17 @@
+- use_table: true
+- center: (0.5, 0.5, 0)
+  lang: a common box with a drawer
+  name: Box
+  on_table: true
+  path: box.urdf
+  reward_asset_path: '102377'
+  size: 0.6
+  type: urdf
+- solution_path: example_tasks/Pull_Drawer_Out/task_Pull_Drawer_Out
+- joint_1: '0'
+  set_joint_angle_object_name: Box
+- spatial_relationships: []
+- task_description: The robotic arm uses the prismatic joint to slide the drawer out
+    from the box
+  task_name: Pull Drawer Out
+- distractor_config_path: example_tasks/Pull_Drawer_Out/The_robotic_arm_uses_the_prismatic_joint_to_slide_the_drawer_out_from_the_box_distractor.yaml

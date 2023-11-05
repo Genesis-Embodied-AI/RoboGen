@@ -1,0 +1,70 @@
+-   all_uid:
+    - 41387a4aea4e481a9368da54893a75b0
+    - 42fac4a7c4be41d783ebda6770f1ef97
+    - 488edbbe8be5414e8313a0f871606e55
+    - cea7540ede414438a2418242f7f07a69
+    - 23b0fa3138c441e0ac322ffa29816eee
+    - cac6babeb8bf4030a23ec16344df3104
+    - 79617e6534f9424bba22f305ddfe70e2
+    - 2c363d45fb824fbcab624e2ad66eed02
+    - d3683763239e484ea2b8015f13651673
+    - 9f3b3b34b56842b2af3c9c004396c83b
+    center: (1.5, -0.5, 0)
+    lang: a common door mat
+    name: Door Mat
+    on_table: false
+    path: doormat.obj
+    size: 0.3
+    type: mesh
+    uid:
+    - 42fac4a7c4be41d783ebda6770f1ef97
+    - 2c363d45fb824fbcab624e2ad66eed02
+-   all_uid:
+    - aa0337e2f4cf4d2b8acc06921f163df8
+    - 0e70eb664f594c5ab6613d0cf4b6c3ab
+    - f7125e65dd004381aa3e9882ef74e963
+    - d2755944f5c749bf8175cf0471bdd9ae
+    - 266929f6de874c5a87e0b426eb52a5d2
+    - 4fbc3f77c8ec487498bf262794b31349
+    - 2d581c7d6468434aac479c50f87d48d0
+    - 72e821fc75d9473183a63d548959693b
+    - df67fa2a371a483b80be5fb62e5fafce
+    - cb8fc6499d694c789550fe829e573887
+    center: (2.5, 0, 0)
+    lang: a wooden coat rack
+    name: Coat Rack
+    on_table: false
+    path: coat_rack.obj
+    size: 1.8
+    type: mesh
+    uid:
+    - aa0337e2f4cf4d2b8acc06921f163df8
+    - 0e70eb664f594c5ab6613d0cf4b6c3ab
+    - d2755944f5c749bf8175cf0471bdd9ae
+-   all_uid:
+    - 02ed13ed39814e578032d32cf9908ad9
+    - c14e9d5759a74916bcc4596512cda902
+    - 67bc029c98454971a213c526bc1fbec0
+    - 9febf58b63d04a45b6e25e2e38ea1a61
+    - c97432ffbe97469694f2ee4364aabf30
+    - a558a207a39a44119d2cf6b22a952e2d
+    - 08045f47cdba4206b6895e9f18952821
+    - a558a207a39a44119d2cf6b22a952e2d
+    - d5bd5371c96a4667aeee20451b66e438
+    center: (1, -1, 0)
+    lang: a metal umbrella stand
+    name: Umbrella Stand
+    on_table: false
+    path: umbrella_stand.obj
+    size: 0.5
+    type: mesh
+    uid:
+    - 02ed13ed39814e578032d32cf9908ad9
+    - c14e9d5759a74916bcc4596512cda902
+    - 67bc029c98454971a213c526bc1fbec0
+    - 9febf58b63d04a45b6e25e2e38ea1a61
+    - c97432ffbe97469694f2ee4364aabf30
+    - a558a207a39a44119d2cf6b22a952e2d
+    - 08045f47cdba4206b6895e9f18952821
+    - a558a207a39a44119d2cf6b22a952e2d
+    - d5bd5371c96a4667aeee20451b66e438

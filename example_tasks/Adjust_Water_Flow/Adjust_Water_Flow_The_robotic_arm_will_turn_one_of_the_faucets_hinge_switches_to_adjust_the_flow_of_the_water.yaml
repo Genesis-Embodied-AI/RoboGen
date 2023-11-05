@@ -1,0 +1,17 @@
+- use_table: true
+- center: (0.5, 0.5, 0)
+  lang: a common water faucet
+  name: Faucet
+  on_table: true
+  path: faucet.urdf
+  reward_asset_path: '929'
+  size: 0.25
+  type: urdf
+- solution_path: example_tasks/Adjust_Water_Flow/task_Adjust_Water_Flow
+- joint_0: random
+  set_joint_angle_object_name: Faucet
+- spatial_relationships: []
+- task_description: The robotic arm will turn one of the faucets hinge switches to
+    adjust the flow of the water
+  task_name: Adjust Water Flow
+- distractor_config_path: example_tasks/Adjust_Water_Flow/The_robotic_arm_will_turn_one_of_the_faucets_hinge_switches_to_adjust_the_flow_of_the_water_distractor.yaml

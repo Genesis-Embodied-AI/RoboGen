@@ -1,0 +1,33 @@
+-   center: (2.5, 2, 0)
+    lang: a standard kitchen fridge
+    name: Refrigerator
+    on_table: false
+    path: fridge.obj
+    reward_asset_path: '11299'
+    size: 1.8
+    type: urdf
+-   center: (1.2, 2.5, 0)
+    lang: a standard microwave with a turntable and digital timer
+    name: Microwave
+    on_table: false
+    path: microwave.obj
+    reward_asset_path: '7128'
+    size: 0.5
+    type: urdf
+-   all_uid: &id001
+    - 5d4fef615166456d9d8e8d01cdb40988
+    - e77dc1c101c3483a834b2a9dbe2b9754
+    - b11886354fb449739c1fa51157f282e8
+    - 3d9bd04e9e8e497c9bb51d5d326f1cbe
+    - e038d2916c0842508c883639bf126a7d
+    - 590e7307ad4e4f1a8fb617e69d5afb60
+    - b0fe9baa97074862a1454228666c0455
+    - 0b5ab99cdad94f5f8a390d54522f0f16
+    center: (1.8, 1, 0)
+    lang: a standard kitchen counter with drawers
+    name: Kitchen Counter
+    on_table: false
+    path: kitchen_counter.obj
+    size: 1.0
+    type: mesh
+    uid: *id001

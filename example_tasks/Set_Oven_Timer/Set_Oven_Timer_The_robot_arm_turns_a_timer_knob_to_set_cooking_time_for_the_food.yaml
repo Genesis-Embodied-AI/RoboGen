@@ -1,0 +1,16 @@
+- use_table: false
+- center: (1.8, 2, 0)
+  lang: a standard oven
+  name: Oven
+  on_table: false
+  path: oven.urdf
+  reward_asset_path: '101940'
+  size: 0.9
+  type: urdf
+- solution_path: example_tasks/Set_Oven_Timer/task_Set_Oven_Timer
+- joint_2: random
+  set_joint_angle_object_name: Oven
+- spatial_relationships: []
+- task_description: The robot arm turns a timer knob to set cooking time for the food
+  task_name: Set Oven Timer
+- distractor_config_path: example_tasks/Set_Oven_Timer/The_robot_arm_turns_a_timer_knob_to_set_cooking_time_for_the_food_distractor.yaml

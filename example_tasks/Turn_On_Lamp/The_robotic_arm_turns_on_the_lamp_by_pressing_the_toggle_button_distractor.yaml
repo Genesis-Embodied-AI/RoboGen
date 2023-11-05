@@ -1,0 +1,65 @@
+-   all_uid:
+    - 9ae37a30179d40dfaaaf6101f5e376d2
+    - 92d65d6c85e34cb9895fbdb85d81038f
+    - c850e5d630e9420d85b8d23a2efae4d5
+    - 7a6b072634564c4d8ab56e4e86137e59
+    - 0061788e0741400c82289337a24af4f6
+    center: (0.2, 0.2, 0)
+    lang: a hardcover book
+    name: book
+    on_table: true
+    path: book.obj
+    size: 0.2
+    type: mesh
+    uid:
+    - 92d65d6c85e34cb9895fbdb85d81038f
+    - 7a6b072634564c4d8ab56e4e86137e59
+    - 0061788e0741400c82289337a24af4f6
+-   all_uid:
+    - a194e0482994495983f6e46559a76600
+    - 2555a69678e64f91a286dd8132f7e937
+    - 7fde5a9ac72f49838d6a2814713c7c79
+    - 856c8e743e11439ebcb8e5da55b8fc73
+    - 59503c8c5e8541a192040869d6be6349
+    center: (0.8, 0.8, 0)
+    lang: a ceramic coffee mug
+    name: coffee_mug
+    on_table: true
+    path: coffee_mug.obj
+    size: 0.1
+    type: mesh
+    uid:
+    - a194e0482994495983f6e46559a76600
+    - 2555a69678e64f91a286dd8132f7e937
+    - 7fde5a9ac72f49838d6a2814713c7c79
+    - 856c8e743e11439ebcb8e5da55b8fc73
+    - 59503c8c5e8541a192040869d6be6349
+-   center: (0.5, 0.2, 0)
+    lang: a standard laptop with a screen and keyboard
+    name: Laptop
+    on_table: true
+    path: laptop.obj
+    reward_asset_path: '11141'
+    size: 0.4
+    type: urdf
+-   all_uid:
+    - aa315b11399f436c9f16d4cd953ec6da
+    - bfda8d0079604b6081f7c4809e1becd6
+    - bfda8d0079604b6081f7c4809e1becd6
+    - 337ccf312b38430da0bcf9462325f49b
+    - 0ac5db3c16514c8da0d48b1b3836ec0d
+    - 06d79ffd2e254fff89a591d7a28666d5
+    - 38ec5687e7364aada3b782cf2d011839
+    - c3977659436146e5a2e63b11ec6ef887
+    - d9cb37b499cf4b7093d7f2585c07fc27
+    - cdf3b8d5d3b04222ae09695c76637be8
+    center: (0.2, 0.8, 0)
+    lang: a cylindrical pen holder
+    name: pen_holder
+    on_table: true
+    path: pen_holder.obj
+    size: 0.15
+    type: mesh
+    uid:
+    - bfda8d0079604b6081f7c4809e1becd6
+    - d9cb37b499cf4b7093d7f2585c07fc27
