@@ -37,8 +37,7 @@ install_python_binding_dependencies()
     if [[ $ubuntu_version > 1910 ]]; then
         ${SUDO} apt-get -y install castxml
     else
-        # wget -q -O- https://data.kitware.com/api/v1/file/5e8b740d2660cbefba944189/download | 
-	tar zxf castxml-linux.tar.gz -C ${HOME}
+        wget -q -O- https://data.kitware.com/api/v1/file/5e8b740d2660cbefba944189/download | tar zxf castxml-linux.tar.gz -C ${HOME}
         export PATH=${HOME}/castxml/bin:${PATH}
     fi
     ${SUDO} apt-get -y install libboost-python-dev
