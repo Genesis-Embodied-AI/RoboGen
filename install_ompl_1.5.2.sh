@@ -32,7 +32,7 @@ install_python_binding_dependencies()
     # install additional python dependencies via pip
     #${SUDO} pip${PYTHONV} install -vU https://github.com/CastXML/pygccxml/archive/develop.zip pyplusplus
     #${SUDO} pip${PYTHONV} install -vU pygccxml-develop.zip pyplusplus
-    ${SUDO} apip${PYTHONV} install -vU pygccxml pyplusplus
+    ${SUDO} pip${PYTHONV} install -vU pygccxml pyplusplus
     # install castxml
     if [[ $ubuntu_version > 1910 ]]; then
         ${SUDO} apt-get -y install castxml
