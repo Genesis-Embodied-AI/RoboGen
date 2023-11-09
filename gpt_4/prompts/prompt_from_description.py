@@ -212,6 +212,16 @@ def generate_from_task_name(task_name, object_category, object_path, temperature
     return config_path
     
 if __name__ == "__main__":
+    import argparse
+    import numpy as np
+    from objaverse_utils.utils import partnet_mobility_dict
+    
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--task_description', type=str, default="put a pen into the box")
+    parser.add_argument('--object', type=str, default="Box")
+    parser.add_argument('--object_path', type=str, default="100426")
+    args = parser.parse_args()
+    
     temperature_dict = {
         "reward": 0,
         "yaml": 0,
@@ -229,7 +239,10 @@ if __name__ == "__main__":
     }
 
     meta_path = "generated_task_from_description"
-    config_path = generate_from_task_name("put a pen into the box", "Box", "100426", 
+    if args.object_path is None:
+        possible_object_ids = partnet_mobility_dict[args.object]
+        args.object_path = possible_object_ids[np.random.randint(len(possible_object_ids))]
+    config_path = generate_from_task_name(args.task_description, args.object, args.object_path, 
         temperature_dict=temperature_dict, meta_path=meta_path, model_dict=model_dict)
     generate_distractor(config_path, temperature_dict=temperature_dict, model_dict=model_dict)
     

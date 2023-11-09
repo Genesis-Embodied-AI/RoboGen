@@ -91,6 +91,7 @@ objaverse_utils/data/partnet_mobility_category_embeddings.pt
 ### One click for all
 Put your OpenAI API key at the top of `gpt_4/query.py`, and simply run
 ```
+source prepare.sh
 python run.py
 ``` 
 RoboGen will then generate the task, build the scene in pybullet, and solve it to learn the corresponding skill.  
@@ -104,7 +105,15 @@ If you wish to just generate the tasks, run
 ```
 python run.py --train 0
 ```
-which will generate the tasks, scene config yaml files, and training supervisions. The generated tasks will be stored at `data/generated_tasks_release/`.
+which will generate the tasks, scene config yaml files, and training supervisions. The generated tasks will be stored at `data/generated_tasks_release/`.  
+If you want to generate task given a text description, you can run
+```
+python gpt_4/prompts/prompt_from_description.py --task_description [TASK_DESCRIPTION] --object [PARTNET_ARTICULATION_OBJECT_CATEGORY]
+``` 
+For example,
+```
+python gpt_4/prompts/prompt_from_description.py --task_description "Put a pen into the box" --object "Box"
+```
 
 ### Learn skills
 If you wish to just learn the skill with a generated task, run
