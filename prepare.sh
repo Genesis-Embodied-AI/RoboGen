@@ -1,3 +1,3 @@
 export PYTHONPATH=${PWD}:$PYTHONPATH
 export CUDA_VISIBLE_DEVICES=0
-conda activate genbot
+conda activate robogen
