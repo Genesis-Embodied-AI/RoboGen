@@ -56,7 +56,7 @@ if gen_func == 'manipulation':
         object_category = args.category
     all_task_config_paths = generate_task_manipulation(object_category, temperature_dict=temperature_dict, model_dict=model_dict, meta_path=meta_path)
     for task_config_path in all_task_config_paths:
-        generate_distractor(task_config_path, temperature_dict=temperature_dict, model_dict=model_dict, meta_path=meta_path)
+        generate_distractor(task_config_path, temperature_dict=temperature_dict, model_dict=model_dict)
 elif gen_func == 'locomotion':
     all_task_config_paths = generate_task_locomotion(temperature_dict=temperature_dict, model_dict=model_dict, meta_path=meta_path)
     
