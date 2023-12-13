@@ -38,9 +38,9 @@ We are still in the process of cleaning the code & testing, please stay tuned!
   - [Dataset](#dataset)
 - [Let's Rock!](#lets-rock)
   - [Automated Task Generation & Skill Learning](#One-click-for-all)
-  - [Generate Tasks](Generate-tasks)
-  - [Learn Skills](Learn-skills)
-  - [Pre-generated Tasks](Pre-generated-tasks)
+  - [Generate Tasks](#Generate-tasks)
+  - [Learn Skills](#Learn-skills)
+  - [Pre-generated Tasks](#Pre-generated-tasks)
 ## Setup
 ### RoboGen
 Clone this git repo.
