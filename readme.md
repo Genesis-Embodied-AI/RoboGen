@@ -60,7 +60,8 @@ To install OMPL, run
 ```
 ./install_ompl_1.5.2.sh --python
 ```
-which will install the ompl with system-wide python. Then, export the installation to the conda environment to be used with RoboGen:
+which will install the ompl with system-wide python. Note at line 19 of the installation script OMPL requries you to run `sudo apt-get -y upgrade`. This might cause trouble for your system packages, so you could probably comment this line during installation (the installation might fail, not fully tested with the line commented).
+Then, export the installation to the conda environment to be used with RoboGen:
 ```
 echo "path_to_your_ompl_installation_from_last_step/OMPL/ompl-1.5.2/py-bindings" >> ~/miniconda3/envs/robogen/lib/python3.9/site-packages/ompl.pth
 ```
