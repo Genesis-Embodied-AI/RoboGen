@@ -239,6 +239,7 @@ if __name__ == "__main__":
     }
 
     meta_path = "generated_task_from_description"
+    assert args.object in partnet_mobility_dict.keys(), "You should use articulated objects in the PartNet Mobility dataset."
     if args.object_path is None:
         possible_object_ids = partnet_mobility_dict[args.object]
         args.object_path = possible_object_ids[np.random.randint(len(possible_object_ids))]
