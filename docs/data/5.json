@@ -1,0 +1,544 @@
+{
+    "500": {
+        "file_id": 28,
+        "content": "    p.stepSimulation()\n    object_name = object_name.lower()\n    save_path = get_save_path(simulator)\n    if not os.path.exists(save_path):\n        os.makedirs(save_path)\n    # if the target object is already grasped.  \n    points = p.getContactPoints(bodyA=simulator.robot.body, linkIndexA=simulator.suction_id, physicsClientId=simulator.id)\n    if points:\n        for point in points:\n            obj_id, contact_link = point[2], point[4]\n            if obj_id == simulator.urdf_ids[object_name]:\n                simulator.activate_suction()\n                rgbs = []\n                states = []\n                for t in range(10):\n                    p.stepSimulation()\n                    rgbs.append(simulator.render()[0])\n                    state_save_path = os.path.join(save_path, \"state_{}.pkl\".format(t))\n                    save_env(simulator, state_save_path)\n                    states.append(state_save_path)\n                return rgbs, states\n    rgbs, states = approach_object(simulator, object_name)\n    base_t = len(rgbs)",
+        "type": "code",
+        "location": "/manipulation/gpt_primitive_api.py:35-59"
+    },
+    "501": {
+        "file_id": 28,
+        "content": "Code snippet checks if the target object is already grasped, and if not, performs an approach action. If the object is grasped, it saves 10 renders with their corresponding states. It returns a list of renders and a list of state save paths.",
+        "type": "comment"
+    },
+    "502": {
+        "file_id": 28,
+        "content": "    if base_t > 1:\n        for t in range(10):\n            simulator.activate_suction()\n            p.stepSimulation()\n            rgbs.append(simulator.render()[0])\n            state_save_path = os.path.join(save_path, \"state_{}.pkl\".format(t + base_t))\n            save_env(simulator, state_save_path)\n            states.append(state_save_path)\n    else:\n        # directy reset the state\n        load_env(simulator, state=ori_state)\n    return rgbs, states\ndef grasp_object_link(simulator, object_name, link_name):\n    ori_state = save_env(simulator, None)\n    p.stepSimulation()\n    object_name = object_name.lower()\n    save_path = get_save_path(simulator)\n    if not os.path.exists(save_path):\n        os.makedirs(save_path)\n    # if the target object link is already grasped.  \n    points = p.getContactPoints(bodyA=simulator.robot.body, linkIndexA=simulator.suction_id, physicsClientId=simulator.id)\n    if points:\n        for point in points:\n            obj_id, contact_link = point[2], point[4]\n            if obj",
+        "type": "code",
+        "location": "/manipulation/gpt_primitive_api.py:60-87"
+    },
+    "503": {
+        "file_id": 28,
+        "content": "The code checks if the base time is greater than 1. If true, it activates suction for 10 timesteps and saves the states at each step. If false, it directly resets the state. The grasp_object_link function saves the initial state, steps simulation, converts object name to lowercase, creates save directory if not exists, checks if target link is already grasped, and returns points if any.",
+        "type": "comment"
+    },
+    "504": {
+        "file_id": 28,
+        "content": "_id == simulator.urdf_ids[object_name] and contact_link == get_link_id_from_name(simulator, object_name, link_name):\n                simulator.activate_suction()\n                rgbs = []\n                states = []\n                for t in range(10):\n                    p.stepSimulation()\n                    rgbs.append(simulator.render()[0])\n                    state_save_path = os.path.join(save_path, \"state_{}.pkl\".format(t))\n                    save_env(simulator, state_save_path)\n                    states.append(state_save_path)\n                return rgbs, states\n    rgbs, states = approach_object_link(simulator, object_name, link_name)\n    base_t = len(rgbs)\n    if base_t > 1:\n        simulator.activate_suction()\n        for t in range(10):\n            p.stepSimulation()\n            rgbs.append(simulator.render()[0])\n            state_save_path = os.path.join(save_path, \"state_{}.pkl\".format(t + base_t))\n            save_env(simulator, state_save_path)\n            states.append(state_save_path)\n    else:",
+        "type": "code",
+        "location": "/manipulation/gpt_primitive_api.py:87-110"
+    },
+    "505": {
+        "file_id": 28,
+        "content": "This code checks if the suction is activated and collects RGB images and state data for 10 steps. If there are existing RGB images, it adds more, and saves the states at each step.",
+        "type": "comment"
+    },
+    "506": {
+        "file_id": 28,
+        "content": "        # directy reset the state\n        load_env(simulator, state=ori_state)\n    return rgbs, states\ndef approach_object(simulator, object_name, dynamics=False):\n    save_path = get_save_path(simulator)\n    ori_state = save_env(simulator, None)\n    simulator.deactivate_suction()\n    release_rgbs = []\n    release_states = []\n    release_steps = 20\n    for t in range(release_steps):\n        p.stepSimulation()\n        rgb, depth = simulator.render()\n        release_rgbs.append(rgb)\n        state_save_path = os.path.join(save_path, \"state_{}.pkl\".format(t))\n        save_env(simulator, state_save_path)\n        release_states.append(state_save_path)\n    object_name = object_name.lower()\n    it = 0\n    object_name = object_name.lower()\n    object_pc, object_normal = get_pc_and_normal(simulator, object_name)\n    low, high = get_bounding_box(simulator, object_name)\n    com = (low + high) / 2\n    current_joint_angles = simulator.robot.get_joint_angles(indices=simulator.robot.right_arm_joint_indices)\n    while True:\n        random_point = object_pc[np.random.randint(0, object_pc.shape[0])]",
+        "type": "code",
+        "location": "/manipulation/gpt_primitive_api.py:111-141"
+    },
+    "507": {
+        "file_id": 28,
+        "content": "Resets the state and saves it, then deactivates suction and approaches an object by releasing the gripper after saving states for 20 steps.",
+        "type": "comment"
+    },
+    "508": {
+        "file_id": 28,
+        "content": "        random_normal = object_normal[np.random.randint(0, object_normal.shape[0])]\n        ### adjust the normal such that it points outwards the object.\n        line = com - random_point\n        if np.dot(line, random_normal) > 0:\n            random_normal = -random_normal\n        for normal in [random_normal, -random_normal]:\n            simulator.robot.set_joint_angles(simulator.robot.right_arm_joint_indices, current_joint_angles)\n            target_pos = random_point\n            real_target_pos = target_pos + normal * 0\n            if simulator.robot_name in [\"panda\", \"sawyer\"]:\n                target_orientation = align_gripper_z_with_normal(-normal).as_quat()\n                mp_target_pos = target_pos + normal * 0.03\n            elif simulator.robot_name in ['ur5', 'fetch']:\n                target_orientation = align_gripper_x_with_normal(-normal).as_quat()\n                if simulator.robot_name == 'ur5':\n                    mp_target_pos = target_pos + normal * 0.07\n                elif simulator.robot_name == 'fetch':",
+        "type": "code",
+        "location": "/manipulation/gpt_primitive_api.py:142-161"
+    },
+    "509": {
+        "file_id": 28,
+        "content": "The code randomly selects a normal from an object's normal distribution and checks if it points outwards. It then sets the robot arm joint angles for two cases (normal and negative normal) and calculates target positions and orientations depending on the robot type. This allows the robot to manipulate objects with different robots (panda, sawyer, ur5, fetch).",
+        "type": "comment"
+    },
+    "510": {
+        "file_id": 28,
+        "content": "                    mp_target_pos = target_pos + normal * 0.07\n            all_objects = list(simulator.urdf_ids.keys())\n            all_objects.remove(\"robot\")\n            obstacles = [simulator.urdf_ids[x] for x in all_objects]\n            allow_collision_links = []\n            res, path = motion_planning(simulator, mp_target_pos, target_orientation, obstacles=obstacles, allow_collision_links=allow_collision_links)\n            if res:\n                if not os.path.exists(save_path):\n                    os.makedirs(save_path)\n                rgbs = release_rgbs\n                intermediate_states = release_states\n                for idx, q in enumerate(path):\n                    if not dynamics:\n                        simulator.robot.set_joint_angles(simulator.robot.right_arm_joint_indices, q)\n                        p.stepSimulation()\n                    else:\n                        for _ in range(3):\n                            simulator.robot.control(simulator.robot.right_arm_joint_indices, q, simulator.robot.motor_gains, forces=5 * 240.)",
+        "type": "code",
+        "location": "/manipulation/gpt_primitive_api.py:162-181"
+    },
+    "511": {
+        "file_id": 28,
+        "content": "This code snippet calculates a target position and removes the \"robot\" object from the list of all objects. It then defines obstacles using the remaining objects, performs motion planning by calling the \"motion_planning\" function with the calculated target position, and checks for successful results. If successful, it creates directories if they don't exist, stores release RGB values, and iterates through path coordinates to set joint angles or control the robot's arm using motor gains and forces.",
+        "type": "comment"
+    },
+    "512": {
+        "file_id": 28,
+        "content": "                            p.stepSimulation()\n                    rgb, depth = simulator.render()\n                    rgbs.append(rgb)\n                    save_state_path = os.path.join(save_path,  \"state_{}.pkl\".format(idx + release_steps))\n                    save_env(simulator, save_state_path)\n                    intermediate_states.append(save_state_path)\n                base_idx = len(intermediate_states)\n                for t in range(20):\n                    ik_indices = [_ for _ in range(len(simulator.robot.right_arm_joint_indices))]\n                    ik_joints = simulator.robot.ik(simulator.robot.right_end_effector, \n                                                    real_target_pos, target_orientation, \n                                                    ik_indices=ik_indices)\n                    p.setJointMotorControlArray(simulator.robot.body, jointIndices=simulator.robot.right_arm_joint_indices, \n                                                controlMode=p.POSITION_CONTROL, targetPositions=ik_joints,",
+        "type": "code",
+        "location": "/manipulation/gpt_primitive_api.py:182-197"
+    },
+    "513": {
+        "file_id": 28,
+        "content": "Code snippet performs robot arm IK manipulation using PyBullet simulation. It renders the robot's state, saves intermediate states, sets joint motor control for positioning and controls the right arm joint indices to achieve a specific target orientation.",
+        "type": "comment"
+    },
+    "514": {
+        "file_id": 28,
+        "content": "                                                forces=[5*240] * len(simulator.robot.right_arm_joint_indices), physicsClientId=simulator.id)\n                    p.stepSimulation()\n                    rgb, depth = simulator.render()\n                    rgbs.append(rgb)\n                    save_state_path = os.path.join(save_path,  \"state_{}.pkl\".format(base_idx + t))\n                    save_env(simulator, save_state_path)\n                    intermediate_states.append(save_state_path)\n                    # TODO: check if there is already a collision. if so, break.\n                    collision = False\n                    points = p.getContactPoints(bodyA=simulator.robot.body, linkIndexA=simulator.suction_id, physicsClientId=simulator.id)\n                    if points:\n                        # Handle contact between suction with a rigid object.\n                        for point in points:\n                            obj_id, contact_link, contact_position_on_obj = point[2], point[4], point[6]\n                            if obj_id == simulator.urdf_ids['plane'] or obj_id == simulator.robot.body:",
+        "type": "code",
+        "location": "/manipulation/gpt_primitive_api.py:198-214"
+    },
+    "515": {
+        "file_id": 28,
+        "content": "This code snippet initializes forces for the robot's right arm joints, steps the simulation, renders the scene, appends RGB values to a list, saves intermediate simulation states, and checks for collisions between the suction and rigid objects. If a collision occurs, it handles the contact by storing the relevant information in variables.",
+        "type": "comment"
+    },
+    "516": {
+        "file_id": 28,
+        "content": "                                pass\n                            else:\n                                collision = True\n                                break\n                    if collision:\n                        break\n                return rgbs, intermediate_states\n            it += 1\n            if it > MOTION_PLANNING_TRY_TIMES:\n                print(\"failed to execute the primitive\")\n                load_env(simulator, state=ori_state)\n                save_env(simulator, os.path.join(save_path,  \"state_{}.pkl\".format(0)))\n                rgbs = [simulator.render()[0]]\n                state_files = [os.path.join(save_path,  \"state_{}.pkl\".format(0))]\n                return rgbs, state_files\ndef approach_object_link(simulator, object_name, link_name, dynamics=False):\n    save_path = get_save_path(simulator)\n    ori_state = save_env(simulator, None)\n    simulator.deactivate_suction()\n    release_rgbs = []\n    release_states = []\n    release_steps = 20\n    for t in range(release_steps):\n        p.stepSimulation()",
+        "type": "code",
+        "location": "/manipulation/gpt_primitive_api.py:215-242"
+    },
+    "517": {
+        "file_id": 28,
+        "content": "The code attempts to execute a primitive motion planning, and if it fails, it restores the environment state and saves it before returning initial RGBs and state files. If the primitive execution succeeds, it stores the intermediate states and RGBs for future use. The function approach_object_link deactivates suction, executes a release motion plan for 20 simulation steps, and then steps the simulation.",
+        "type": "comment"
+    },
+    "518": {
+        "file_id": 28,
+        "content": "        rgb, depth = simulator.render()\n        release_rgbs.append(rgb)\n        state_save_path = os.path.join(save_path, \"state_{}.pkl\".format(t))\n        save_env(simulator, state_save_path)\n        release_states.append(state_save_path)\n    object_name = object_name.lower()\n    it = 0\n    object_name = object_name.lower()\n    link_pc = get_link_pc(simulator, object_name, link_name) \n    object_pc = link_pc\n    pcd = o3d.geometry.PointCloud() \n    pcd.points = o3d.utility.Vector3dVector(object_pc)\n    pcd.estimate_normals()\n    object_normal = np.asarray(pcd.normals)\n    current_joint_angles = simulator.robot.get_joint_angles(indices=simulator.robot.right_arm_joint_indices)\n    while True:\n        object_name = object_name.lower()\n        target_pos = link_pc[np.random.randint(0, link_pc.shape[0])]\n        nearest_point_idx = np.argmin(np.linalg.norm(object_pc - target_pos.reshape(1, 3), axis=1))\n        align_normal = object_normal[nearest_point_idx]\n        ### adjust the normal such that it points outwards the object.",
+        "type": "code",
+        "location": "/manipulation/gpt_primitive_api.py:243-268"
+    },
+    "519": {
+        "file_id": 28,
+        "content": "This code snippet is responsible for rendering a simulator, saving its state at each timestep, and calculating object normals for manipulation tasks. It retrieves the link and object points cloud, estimates their normals, and aligns them to ensure they point outwards from the object. The normal adjustment is important for successful manipulation tasks.",
+        "type": "comment"
+    },
+    "520": {
+        "file_id": 28,
+        "content": "        low, high = get_bounding_box(simulator, object_name)\n        com = (low + high) / 2\n        line = com - target_pos\n        if np.dot(line, align_normal) > 0:\n            align_normal = -align_normal\n        for normal in [align_normal, -align_normal]:\n            simulator.robot.set_joint_angles(simulator.robot.right_arm_joint_indices, current_joint_angles)\n            real_target_pos = target_pos + normal * 0\n            debug_id = p.addUserDebugLine(target_pos, target_pos + normal, [1, 0, 0], 5)\n            if simulator.robot_name in [\"panda\", \"sawyer\"]:\n                target_orientation = align_gripper_z_with_normal(-normal).as_quat()\n                mp_target_pos = target_pos + normal * 0.03\n            elif simulator.robot_name in ['ur5', 'fetch']:\n                target_orientation = align_gripper_x_with_normal(-normal).as_quat()\n                if simulator.robot_name == 'ur5':\n                    mp_target_pos = target_pos + normal * 0.07\n                elif simulator.robot_name == 'fetch':",
+        "type": "code",
+        "location": "/manipulation/gpt_primitive_api.py:269-287"
+    },
+    "521": {
+        "file_id": 28,
+        "content": "This code calculates the center of a bounding box using get_bounding_box() and aligns the robot's arm based on the object's normal direction. It adjusts the target position and orientation for different robots, sets joint angles, and adds a debug line to visualize the process. The code checks the robot type (panda, sawyer, ur5, or fetch) and aligns the gripper accordingly.",
+        "type": "comment"
+    },
+    "522": {
+        "file_id": 28,
+        "content": "                    mp_target_pos = target_pos + normal * 0.07\n            all_objects = list(simulator.urdf_ids.keys())\n            all_objects.remove(\"robot\")\n            obstacles = [simulator.urdf_ids[x] for x in all_objects]\n            allow_collision_links = []\n            res, path = motion_planning(simulator, mp_target_pos, target_orientation, obstacles=obstacles, allow_collision_links=allow_collision_links)\n            p.removeUserDebugItem(debug_id)\n            if res:\n                if not os.path.exists(save_path):\n                    os.makedirs(save_path)\n                rgbs = release_rgbs\n                intermediate_states = release_states\n                for idx, q in enumerate(path):\n                    if not dynamics:\n                        simulator.robot.set_joint_angles(simulator.robot.right_arm_joint_indices, q)\n                    else:\n                        for _ in range(3):\n                            simulator.robot.control(simulator.robot.right_arm_joint_indices, q, simulator.robot.motor_gains, forces=5 * 240.)",
+        "type": "code",
+        "location": "/manipulation/gpt_primitive_api.py:288-307"
+    },
+    "523": {
+        "file_id": 28,
+        "content": "This code adjusts the target position, removes unnecessary objects from simulation, plans motion with collision avoidance, and executes the planned motion on the robot's right arm. If dynamics are considered, it repeats the control action three times for better accuracy. Finally, if the path is successful, it saves RGB data and intermediate states at each step in a specified folder.",
+        "type": "comment"
+    },
+    "524": {
+        "file_id": 28,
+        "content": "                            p.stepSimulation()\n                    p.stepSimulation()\n                    rgb, depth = simulator.render()\n                    rgbs.append(rgb)\n                    save_state_path = os.path.join(save_path,  \"state_{}.pkl\".format(idx + release_steps))\n                    save_env(simulator, save_state_path)\n                    intermediate_states.append(save_state_path)\n                base_idx = len(intermediate_states)\n                for t in range(20):\n                    print(\"post motion planing step: \", t)\n                    print(\"rgb image length: \", len(rgbs))\n                    ik_indices = [_ for _ in range(len(simulator.robot.right_arm_joint_indices))]\n                    ik_joints = simulator.robot.ik(simulator.robot.right_end_effector, \n                                                    real_target_pos, target_orientation, \n                                                    ik_indices=ik_indices)\n                    p.setJointMotorControlArray(simulator.robot.body, jointIndices=simulator.robot.right_arm_joint_indices, ",
+        "type": "code",
+        "location": "/manipulation/gpt_primitive_api.py:308-326"
+    },
+    "525": {
+        "file_id": 28,
+        "content": "The code snippet is part of a simulation where the robot arm's joint angles are updated based on inverse kinematics calculations. RGB and depth images are obtained from rendering, intermediate states are saved, and the right arm is controlled using joint motor control for 20 steps after motion planning.",
+        "type": "comment"
+    },
+    "526": {
+        "file_id": 28,
+        "content": "                                                controlMode=p.POSITION_CONTROL, targetPositions=ik_joints,\n                                                forces=[5*240] * len(simulator.robot.right_arm_joint_indices), physicsClientId=simulator.id)\n                    p.stepSimulation()\n                    rgb, depth = simulator.render()\n                    rgbs.append(rgb)\n                    save_state_path = os.path.join(save_path,  \"state_{}.pkl\".format(base_idx + t))\n                    save_env(simulator, save_state_path)\n                    intermediate_states.append(save_state_path)\n                    # TODO check here if there is a collision. if so, break\n                    collision = False\n                    points = p.getContactPoints(bodyA=simulator.robot.body, linkIndexA=simulator.suction_id, physicsClientId=simulator.id)\n                    if points:\n                        # Handle contact between suction with a rigid object.\n                        for point in points:\n                            obj_id, contact_link, contact_position_on_obj = point[2], point[4], point[6]",
+        "type": "code",
+        "location": "/manipulation/gpt_primitive_api.py:327-342"
+    },
+    "527": {
+        "file_id": 28,
+        "content": "Code snippet checks for collisions between the robot's suction and a rigid object. It retrieves contact points, and if any are found, it proceeds to handle the contact by iterating over them. The function saves the current state of the simulation into a file before checking for collisions. If collisions occur, the code breaks out of the loop.",
+        "type": "comment"
+    },
+    "528": {
+        "file_id": 28,
+        "content": "                            if obj_id == simulator.urdf_ids['plane'] or obj_id == simulator.robot.body:\n                                pass\n                            else:\n                                collision = True\n                                break\n                    if collision:\n                        break\n                return rgbs, intermediate_states \n            it += 1\n            if it > MOTION_PLANNING_TRY_TIMES:\n                print(\"failed to execute the primitive\")\n                load_env(simulator, state=ori_state)\n                save_env(simulator, os.path.join(save_path,  \"state_{}.pkl\".format(0)))\n                rgbs = [simulator.render()[0]]\n                state_files = [os.path.join(save_path,  \"state_{}.pkl\".format(0))]\n                return rgbs, state_files",
+        "type": "code",
+        "location": "/manipulation/gpt_primitive_api.py:344-361"
+    },
+    "529": {
+        "file_id": 28,
+        "content": "This code checks for collisions during motion planning and retries if necessary. If a certain object is identified, no collision check is performed. The code also handles failure by restoring the environment state and saving it before returning default values.",
+        "type": "comment"
+    },
+    "530": {
+        "file_id": 29,
+        "content": "/manipulation/gpt_reward_api.py",
+        "type": "filepath"
+    },
+    "531": {
+        "file_id": 29,
+        "content": "This code imports necessary libraries and defines functions for RoboGen tasks, including distance computation, joint angle retrieval, gripper proximity checks using PyBullet library. It retrieves robot end effector info, provides functions for bounding box info, joint state, link position, grasp detection, joint value setting, bounds checking, and rendering CoM. This code snippet compares images to find differences, determines the best image for reward calculation, calculates a link's center of mass and point clouds for a given object, and retrieves joint indices from link or joint names in objects.",
+        "type": "summary"
+    },
+    "532": {
+        "file_id": 29,
+        "content": "import pybullet as p\nimport numpy as np\nfrom manipulation.utils import get_pc\nfrom manipulation.grasping_utils import get_pc_and_normal\nfrom manipulation.utils import take_round_images\nfrom gpt_4.query import query\nimport os\nfrom scipy import ndimage\ndef compute_obj_to_center_dist(simulator, obj_a, obj_b):\n    obj_a_center = get_position(simulator, obj_a)\n    obj_b_bbox_min, obj_b_bbox_max = get_bounding_box(simulator, obj_b)\n    obj_b_center = (obj_b_bbox_min + obj_b_bbox_max) / 2\n    return np.linalg.norm(obj_a_center - obj_b_center)\ndef get_initial_joint_angle(simulator, object_name, joint_name):\n    object_name = object_name.lower()\n    return simulator.initial_joint_angle[object_name][joint_name]\ndef get_initial_pos_orient(simulator, object_name):\n    object_name = object_name.lower()\n    return simulator.initial_pos[object_name], np.array(p.getEulerFromQuaternion(simulator.initial_orient[object_name]))\n### success check functions\ndef gripper_close_to_object_link(simulator, object_name, link_name):\n    link_pc = get_link_pc(simulator, object_name, link_name)",
+        "type": "code",
+        "location": "/manipulation/gpt_reward_api.py:1-26"
+    },
+    "533": {
+        "file_id": 29,
+        "content": "This code imports necessary libraries and defines functions to compute the distance between two objects, retrieve initial joint angles and positions for an object, and check if a gripper is close to a specific link of an object. These functions seem to be used for manipulation tasks in RoboGen.",
+        "type": "comment"
+    },
+    "534": {
+        "file_id": 29,
+        "content": "    gripper_pos, _ = get_eef_pos(simulator)\n    distance = np.linalg.norm(link_pc.reshape(-1, 3) - gripper_pos.reshape(1, 3), axis=1)\n    if np.min(distance) < 0.06:\n        return True\n    return False\ndef gripper_close_to_object(simulator, object_name):\n    object_pc, _ = get_pc_and_normal(simulator, object_name)\n    gripper_pos, _ = get_eef_pos(simulator)\n    distance = np.linalg.norm(object_pc.reshape(-1, 3) - gripper_pos.reshape(1, 3), axis=1)\n    if np.min(distance) < 0.06:\n        return True\n    return False\ndef check_grasped(self, object_name, link_name=None):\n    object_name = object_name.lower()\n    grasped_object_name, grasped_link_name = get_grasped_object_and_link_name(self)\n    if link_name is None:\n        return grasped_object_name == object_name\n    else:\n        return grasped_object_name == object_name and grasped_link_name == link_name\ndef get_grasped_object_name(simulator):\n    grasped_object_id = simulator.suction_obj_id\n    if grasped_object_id is None:\n        return None\n    id_to_name = {v: k for k, v in simulator.urdf_ids.items()}",
+        "type": "code",
+        "location": "/manipulation/gpt_reward_api.py:27-54"
+    },
+    "535": {
+        "file_id": 29,
+        "content": "This code includes three functions. The first function, \"gripper_pos,\" retrieves the gripper position from the simulator. The second function, \"gripper_close_to_object,\" calculates the distance between the gripper and an object using point cloud data and returns True if the gripper is within 0.06 units of the object. The third function, \"check_grasped,\" checks if a specific object or link name is currently grasped by comparing it to the currently grasped object and/or link names retrieved from the simulator. Lastly, the \"get_grasped_object_name\" function retrieves the currently grasped object name from the simulator based on the object ID.",
+        "type": "comment"
+    },
+    "536": {
+        "file_id": 29,
+        "content": "    return id_to_name[grasped_object_id]\ndef get_grasped_object_and_link_name(simulator):\n    grasped_object_id = simulator.suction_obj_id\n    grasped_link_id = simulator.suction_contact_link\n    if grasped_object_id is None or grasped_link_id is None:\n        return None, None\n    id_to_name = {v: k for k, v in simulator.urdf_ids.items()}\n    grasped_obj_name = id_to_name[grasped_object_id]\n    if grasped_link_id == -1:\n        return grasped_obj_name, \"base\"\n    joint_info = p.getJointInfo(grasped_object_id, grasped_link_id, physicsClientId=simulator.id)\n    link_name = joint_info[12].decode(\"utf-8\")\n    return grasped_obj_name, link_name\ndef get_joint_limit(simulator, object_name, custom_joint_name):\n    object_name = object_name.lower()\n    object_id = simulator.urdf_ids[object_name]\n    num_joints = p.getNumJoints(object_id, physicsClientId=simulator.id)\n    urdf_joint_name = custom_joint_name\n    max_joint_val = 0\n    min_joint_val = 0\n    for j_id in range(num_joints):\n        joint_info = p.getJointInfo(object_id, j_id, physicsClientId=simulator.id)",
+        "type": "code",
+        "location": "/manipulation/gpt_reward_api.py:55-83"
+    },
+    "537": {
+        "file_id": 29,
+        "content": "Code snippet returns the grasped object name, link name based on the simulator state. It retrieves joint information and finds the maximum and minimum joint values for a given object and custom joint name.\n\nExplanation:\n- The code defines three functions: \"return_grasped_object\", \"get_grasped_object_and_link_name\", and \"get_joint_limit\". \n- The \"return_grasped_object\" function returns the name of the grasped object based on its ID from the simulator.\n- The \"get_grasped_object_and_link_name\" function identifies the grasped object and link, retrieves the joint information using PyBullet library's p.getJointInfo(), and returns the names of the grasped object and link. If the grasped link ID is -1, it defaults to 'base'.\n- The \"get_joint_limit\" function takes a simulator, object name, and custom joint name as input parameters. It retrieves the ID of the given object from the simulator's urdf_ids dictionary and uses PyBullet library functions to get the number of joints for that object. Then, it iterates over all the joints and finds the maximum and minimum values for the specified custom joint name.",
+        "type": "comment"
+    },
+    "538": {
+        "file_id": 29,
+        "content": "        if joint_info[1].decode(\"utf-8\") == urdf_joint_name:\n            max_joint_val = joint_info[9]\n            min_joint_val = joint_info[8]\n            break\n    if min_joint_val < max_joint_val:\n        return min_joint_val, max_joint_val\n    else:\n        return max_joint_val, min_joint_val\ndef get_position(simulator, object_name):\n    object_name = object_name.lower()\n    object_id = simulator.urdf_ids[object_name]\n    return np.array(p.getBasePositionAndOrientation(object_id, physicsClientId=simulator.id)[0])\ndef get_velocity(simulator, object_name):\n    object_name = object_name.lower()\n    object_id = simulator.urdf_ids[object_name]\n    return np.array(p.getBaseVelocity(object_id, physicsClientId=simulator.id)[0])\ndef get_orientation(simulator, object_name):\n    object_name = object_name.lower()\n    object_id = simulator.urdf_ids[object_name]\n    return np.array(p.getEulerFromQuaternion(p.getBasePositionAndOrientation(object_id, physicsClientId=simulator.id)[1]))\ndef get_eef_pos(simulator):\n    ",
+        "type": "code",
+        "location": "/manipulation/gpt_reward_api.py:84-110"
+    },
+    "539": {
+        "file_id": 29,
+        "content": "The code defines functions to get the position, velocity, and orientation of an object in a simulator. It first ensures the object name is lowercase and retrieves the associated URDF ID. Then, it uses PyBullet physics library functions to obtain the position, velocity, or orientation. The eef_pos function gets the end effector position from the simulator. The code also compares maximum and minimum joint values for a given URDF joint name.",
+        "type": "comment"
+    },
+    "540": {
+        "file_id": 29,
+        "content": "robot_eef_pos, robot_eef_orient = simulator.robot.get_pos_orient(simulator.robot.right_end_effector)\n    return np.array(robot_eef_pos).flatten(), np.array(p.getEulerFromQuaternion(robot_eef_orient)).flatten()\ndef get_finger_pos(simulator):\n    left_finger_joint_pos =  p.getLinkState(simulator.robot.body, simulator.robot.right_gripper_indices[0], physicsClientId=simulator.id)[0]\n    right_finger_joint_pos = p.getLinkState(simulator.robot.body, simulator.robot.right_gripper_indices[1], physicsClientId=simulator.id)[0]\n    return np.array(left_finger_joint_pos), np.array(right_finger_joint_pos)\ndef get_finger_distance(simulator): \n    left_finger_joint_angle = p.getJointState(simulator.robot.body, simulator.robot.right_gripper_indices[0], physicsClientId=simulator.id)[0]\n    right_finger_joint_angle = p.getJointState(simulator.robot.body, simulator.robot.right_gripper_indices[1], physicsClientId=simulator.id)[0]\n    return left_finger_joint_angle + right_finger_joint_angle\ndef get_bounding_box(simulator, object_name):",
+        "type": "code",
+        "location": "/manipulation/gpt_reward_api.py:110-123"
+    },
+    "541": {
+        "file_id": 29,
+        "content": "The code retrieves the robot's end effector position and orientation using the simulator. It also gets the left and right finger joint positions, calculates the finger joint angles to determine finger distance apart, and gets the bounding box for a specific object in the simulation environment.",
+        "type": "comment"
+    },
+    "542": {
+        "file_id": 29,
+        "content": "    object_name = object_name.lower()\n    object_id = simulator.urdf_ids[object_name]\n    if object_name != \"init_table\":\n        return simulator.get_aabb(object_id)\n    else:\n        return simulator.table_bbox_min, simulator.table_bbox_max\ndef get_bounding_box_link(simulator, object_name, link_name):\n    object_name = object_name.lower()\n    link_id = get_link_id_from_name(simulator, object_name, link_name)\n    object_id = simulator.urdf_ids[object_name]\n    return simulator.get_aabb_link(object_id, link_id)\ndef get_joint_state(simulator, object_name, custom_joint_name):\n    object_name = object_name.lower()\n    object_id = simulator.urdf_ids[object_name]\n    num_joints = p.getNumJoints(object_id, physicsClientId=simulator.id)\n    urdf_joint_name = custom_joint_name\n    for i in range(num_joints):\n        joint_info = p.getJointInfo(object_id, i, physicsClientId=simulator.id)\n        if joint_info[1].decode(\"utf-8\") == urdf_joint_name:\n            joint_index = i\n            break\n    return np.array(p.getJointState(object_id, joint_index, physicsClientId=simulator.id)[0])",
+        "type": "code",
+        "location": "/manipulation/gpt_reward_api.py:124-149"
+    },
+    "543": {
+        "file_id": 29,
+        "content": "The code provides functions to retrieve bounding box information, joint state, and link position from a simulator. The get_bounding_box_link function returns the AABB of an object's link given its name, while get_joint_state retrieves the state of a specified joint within an object. Both functions require the object and link names to be in lowercase format.",
+        "type": "comment"
+    },
+    "544": {
+        "file_id": 29,
+        "content": "def get_link_state(simulator, object_name, custom_link_name):\n    object_name = object_name.lower()\n    object_id = simulator.urdf_ids[object_name]\n    urdf_link_name = custom_link_name\n    link_id = get_link_id_from_name(simulator, object_name, urdf_link_name)\n    link_pos, link_orient = p.getLinkState(object_id, link_id, physicsClientId=simulator.id)[:2]\n    return np.array(link_pos)\ndef get_link_pc(simulator, object_name, custom_link_name):\n    object_name = object_name.lower()\n    urdf_link_name = custom_link_name \n    link_com, all_pc = render_to_get_link_com(simulator, object_name, urdf_link_name)\n    return all_pc\ndef set_joint_value(simulator, object_name, joint_name, joint_value=\"max\"):\n    object_name = object_name.lower()\n    object_id = simulator.urdf_ids[object_name]\n    num_joints = p.getNumJoints(object_id, physicsClientId=simulator.id)\n    joint_index = None\n    max_joint_val = 0\n    min_joint_val = 0\n    for j_id in range(num_joints):\n        joint_info = p.getJointInfo(object_id, j_id, physicsClientId=simulator.id)",
+        "type": "code",
+        "location": "/manipulation/gpt_reward_api.py:151-175"
+    },
+    "545": {
+        "file_id": 29,
+        "content": "get_link_state: Retrieves the position and orientation of a specific link in a simulated object.\nget_link_pc: Retrieves point cloud data for a given link in a simulated object.\nset_joint_value: Sets the value of a joint in a simulated object to either maximum or a specified value.",
+        "type": "comment"
+    },
+    "546": {
+        "file_id": 29,
+        "content": "        print(joint_info[1])\n        if joint_info[1].decode(\"utf-8\") == joint_name:\n            joint_index = j_id\n            max_joint_val = joint_info[9]\n            min_joint_val = joint_info[8]\n            break\n    if joint_value == 'max':\n        p.resetJointState(object_id, joint_index, max_joint_val, physicsClientId=simulator.id)\n    elif joint_value == 'min':\n        p.resetJointState(object_id, joint_index, min_joint_val, physicsClientId=simulator.id)\n    else:\n        p.resetJointState(object_id, joint_index, joint_value, physicsClientId=simulator.id)\ndef in_bbox(simulator, pos, bbox_min, bbox_max):\n    if (pos[0] <= bbox_max[0] and pos[0] >= bbox_min[0] and \\\n        pos[1] <= bbox_max[1] and pos[1] >= bbox_min[1] and \\\n        pos[2] <= bbox_max[2] and pos[2] >= bbox_min[2]):\n        return True\n    return False\ndef grasped(simulator, object_name):\n    if object_name in simulator.grasped_object_list:\n        return True\n    return False\ndef render_to_get_link_com(simulator, object_name, urdf_link_name):    ",
+        "type": "code",
+        "location": "/manipulation/gpt_reward_api.py:176-203"
+    },
+    "547": {
+        "file_id": 29,
+        "content": "The code initializes joint values and resets joint states based on a given joint value (max, min, or specified). It also checks if the object is within a bounding box, determines if an object has been grasped, and renders a link's center of mass.",
+        "type": "comment"
+    },
+    "548": {
+        "file_id": 29,
+        "content": "    ### make all other objects invisiable\n    prev_rgbas = []\n    object_id = simulator.urdf_ids[object_name]\n    for obj_name, obj_id in simulator.urdf_ids.items():\n        if obj_name != object_name:\n            num_links = p.getNumJoints(obj_id, physicsClientId=simulator.id)\n            for link_idx in range(-1, num_links):\n                prev_rgba = p.getVisualShapeData(obj_id, link_idx, physicsClientId=simulator.id)[0][14:18]\n                prev_rgbas.append(prev_rgba)\n                p.changeVisualShape(obj_id, link_idx, rgbaColor=[0, 0, 0, 0], physicsClientId=simulator.id)\n    ### center camera to the target object\n    env_prev_view_matrix, env_prev_projection_matrix = simulator.view_matrix, simulator.projection_matrix\n    camera_width = 640\n    camera_height = 480\n    obj_id = object_id\n    min_aabb, max_aabb = simulator.get_aabb(obj_id)\n    camera_target = (max_aabb + min_aabb) / 2\n    distance = np.linalg.norm(max_aabb - min_aabb) * 1.2\n    elevation = 30\n    ### get a round of images of the target object",
+        "type": "code",
+        "location": "/manipulation/gpt_reward_api.py:204-225"
+    },
+    "549": {
+        "file_id": 29,
+        "content": "Code snippet sets the visibility of all objects in the simulation to invisible except for the target object. It then centers the camera to the target object and gets a round of images of the target object from different angles.",
+        "type": "comment"
+    },
+    "550": {
+        "file_id": 29,
+        "content": "    rgbs, depths, view_matrices, projection_matrices = take_round_images(\n        simulator, camera_target, distance, elevation, \n        camera_width=camera_width, camera_height=camera_height, \n        z_near=0.01, z_far=10,\n        return_camera_matrices=True)\n    ### make the target link invisiable\n    link_id = get_link_id_from_name(simulator, object_name, urdf_link_name)\n    # import pdb; pdb.set_trace()\n    prev_link_rgba = p.getVisualShapeData(obj_id, link_id, physicsClientId=simulator.id)[0][14:18]\n    p.changeVisualShape(obj_id, link_id, rgbaColor=[0, 0, 0, 0], physicsClientId=simulator.id)\n    ### get a round of images of the target object with link invisiable\n    rgbs_link_invisiable, _ = take_round_images(\n        simulator, camera_target, distance, elevation,\n        camera_width=camera_width, camera_height=camera_height, \n        z_near=0.01, z_far=10,\n    )\n    ### use subtraction to get the link mask\n    max_num_diff_pixels = 0\n    best_idx = 0\n    for idx, (rgb, rgb_link_invisiable) in enumerate(zip(rgbs, rgbs_link_invisiable)):",
+        "type": "code",
+        "location": "/manipulation/gpt_reward_api.py:226-248"
+    },
+    "551": {
+        "file_id": 29,
+        "content": "This code snippet takes a series of round images from different angles using PyBullet simulator and hides the target object's link. Then it obtains another set of images with the hidden link, compares them to find differences, and determines the best image for calculating rewards.",
+        "type": "comment"
+    },
+    "552": {
+        "file_id": 29,
+        "content": "        diff_image = np.abs(rgb - rgb_link_invisiable)\n        diff_pixels = np.sum(diff_image > 0)\n        if diff_pixels > max_num_diff_pixels:\n            max_num_diff_pixels = diff_pixels\n            best_idx = idx\n    best_mask = np.abs(rgbs[best_idx] - rgbs_link_invisiable[best_idx]) > 0\n    best_mask = np.any(best_mask, axis=2)\n    ### get the link mask center\n    center = ndimage.measurements.center_of_mass(best_mask)\n    center = [int(center[0]), int(center[1])]\n    ### back project the link mask center to get the link com in 3d coordinate\n    best_pc = get_pc(projection_matrices[best_idx], view_matrices[best_idx], depths[best_idx], camera_width, camera_height)\n    pt_idx = center[0] * camera_width + center[1]\n    link_com = best_pc[pt_idx]\n    best_pc = best_pc.reshape((camera_height, camera_width, 3))\n    all_pc = best_pc[best_mask]\n    ### reset the object and link rgba to previous values, and the simulator view matrix and projection matrix\n    p.changeVisualShape(obj_id, link_id, rgbaColor=prev_link_rgba, physicsClientId=simulator.id)",
+        "type": "code",
+        "location": "/manipulation/gpt_reward_api.py:249-273"
+    },
+    "553": {
+        "file_id": 29,
+        "content": "This code calculates the difference between two images and finds the best mask based on the maximum number of different pixels. It then determines the link mask center and back-projects it to obtain the 3D coordinate for the link's center of mass. Finally, it resets the object and link rgba values along with simulator view and projection matrices.",
+        "type": "comment"
+    },
+    "554": {
+        "file_id": 29,
+        "content": "    cnt = 0\n    object_id = simulator.urdf_ids[object_name]\n    for obj_name, obj_id in simulator.urdf_ids.items():\n        if obj_name != object_name:\n            num_links = p.getNumJoints(obj_id, physicsClientId=simulator.id)\n            for link_idx in range(-1, num_links):\n                p.changeVisualShape(obj_id, link_idx, rgbaColor=prev_rgbas[cnt], physicsClientId=simulator.id)\n                cnt += 1\n    simulator.view_matrix, simulator.projection_matrix = env_prev_view_matrix, env_prev_projection_matrix\n    ### add a safety check here in case the rendering fails\n    bounding_box = get_bounding_box_link(simulator, object_name, urdf_link_name)\n    if not in_bbox(simulator, link_com, bounding_box[0], bounding_box[1]):\n        link_com = (bounding_box[0] + bounding_box[1]) / 2\n    return link_com, all_pc\ndef get_link_id_from_name(simulator, object_name, link_name):\n    object_id = simulator.urdf_ids[object_name]\n    num_joints = p.getNumJoints(object_id, physicsClientId=simulator.id)\n    joint_index = None",
+        "type": "code",
+        "location": "/manipulation/gpt_reward_api.py:275-297"
+    },
+    "555": {
+        "file_id": 29,
+        "content": "Code snippet retrieves the link's center of mass and all point clouds for a given object. It iterates through each object in the simulator, changes their visual shapes to previous colors, and then checks if the link is within a bounding box. If not, it adjusts the link's position.",
+        "type": "comment"
+    },
+    "556": {
+        "file_id": 29,
+        "content": "    for i in range(num_joints):\n        joint_info = p.getJointInfo(object_id, i, physicsClientId=simulator.id)\n        if joint_info[12].decode(\"utf-8\") == link_name:\n            joint_index = i\n            break\n    return joint_index\ndef get_joint_id_from_name(simulator, object_name, joint_name):\n    object_id = simulator.urdf_ids[object_name]\n    num_joints = p.getNumJoints(object_id, physicsClientId=simulator.id)\n    joint_index = None\n    for i in range(num_joints):\n        joint_info = p.getJointInfo(object_id, i, physicsClientId=simulator.id)\n        if joint_info[1].decode(\"utf-8\") == joint_name:\n            joint_index = i\n            break\n    return joint_index",
+        "type": "code",
+        "location": "/manipulation/gpt_reward_api.py:298-317"
+    },
+    "557": {
+        "file_id": 29,
+        "content": "This code retrieves the joint index from either a link or joint name in the given object. It first maps the object name to its ID and then iterates through all joints of that object, comparing their names until it finds a match. Once the matching joint is found, its index is returned.",
+        "type": "comment"
+    },
+    "558": {
+        "file_id": 30,
+        "content": "/manipulation/grasping_utils.py",
+        "type": "filepath"
+    },
+    "559": {
+        "file_id": 30,
+        "content": "This code contains three functions: voxelizing, rotating, and aligning grippers. It also includes functions for frame manipulation and obtaining point clouds from simulators. The code estimates normals, voxelizes, and returns point clouds and their normals using Open3D library.",
+        "type": "summary"
+    },
+    "560": {
+        "file_id": 30,
+        "content": "import pybullet as p\nimport numpy as np\nfrom manipulation.utils import take_round_images_around_object, get_pc\nimport open3d as o3d\nfrom scipy.spatial.transform import Rotation as R\ndef voxelize_pc(pc, voxel_size=0.01):\n    pcd = o3d.geometry.PointCloud()\n    pcd.points = o3d.utility.Vector3dVector(pc)\n    try:\n        voxelized_pcd = pcd.voxel_down_sample(voxel_size)\n    except RuntimeError:\n        return None\n    voxelized_pc = np.asarray(voxelized_pcd.points)\n    return voxelized_pc\ndef rotation_matrix_x(theta):\n    \"\"\"Return a 3x3 rotation matrix for a rotation around the x-axis by angle theta.\"\"\"\n    return R.from_matrix(np.array([\n        [1, 0, 0],\n        [0, np.cos(theta), -np.sin(theta)],\n        [0, np.sin(theta), np.cos(theta)]\n    ]))\ndef align_gripper_z_with_normal(normal):\n    n_WS = normal\n    Gz = n_WS  # gripper z axis aligns with normal # TODO: check the object axis of the franka gripper\n    # make orthonormal y axis, aligned with world down\n    # y = np.array([0.0, 0.0, -1.0])\n    # or, make it horizontal",
+        "type": "code",
+        "location": "/manipulation/grasping_utils.py:1-30"
+    },
+    "561": {
+        "file_id": 30,
+        "content": "This code defines three functions: `voxelize_pc`, `rotation_matrix_x`, and `align_gripper_z_with_normal`. The first function voxelizes a point cloud by down-sampling it, the second function calculates a rotation matrix for a rotation around the x-axis, and the third function aligns the gripper's z-axis with a given normal vector.",
+        "type": "comment"
+    },
+    "562": {
+        "file_id": 30,
+        "content": "    y = np.array([0.0, -1, 0])\n    Gy = y - np.dot(y, Gz) * Gz\n    Gx = np.cross(Gy, Gz)\n    R_WG = R.from_matrix(np.vstack((Gx, Gy, Gz)).T)\n    return R_WG\ndef align_gripper_x_with_normal(normal):\n    n_WS = normal\n    Gx = n_WS  # gripper z axis aligns with normal # TODO: check the object axis of the franka gripper\n    # make orthonormal y axis, aligned with world down\n    # y = np.array([0.0, 0.0, -1.0])\n    # or, make it horizontal\n    y = np.array([0.0, -1, 0])\n    Gy = y - np.dot(y, Gx) * Gx\n    Gz = np.cross(Gx, Gy)\n    R_WG = R.from_matrix(np.vstack((Gx, Gy, Gz)).T)\n    return R_WG\ndef get_pc_and_normal(simulator, object_name):\n    camera_width=640\n    camera_height=480\n    rgbs, depths, view_camera_matrices, project_camera_matrices = \\\n        take_round_images_around_object(simulator, object_name, \n                                        return_camera_matrices=True, camera_height=camera_height, camera_width=camera_width, \n                                        only_object=True)\n    pcs = []\n    for depth, view_matrix, project_matrix in zip(depths, view_camera_matrices, project_camera_matrices):",
+        "type": "code",
+        "location": "/manipulation/grasping_utils.py:31-60"
+    },
+    "563": {
+        "file_id": 30,
+        "content": "Code in RoboGen/manipulation/grasping_utils.py defines functions to align gripper, create an orthonormal frame, and obtain point clouds with normals from a simulator.",
+        "type": "comment"
+    },
+    "564": {
+        "file_id": 30,
+        "content": "        pc = get_pc(project_matrix, view_matrix, depth, camera_width, camera_height, mask_infinite=True)\n        pcs.append(pc)\n    pc = np.concatenate(pcs, axis=0)\n    pc = voxelize_pc(pc, voxel_size=0.0005) \n    ### get normals of the point cloud\n    pcd = o3d.geometry.PointCloud() \n    pcd.points = o3d.utility.Vector3dVector(pc)\n    pcd.estimate_normals()\n    normals = np.asarray(pcd.normals)\n    return pc, normals",
+        "type": "code",
+        "location": "/manipulation/grasping_utils.py:61-74"
+    },
+    "565": {
+        "file_id": 30,
+        "content": "This code segment estimates point cloud normals, voxelizes the point cloud, and returns both the point cloud and its normals. It uses Open3D library for point cloud operations.",
+        "type": "comment"
+    },
+    "566": {
+        "file_id": 31,
+        "content": "/manipulation/motion_planning_utils.py",
+        "type": "filepath"
+    },
+    "567": {
+        "file_id": 31,
+        "content": "The code defines a motion planning function for the RoboGen environment using OMPL, sets parameters and limits, and loops until a valid solution is found or 600 iterations are reached.",
+        "type": "summary"
+    },
+    "568": {
+        "file_id": 31,
+        "content": "import numpy as np\nimport pybullet_ompl.pb_ompl as pb_ompl\nimport pybullet as p\nimport copy\ndef motion_planning(env, target_pos, target_orientation, planner=\"BITstar\", obstacles=[], allow_collision_links=[], panda_slider=True):\n    current_joint_angles = copy.deepcopy(env.robot.get_joint_angles(indices=env.robot.right_arm_joint_indices))\n    ompl_robot = pb_ompl.PbOMPLRobot(env.robot.body)\n    ompl_robot.set_state(current_joint_angles)\n    allow_collision_robot_link_pairs = []\n    if env.robot_name == \"sawyer\":\n        allow_collision_robot_link_pairs.append((5, 8))\n    if env.robot_name == 'fetch':\n        allow_collision_robot_link_pairs.append((3, 19))\n    pb_ompl_interface = pb_ompl.PbOMPL(ompl_robot, obstacles, allow_collision_links, \n                                       allow_collision_robot_link_pairs=allow_collision_robot_link_pairs)\n    pb_ompl_interface.set_planner(planner)\n    # first need to compute a collision-free IK solution\n    ik_lower_limits = env.robot.ik_lower_limits \n    ik_upper_limits = env.robot.ik_upper_limits ",
+        "type": "code",
+        "location": "/manipulation/motion_planning_utils.py:1-22"
+    },
+    "569": {
+        "file_id": 31,
+        "content": "This code is importing necessary libraries and defining a function for motion planning using OMPL with Pybullet. It creates a robot object, sets the state, adds collision pairs if needed, initializes an interface, and sets the chosen planner before computing a collision-free IK solution.",
+        "type": "comment"
+    },
+    "570": {
+        "file_id": 31,
+        "content": "    print(\"ik_lower_limits: \", ik_lower_limits)\n    print(\"ik_upper_limits: \", ik_upper_limits)\n    ik_joint_ranges = ik_upper_limits - ik_lower_limits\n    it = 0\n    while True:\n        if it % 10 == 0:\n            print(\"sampling target ik it: \", it)\n        ik_rest_poses = np.random.uniform(ik_lower_limits, ik_upper_limits)\n        target_joint_angle = np.array(p.calculateInverseKinematics(\n            env.robot.body, env.robot.right_end_effector, \n            targetPosition=target_pos, targetOrientation=target_orientation, \n            lowerLimits=ik_lower_limits.tolist(), upperLimits=ik_upper_limits.tolist(), jointRanges=ik_joint_ranges.tolist(), \n            restPoses=ik_rest_poses.tolist(), \n            maxNumIterations=1000,\n            residualThreshold=1e-4\n        ))\n        if np.all(target_joint_angle >= ik_lower_limits) and np.all(target_joint_angle <= ik_upper_limits) \\\n                and pb_ompl_interface.is_state_valid(target_joint_angle):\n            break\n        it += 1\n        if it > 600:",
+        "type": "code",
+        "location": "/manipulation/motion_planning_utils.py:23-47"
+    },
+    "571": {
+        "file_id": 31,
+        "content": "The code is sampling target inverse kinematics (IK) positions and generating random IK rest poses within the given limits. It then calculates a new target joint angle using the calculateInverseKinematics function from a library, ensuring the joint angles remain within specified limits and are valid. The loop continues until a valid solution is found or exceeds 600 iterations.",
+        "type": "comment"
+    },
+    "572": {
+        "file_id": 31,
+        "content": "            ompl_robot.set_state(current_joint_angles)\n            print(\"failed to find a valid IK solution\")\n            return False, None\n    # then plan using ompl\n    assert len(target_joint_angle) == ompl_robot.num_dim\n    for idx in range(ompl_robot.num_dim):\n        print(\"joint: \", idx, \" lower limit: \", ompl_robot.joint_bounds[idx][0], \" upper limit: \", ompl_robot.joint_bounds[idx][1], \" target: \", target_joint_angle[idx])\n        assert (ompl_robot.joint_bounds[idx][0] <= target_joint_angle[idx]) & (target_joint_angle[idx] <= ompl_robot.joint_bounds[idx][1])\n    ompl_robot.set_state(current_joint_angles)\n    res, path = pb_ompl_interface.plan(target_joint_angle)\n    ompl_robot.set_state(current_joint_angles)\n    if not res:\n        print(\"motion planning failed to find a path\")\n    return res, path\ndef motion_planning_joint_angle(env, target_joint_angle, planner=\"BITstar\", obstacles=[], allow_collision_links=[], panda_slider=True):\n    ompl_robot = pb_ompl.PbOMPLRobot(env.robot.body)\n    pb_ompl_interface = pb_ompl.PbOMPL(ompl_robot, obstacles, allow_collision_links)",
+        "type": "code",
+        "location": "/manipulation/motion_planning_utils.py:48-70"
+    },
+    "573": {
+        "file_id": 31,
+        "content": "The code defines a function for motion planning joint angles in the RoboGen environment using OMPL. It first checks if a valid IK solution exists, then sets up the OMPL robot and interface, and finally plans a path based on the target joint angles provided. If no path is found, it returns False, otherwise it returns the result and the planned path.",
+        "type": "comment"
+    },
+    "574": {
+        "file_id": 31,
+        "content": "    pb_ompl_interface.set_planner(planner)\n    #  plan using ompl\n    assert len(target_joint_angle) == ompl_robot.num_dim\n    for idx in range(ompl_robot.num_dim):\n        print(\"joint: \", idx, \" lower limit: \", ompl_robot.joint_bounds[idx][0], \" upper limit: \", ompl_robot.joint_bounds[idx][1], \" target: \", target_joint_angle[idx])\n        assert (ompl_robot.joint_bounds[idx][0] <= target_joint_angle[idx]) & (target_joint_angle[idx] <= ompl_robot.joint_bounds[idx][1])\n    res, path = pb_ompl_interface.plan(target_joint_angle)\n    if not res:\n        print(\"motion planning failed to find a path\")\n    return res, path",
+        "type": "code",
+        "location": "/manipulation/motion_planning_utils.py:71-84"
+    },
+    "575": {
+        "file_id": 31,
+        "content": "This code sets the planner for OMPL interface, checks joint angle limits and targets, then plans using OMPL. If planning fails, it displays a failure message. Finally, it returns whether a path was found and the path itself.",
+        "type": "comment"
+    },
+    "576": {
+        "file_id": 32,
+        "content": "/manipulation/panda.py",
+        "type": "filepath"
+    },
+    "577": {
+        "file_id": 32,
+        "content": "The Panda class inherits from Robot and initializes instance variables. It sets joint indices, end effector index, and gripper indices for the right arm based on input arguments. The super function is used to call the constructor of the parent class Robot. The object is initialized by loading a URDF file and setting up joints with optional parameters.",
+        "type": "summary"
+    },
+    "578": {
+        "file_id": 32,
+        "content": "import os\nimport numpy as np\nimport pybullet as p\nfrom .robot import Robot\nclass Panda(Robot):\n    def __init__(self, controllable_joints='right', slider=True, floating=False):\n        self.slider = slider\n        self.floating = floating\n        if not floating:\n            if not slider:\n                right_arm_joint_indices = [0, 1, 2, 3, 4, 5, 6] # Controllable arm joints\n                right_end_effector = 11 # Used to get the pose of the end effector\n                right_gripper_indices = [9, 10] # Gripper actuated joints\n            else:\n                right_arm_joint_indices = [0, 1, 2, 4, 5, 6, 7, 8, 9, 10]\n                right_end_effector = 15 # Used to get the pose of the end effector\n                right_gripper_indices = [13, 14] # Gripper actuated joints\n        else:\n            right_arm_joint_indices = []\n            right_end_effector = -1\n            right_gripper_indices = [0, 1]\n        super(Panda, self).__init__(controllable_joints, right_arm_joint_indices, right_end_effector, right_gripper_indices)",
+        "type": "code",
+        "location": "/manipulation/panda.py:1-25"
+    },
+    "579": {
+        "file_id": 32,
+        "content": "Class Panda inherits from Robot and initializes instance variables slider and floating based on their respective input arguments. It also assigns the joint indices, end effector index, and gripper indices for the right arm of the robot based on whether the arm is floating or controllable with a slider. If the arm is floating, these values are set to default values. The super() function is used to call the constructor from the parent class Robot.",
+        "type": "comment"
+    },
+    "580": {
+        "file_id": 32,
+        "content": "    def init(self, directory, id, np_random, fixed_base=False, use_suction=True):\n        self.body = p.loadURDF(os.path.join(directory, 'franka_mobile', 'panda_suction_slider_mobile.urdf'), useFixedBase=fixed_base, basePosition=[-1, -1, 0.5], flags=p.URDF_USE_SELF_COLLISION, physicsClientId=id)\n        for i in range(p.getNumJoints(self.body, physicsClientId=id)):\n            print(p.getJointInfo(self.body, i, physicsClientId=id))\n            link_name = p.getJointInfo(self.body, i, physicsClientId=id)[12].decode('utf-8')\n            print(\"link_name: \", link_name)\n        super(Panda, self).init(self.body, id, np_random)",
+        "type": "code",
+        "location": "/manipulation/panda.py:27-35"
+    },
+    "581": {
+        "file_id": 32,
+        "content": "The function initializes the Panda object by loading a URDF file and sets up the joints. It takes parameters for directory, id, np_random, fixed_base, and use_suction. The super function is called to initialize the base class.",
+        "type": "comment"
+    },
+    "582": {
+        "file_id": 33,
+        "content": "/manipulation/partnet_category.py",
+        "type": "filepath"
+    },
+    "583": {
+        "file_id": 33,
+        "content": "This code defines a list of categories from the PartNet dataset, which is a collection of manipulation tasks involving various objects. Each category represents an object that can be manipulated in different ways, such as Bottle, Box, Bucket, etc. These categories are useful for training and evaluating robotic manipulation models.",
+        "type": "summary"
+    },
+    "584": {
+        "file_id": 33,
+        "content": "partnet_categories = [\n    'Bottle',\n    'Box',\n    'Bucket',\n    'Camera',\n    'Cart',\n    'Chair',\n    'Clock',\n    'CoffeeMachine',\n    'Dishwasher',\n    'Dispenser',\n    'Display',\n    'Door',\n    'Eyeglasses',\n    'Fan',\n    'Faucet',\n    'FoldingChair',\n    'Globe',\n    'Kettle',\n    'Keyboard',\n    'KitchenPot',\n    'Knife',\n    'Lamp',\n    'Laptop',\n    'Lighter',\n    'Microwave',\n    'Mouse',\n    'Oven',\n    'Pen',\n    'Phone',\n    'Pliers',\n    'Printer',\n    'Refrigerator',\n    'Remote',\n    'Safe',\n    'Scissors',\n    'Stapler',\n    'StorageFurniture',\n    'Suitcase',\n    'Switch',\n    'Table',\n    'Toaster',\n    'Toilet',\n    'TrashCan',\n    'USB',\n    'WashingMachine',\n    'Window',\n]",
+        "type": "code",
+        "location": "/manipulation/partnet_category.py:1-48"
+    },
+    "585": {
+        "file_id": 33,
+        "content": "This code defines a list of categories from the PartNet dataset, which is a collection of manipulation tasks involving various objects. Each category represents an object that can be manipulated in different ways, such as Bottle, Box, Bucket, etc. These categories are useful for training and evaluating robotic manipulation models.",
+        "type": "comment"
+    },
+    "586": {
+        "file_id": 34,
+        "content": "/manipulation/robot.py",
+        "type": "filepath"
+    },
+    "587": {
+        "file_id": 34,
+        "content": "This code defines a Robot class inheriting from Agent, initializing it with joints, end effector, and gripper indices. It sets joint motor control, checks fixed joints, uses PyBullet engine for position control, adjusts gains, and offers instant setting option.",
+        "type": "summary"
+    },
+    "588": {
+        "file_id": 34,
+        "content": "import numpy as np\nimport pybullet as p\nfrom .agent import Agent\nclass Robot(Agent):\n    def __init__(self, controllable_joints, right_arm_joint_indices, right_end_effector, right_gripper_indices):\n        self.controllable_joints = controllable_joints \n        self.right_arm_joint_indices = right_arm_joint_indices # Controllable arm joints\n        self.controllable_joint_indices = self.right_arm_joint_indices \n        self.right_end_effector = right_end_effector # Used to get the pose of the end effector\n        self.right_gripper_indices = right_gripper_indices # Gripper actuated joints\n        self.motor_forces = 1.0\n        self.motor_gains = 0.05\n        super(Robot, self).__init__()\n    def init(self, body, id, np_random):\n        super(Robot, self).init(body, id, np_random)\n        self.joint_max_forces = self.get_joint_max_force(self.controllable_joint_indices)\n        self.update_joint_limits()\n        self.right_arm_ik_indices = self.right_arm_joint_indices \n    def set_gripper_open_position(self, indices, positions, set_instantly=False, force=500):",
+        "type": "code",
+        "location": "/manipulation/robot.py:1-22"
+    },
+    "589": {
+        "file_id": 34,
+        "content": "The code defines a Robot class that inherits from the Agent class. It initializes the robot with controllable joints, right arm joint indices, right end effector, and right gripper indices. The `init` function is called to set the joint maximum forces, update joint limits, and set gripper open position if needed.",
+        "type": "comment"
+    },
+    "590": {
+        "file_id": 34,
+        "content": "        p.setJointMotorControlArray(self.body, jointIndices=indices, controlMode=p.POSITION_CONTROL, targetPositions=positions, positionGains=np.array([0.05]*len(indices)), forces=[force]*len(indices), physicsClientId=self.id)\n        if set_instantly:\n            self.set_joint_angles(indices, positions, use_limits=True)\n    def _is_not_fixed(self, joint_idx):\n        joint_info = p.getJointInfo(self.body, joint_idx)\n        return joint_info[2] != p.JOINT_FIXED",
+        "type": "code",
+        "location": "/manipulation/robot.py:23-29"
+    },
+    "591": {
+        "file_id": 34,
+        "content": "This code sets joint motor control and checks if a joint is fixed. It uses PyBullet physics engine, sets position control mode, adjusts gains, and offers an option to set instantly.",
+        "type": "comment"
+    },
+    "592": {
+        "file_id": 35,
+        "content": "/manipulation/sawyer.py",
+        "type": "filepath"
+    },
+    "593": {
+        "file_id": 35,
+        "content": "The code initializes a Sawyer robot class that extends Robot, sets controllable joints and determines end effector position and gripper joint indices based on the arm type (slider or floating). It loads URDF files, checks for joint controllability, and prints debugging information.",
+        "type": "summary"
+    },
+    "594": {
+        "file_id": 35,
+        "content": "import os\nimport numpy as np\nimport pybullet as p\nfrom .robot import Robot\nclass Sawyer(Robot):\n    def __init__(self, controllable_joints='right', slider=True, floating=False):\n        self.slider = slider\n        self.floating = floating\n        if not floating:\n            if not slider:\n                right_arm_joint_indices = [0, 1, 2, 3, 4, 5, 6] # Controllable arm joints\n                right_end_effector = 11 # Used to get the pose of the end effector\n                right_gripper_indices = [9, 10] # Gripper actuated joints\n            else:\n                right_arm_joint_indices = [0, 1, 2, 4, 5, 6, 7, 8, 9, 10]\n                right_end_effector = 26 # Used to get the pose of the end effector\n                right_gripper_indices = [25, 23] # Gripper actuated joints\n        else:\n            right_arm_joint_indices = []\n            right_end_effector = -1\n            right_gripper_indices = [0, 1]\n        super(Sawyer, self).__init__(controllable_joints, right_arm_joint_indices, right_end_effector, right_gripper_indices)",
+        "type": "code",
+        "location": "/manipulation/sawyer.py:1-25"
+    },
+    "595": {
+        "file_id": 35,
+        "content": "This code defines a Sawyer robot class that extends the Robot class. It initializes slider and floating variables, and sets the controllable joints based on whether the arm is slider or floating. The controllable joint indices, end effector position, and gripper joint indices are determined accordingly for each type of Sawyer configuration.",
+        "type": "comment"
+    },
+    "596": {
+        "file_id": 35,
+        "content": "    def init(self, directory, id, np_random, fixed_base=False, use_suction=True):\n        self.body = p.loadURDF(os.path.join(directory, 'sawyer', 'sawyer_mobile.urdf'), useFixedBase=fixed_base, basePosition=[-1, -1, 0.5], flags=p.URDF_USE_SELF_COLLISION, physicsClientId=id)\n        for i in range(p.getNumJoints(self.body, physicsClientId=id)):\n            print(p.getJointInfo(self.body, i, physicsClientId=id))\n            link_name = p.getJointInfo(self.body, i, physicsClientId=id)[12].decode('utf-8')\n            print(\"link_name: \", link_name)\n        all_joint_num = p.getNumJoints(self.body)\n        all_joint_idx = list(range(all_joint_num))\n        joint_idx = [j for j in all_joint_idx if self._is_not_fixed(j)]\n        self.right_arm_joint_indices = joint_idx\n        self.controllable_joint_indices = self.right_arm_joint_indices\n        print(\"joint_idx: \", joint_idx)\n        super(Sawyer, self).init(self.body, id, np_random)",
+        "type": "code",
+        "location": "/manipulation/sawyer.py:27-42"
+    },
+    "597": {
+        "file_id": 35,
+        "content": "This code initializes a Sawyer robot by loading the URDF file, checking joints for controllability, and setting up class attributes. It also prints joint information and link names for debugging purposes.",
+        "type": "comment"
+    },
+    "598": {
+        "file_id": 36,
+        "content": "/manipulation/sim.py",
+        "type": "filepath"
+    },
+    "599": {
+        "file_id": 36,
+        "content": "The code initializes a PyBullet-based simulation, sets physics parameters, configures reinforcement learning spaces, adjusts object positions, handles collisions, and updates the robot's environment, managing object placement, collision checks, joint angles, camera setup, inverse kinematics, rotation types with suction activation, contact detection, identifies objects, creates constraints, retrieves entity data, grips angle control, suction control, observation space, reward computation, and provides necessary information in a simulated robotics environment.",
+        "type": "summary"
+    }
+}

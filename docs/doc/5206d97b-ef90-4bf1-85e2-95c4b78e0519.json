@@ -1,0 +1,15 @@
+{
+    "summary": "The Panda class inherits from Robot and initializes instance variables. It sets joint indices, end effector index, and gripper indices for the right arm based on input arguments. The super function is used to call the constructor of the parent class Robot. The object is initialized by loading a URDF file and setting up joints with optional parameters.",
+    "details": [
+        {
+            "comment": "Class Panda inherits from Robot and initializes instance variables slider and floating based on their respective input arguments. It also assigns the joint indices, end effector index, and gripper indices for the right arm of the robot based on whether the arm is floating or controllable with a slider. If the arm is floating, these values are set to default values. The super() function is used to call the constructor from the parent class Robot.",
+            "location": "\"/media/root/Prima/works/RoboGen/docs/src/manipulation/panda.py\":0-24",
+            "content": "import os\nimport numpy as np\nimport pybullet as p\nfrom .robot import Robot\nclass Panda(Robot):\n    def __init__(self, controllable_joints='right', slider=True, floating=False):\n        self.slider = slider\n        self.floating = floating\n        if not floating:\n            if not slider:\n                right_arm_joint_indices = [0, 1, 2, 3, 4, 5, 6] # Controllable arm joints\n                right_end_effector = 11 # Used to get the pose of the end effector\n                right_gripper_indices = [9, 10] # Gripper actuated joints\n            else:\n                right_arm_joint_indices = [0, 1, 2, 4, 5, 6, 7, 8, 9, 10]\n                right_end_effector = 15 # Used to get the pose of the end effector\n                right_gripper_indices = [13, 14] # Gripper actuated joints\n        else:\n            right_arm_joint_indices = []\n            right_end_effector = -1\n            right_gripper_indices = [0, 1]\n        super(Panda, self).__init__(controllable_joints, right_arm_joint_indices, right_end_effector, right_gripper_indices)"
+        },
+        {
+            "comment": "The function initializes the Panda object by loading a URDF file and sets up the joints. It takes parameters for directory, id, np_random, fixed_base, and use_suction. The super function is called to initialize the base class.",
+            "location": "\"/media/root/Prima/works/RoboGen/docs/src/manipulation/panda.py\":26-34",
+            "content": "    def init(self, directory, id, np_random, fixed_base=False, use_suction=True):\n        self.body = p.loadURDF(os.path.join(directory, 'franka_mobile', 'panda_suction_slider_mobile.urdf'), useFixedBase=fixed_base, basePosition=[-1, -1, 0.5], flags=p.URDF_USE_SELF_COLLISION, physicsClientId=id)\n        for i in range(p.getNumJoints(self.body, physicsClientId=id)):\n            print(p.getJointInfo(self.body, i, physicsClientId=id))\n            link_name = p.getJointInfo(self.body, i, physicsClientId=id)[12].decode('utf-8')\n            print(\"link_name: \", link_name)\n        super(Panda, self).init(self.body, id, np_random)"
+        }
+    ]
+}

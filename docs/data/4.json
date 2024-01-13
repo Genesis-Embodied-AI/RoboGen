@@ -1,0 +1,543 @@
+{
+    "400": {
+        "file_id": 19,
+        "content": "import torch\nfrom sentence_transformers import SentenceTransformer, util\nfrom PIL import Image\ndevice = \"cuda\" if torch.cuda.is_available() else \"cpu\"\nsentence_bert_model = None\ndef check_text_similarity(text, check_list=None, check_embeddings=None):\n    global sentence_bert_model\n    if sentence_bert_model is None:\n        sentence_bert_model = SentenceTransformer('all-mpnet-base-v2')\n    #Sentences are encoded by calling model.encode()\n    with torch.no_grad():\n        emb1 = sentence_bert_model.encode(text)\n        if check_embeddings is None:\n            emb_to_check = sentence_bert_model.encode(check_list)\n        else:\n            emb_to_check = check_embeddings\n        cos_sim = util.cos_sim(emb1, emb_to_check)\n    return cos_sim.cpu().numpy()",
+        "type": "code",
+        "location": "/gpt_4/verification.py:1-22"
+    },
+    "401": {
+        "file_id": 19,
+        "content": "This code imports necessary libraries, initializes a device based on GPU availability, and defines a function called \"check_text_similarity\". The function takes in text, a list of texts to check against, and embeddings for comparison. It uses the SentenceTransformer model 'all-mpnet-base-v2' to encode the input text(s) into embeddings, computes cosine similarities between the embeddings, and returns the results as a numpy array.",
+        "type": "comment"
+    },
+    "402": {
+        "file_id": 20,
+        "content": "/install_ompl_1.5.2.sh",
+        "type": "filepath"
+    },
+    "403": {
+        "file_id": 20,
+        "content": "The script installs ROS dependencies, libraries, and Python packages before optionally installing OMPL on Ubuntu systems.",
+        "type": "summary"
+    },
+    "404": {
+        "file_id": 20,
+        "content": "#!/bin/bash\nset -e\nif [ `id -u` == 0 ]; then\n    SUDO=\n    export DEBIAN_FRONTEND=noninteractive\n    apt-get -y install lsb-release\nelse\n    SUDO=\"sudo -H\"\nfi\nubuntu_version=`lsb_release -rs | sed 's/\\.//'`\ninstall_common_dependencies()\n{\n    # install most dependencies via apt-get\n    ${SUDO} apt-get -y update\n    ${SUDO} apt-get -y upgrade\n    # We explicitly set the C++ compiler to g++, the default GNU g++ compiler. This is\n    # needed because we depend on system-installed libraries built with g++ and linked\n    # against libstdc++. In case `c++` corresponds to `clang++`, code will not build, even\n    # if we would pass the flag `-stdlib=libstdc++` to `clang++`.\n    ${SUDO} apt-get -y install g++ cmake pkg-config libboost-serialization-dev libboost-filesystem-dev libboost-system-dev libboost-program-options-dev libboost-test-dev libeigen3-dev libode-dev wget libyaml-cpp-dev\n    export CXX=g++\n    export MAKEFLAGS=\"-j `nproc`\"\n}\ninstall_python_binding_dependencies()\n{\n    ${SUDO} apt-get -y install python${PYTHONV}-dev python${PYTHONV}-pip",
+        "type": "code",
+        "location": "/install_ompl_1.5.2.sh:1-31"
+    },
+    "405": {
+        "file_id": 20,
+        "content": "This script installs dependencies for Robot Operating System (ROS) with ubuntu_version, common dependencies via apt-get and python binding dependencies. It sets C++ compiler to g++ and installs libraries built with it, ensures noninteractive debian frontend, and uses sudo if not root. It updates and upgrades, then installs various boost libraries, Eigen3, ODE, YAML-cpp, python's dev and pip for specified Python version.",
+        "type": "comment"
+    },
+    "406": {
+        "file_id": 20,
+        "content": "    # install additional python dependencies via pip\n    #${SUDO} pip${PYTHONV} install -vU https://github.com/CastXML/pygccxml/archive/develop.zip pyplusplus\n    #${SUDO} pip${PYTHONV} install -vU pygccxml-develop.zip pyplusplus\n    ${SUDO} pip${PYTHONV} install -vU pygccxml pyplusplus\n    # install castxml\n    if [[ $ubuntu_version > 1910 ]]; then\n        ${SUDO} apt-get -y install castxml\n    else\n        wget -q -O- https://data.kitware.com/api/v1/file/5e8b740d2660cbefba944189/download | tar zxf castxml-linux.tar.gz -C ${HOME}\n        export PATH=${HOME}/castxml/bin:${PATH}\n    fi\n    ${SUDO} apt-get -y install libboost-python-dev\n    if [[ $ubuntu_version > 1710 ]]; then\n        ${SUDO} apt-get -y install libboost-numpy-dev python${PYTHONV}-numpy\n    fi\n    if [[ $ubuntu_version > 1904 ]]; then\n        ${SUDO} apt-get -y install pypy3\n    fi\n}\ninstall_app_dependencies()\n{\n    ${SUDO} apt-get -y install python${PYTHONV}-pyqt5.qtopengl freeglut3-dev libassimp-dev python${PYTHONV}-opengl python${PYTHONV}-flask python${PYTHONV}-celery libccd-dev",
+        "type": "code",
+        "location": "/install_ompl_1.5.2.sh:32-54"
+    },
+    "407": {
+        "file_id": 20,
+        "content": "Installs additional Python dependencies with pip, installs CastXML, sets path for CastXML, installs Boost Python dev package, installs PyQt5.qtopengl and Freeglut3-dev libraries, installs Assimp library, installs Flask and Celery packages, installs CCD development library.",
+        "type": "comment"
+    },
+    "408": {
+        "file_id": 20,
+        "content": "    # install additional python dependencies via pip\n    ${SUDO} pip${PYTHONV} install -vU PyOpenGL-accelerate\n    # install fcl\n    if ! pkg-config --atleast-version=0.5.0 fcl; then\n        if [[ $ubuntu_version > 1604 ]]; then\n            ${SUDO} apt-get -y install libfcl-dev\n        else\n            wget -O - https://github.com/flexible-collision-library/fcl/archive/0.6.1.tar.gz | tar zxf -\n            cd fcl-0.6.1; cmake .; ${SUDO} -E make install; cd ..\n        fi\n    fi\n}\ninstall_ompl()\n{\n    if [ -z $APP ]; then\n        OMPL=\"ompl\"\n    else\n        OMPL=\"omplapp\"\n    fi\n    if [ -z $GITHUB ]; then\n        if [ -z $APP]; then\n            wget --no-check-certificate -O - https://github.com/ompl/${OMPL}/archive/1.5.2.tar.gz | tar zxf -\n            cd ${OMPL}-1.5.2\n        else\n            wget -O - https://github.com/ompl/${OMPL}/releases/download/1.5.2/${OMPL}-1.5.2-Source.tar.gz | tar zxf -\n            cd $OMPL-1.5.2-Source\n        fi\n    else\n        ${SUDO} apt-get -y install git\n        git clone --recurse-submodules https://github.com/ompl/${OMPL}.git",
+        "type": "code",
+        "location": "/install_ompl_1.5.2.sh:55-85"
+    },
+    "409": {
+        "file_id": 20,
+        "content": "Installing OMPL dependencies and libraries.\n\n- Installs Python dependency PyOpenGL-accelerate via pip.\n- Checks for required fcl package version and installs it if necessary.\n- Downloads the OMPL source code from GitHub or installs using apt-get.\n- Sets up the necessary environment for OMPL installation.",
+        "type": "comment"
+    },
+    "410": {
+        "file_id": 20,
+        "content": "        cd $OMPL\n    fi\n    mkdir -p build/Release\n    cd build/Release\n    cmake ../.. -DPYTHON_EXEC=/usr/bin/python${PYTHONV}\n    if [ ! -z $PYTHON ]; then\n        # Check if the total memory is less than 6GB.\n        if [ `cat /proc/meminfo | head -1 | awk '{print $2}'` -lt 6291456 ]; then\n            echo \"Python binding generation is very memory intensive. At least 6GB of RAM is recommended.\"\n            echo \"Proceeding with binding generation using 1 core...\"\n            make -j 1 update_bindings\n        else\n            make update_bindings\n        fi\n    fi\n    make\n    ${SUDO} make install\n}\nfor i in \"$@\"\ndo\ncase $i in\n    -a|--app)\n        APP=1\n        PYTHON=1\n        shift\n        ;;\n    -p|--python)\n        PYTHON=1\n        shift\n        ;;\n    -g|--github)\n        GITHUB=1\n        shift\n        ;;\n    *)\n        # unknown option -> show help\n        echo \"Usage: `basename $0` [-p] [-a]\"\n        echo \"  -p: enable Python bindings\"\n        echo \"  -a: enable OMPL.app (implies '-p')\"\n        echo \"  -g: install latest commit from master branch on GitHub\"",
+        "type": "code",
+        "location": "/install_ompl_1.5.2.sh:86-126"
+    },
+    "411": {
+        "file_id": 20,
+        "content": "This code is a shell script for installing OMPL (Open Motion Planning Library) version 1.5.2. It checks if the Python binding generation can proceed, then compiles and installs OMPL with optional features such as Python bindings or generating an OMPL.app bundle. The latest commit from GitHub's master branch can also be installed using the script.",
+        "type": "comment"
+    },
+    "412": {
+        "file_id": 20,
+        "content": "    ;;\nesac\ndone\n# the default version of Python in 17.10 and above is version 3\nif [[ $ubuntu_version > 1704 ]]; then\n    PYTHONV=3\nfi\ninstall_common_dependencies\nif [ ! -z $PYTHON ]; then\n    install_python_binding_dependencies\nfi\nif [ ! -z $APP ]; then\n    install_app_dependencies\nfi\ninstall_ompl",
+        "type": "code",
+        "location": "/install_ompl_1.5.2.sh:127-143"
+    },
+    "413": {
+        "file_id": 20,
+        "content": "This code is part of a script that installs the OMPL library. It checks the Ubuntu version, sets Python version to 3 if Ubuntu is above 17.04, installs common dependencies, optionally installs Python binding and app dependencies, and finally installs OMPL.",
+        "type": "comment"
+    },
+    "414": {
+        "file_id": 21,
+        "content": "/locomotion/atlas/meshes_unplugged/convert.bat",
+        "type": "filepath"
+    },
+    "415": {
+        "file_id": 21,
+        "content": "This code uses the \"assimp\" tool to export various mesh files in .dae format into corresponding .obj files. The file names represent different body parts of a robot, and the process seems to be converting the models for further use or processing.",
+        "type": "summary"
+    },
+    "416": {
+        "file_id": 21,
+        "content": "assimp export ltorso.dae ltorso.obj\nassimp export l_foot.dae l_foot.obj\nassimp export l_lglut.dae l_lglut.obj\nassimp export l_lleg.dae l_lleg.obj\nassimp export l_talus.dae l_talus.obj\nassimp export l_uglut.dae l_uglut.obj\nassimp export l_uleg.dae l_uleg.obj\nassimp export mtorso.dae mtorso.obj\nassimp export pelvis.dae pelvis.obj\nassimp export r_clav.dae r_clav.obj\nassimp export r_foot.dae r_foot.obj\nassimp export r_lglut.dae r_lglut.obj\nassimp export r_lleg.dae r_lleg.obj\nassimp export r_scap.dae r_scap.obj\nassimp export r_talus.dae r_talus.obj\nassimp export r_uarm.dae r_uarm.obj\nassimp export r_uglut.dae r_uglut.obj\nassimp export r_uleg.dae r_uleg.obj\nassimp export utorso.dae utorso.obj",
+        "type": "code",
+        "location": "/locomotion/atlas/meshes_unplugged/convert.bat:1-19"
+    },
+    "417": {
+        "file_id": 21,
+        "content": "This code uses the \"assimp\" tool to export various mesh files in .dae format into corresponding .obj files. The file names represent different body parts of a robot, and the process seems to be converting the models for further use or processing.",
+        "type": "comment"
+    },
+    "418": {
+        "file_id": 22,
+        "content": "/locomotion/atlas/meshes_v3/convert.bat",
+        "type": "filepath"
+    },
+    "419": {
+        "file_id": 22,
+        "content": "The code is using the Assimp library to convert .dae files to .obj files. It processes three specific files: r_farm.dae, r_hand.dae, and r_larm.dae, and outputs the corresponding .obj files. The \"assimp export\" command seems to be a standard way of utilizing Assimp for file conversion in this context.",
+        "type": "summary"
+    },
+    "420": {
+        "file_id": 22,
+        "content": "assimp export r_farm.dae r_farm.obj\nassimp export r_hand.dae r_hand.obj\nassimp export r_larm.dae r_larm.obj",
+        "type": "code",
+        "location": "/locomotion/atlas/meshes_v3/convert.bat:1-3"
+    },
+    "421": {
+        "file_id": 22,
+        "content": "The code is using the Assimp library to convert .dae files to .obj files. It processes three specific files: r_farm.dae, r_hand.dae, and r_larm.dae, and outputs the corresponding .obj files. The \"assimp export\" command seems to be a standard way of utilizing Assimp for file conversion in this context.",
+        "type": "comment"
+    },
+    "422": {
+        "file_id": 23,
+        "content": "/locomotion/atlas/multisense_sl_description/meshes/convert.bat",
+        "type": "filepath"
+    },
+    "423": {
+        "file_id": 23,
+        "content": "The code uses Assimp library to convert .dae files (Assimp Scene format) into .obj files (Wavefront 3D Object file). It performs the conversion for both \"head.dae\" and \"head_camera.dae\", saving the results as \"head.obj\" and \"head_camera.obj\" respectively.",
+        "type": "summary"
+    },
+    "424": {
+        "file_id": 23,
+        "content": "assimp export head.dae head.obj\nassimp export head_camera.dae head_camera.obj",
+        "type": "code",
+        "location": "/locomotion/atlas/multisense_sl_description/meshes/convert.bat:1-2"
+    },
+    "425": {
+        "file_id": 23,
+        "content": "The code uses Assimp library to convert .dae files (Assimp Scene format) into .obj files (Wavefront 3D Object file). It performs the conversion for both \"head.dae\" and \"head_camera.dae\", saving the results as \"head.obj\" and \"head_camera.obj\" respectively.",
+        "type": "comment"
+    },
+    "426": {
+        "file_id": 24,
+        "content": "/locomotion/gpt_reward_api.py",
+        "type": "filepath"
+    },
+    "427": {
+        "file_id": 24,
+        "content": "This code retrieves a robot's pose, velocity, and direction from PyBullet simulator, and calculates energy reward based on joint velocities/torques for controlling/analyzing robotic movements. Alpha_energy is multiplied with the energy reward before returning it.",
+        "type": "summary"
+    },
+    "428": {
+        "file_id": 24,
+        "content": "import pybullet as p\nimport numpy as np\nimport os\ndef get_robot_pose(simulator):\n    COM_pos, COM_quat = p.getBasePositionAndOrientation(simulator.robot_id, physicsClientId=simulator.id)\n    return COM_pos, COM_quat\ndef get_robot_velocity(simulator):\n    COM_vel, COM_ang = p.getBaseVelocity(simulator.robot_id, physicsClientId=simulator.id)\n    return COM_vel, COM_ang\ndef get_robot_direction(simulator, COM_quat):\n    face_dir = np.array(p.getMatrixFromQuaternion(COM_quat)).reshape((3, 3))[:, 0]\n    side_dir = np.array(p.getMatrixFromQuaternion(COM_quat)).reshape((3, 3))[:, 1]\n    up_dir = np.array(p.getMatrixFromQuaternion(COM_quat)).reshape((3, 3))[:, 2]\n    return face_dir, side_dir, up_dir\ndef get_energy_reward(simulator):\n    alpha_energy = 1e-6\n    r_energy = 0.0\n    for joint_id in simulator.joint_ids:\n        joint_state = p.getJointState(simulator.robot_id, joint_id, physicsClientId=simulator.id)\n        joint_vel = joint_state[1]\n        joint_tau = joint_state[3]\n        r_energy += - np.power(joint_vel * joint_tau, 2)",
+        "type": "code",
+        "location": "/locomotion/gpt_reward_api.py:1-26"
+    },
+    "429": {
+        "file_id": 24,
+        "content": "This code snippet retrieves the robot's pose, velocity, and direction from a PyBullet simulator. It also calculates the energy reward based on joint velocities and torques in the system. These functions can be used to gather necessary information for controlling or analyzing robotic movements within the simulation environment.",
+        "type": "comment"
+    },
+    "430": {
+        "file_id": 24,
+        "content": "    r_energy *= alpha_energy\n    return r_energy",
+        "type": "code",
+        "location": "/locomotion/gpt_reward_api.py:27-29"
+    },
+    "431": {
+        "file_id": 24,
+        "content": "Multiply the energy reward by alpha_energy and return the result.",
+        "type": "comment"
+    },
+    "432": {
+        "file_id": 25,
+        "content": "/locomotion/sim.py",
+        "type": "filepath"
+    },
+    "433": {
+        "file_id": 25,
+        "content": "The code sets up a PyBullet environment for robot simulation, initializes observation and action spaces, loads URDF files, prepares the initial state, interacts with the environment using methods, defines a camera class, and requires reward function, action taking, and camera setup.",
+        "type": "summary"
+    },
+    "434": {
+        "file_id": 25,
+        "content": "import os\nimport pybullet as p\nimport pybullet_data as pd\nimport numpy as np\nfrom gym import spaces\nimport gym\nfrom cem_policy.utils import save_env\nclass SimpleEnv(gym.Env):\n    def __init__(self, dt=0.01, gui=True, task='', robot_name='', frameskip=10, frameskip_save=2, horizon=50):\n        self.gui = gui\n        self.task = task\n        self.robot_name = robot_name\n        self.frameskip = frameskip\n        self.frameskip_save = frameskip_save\n        self.horizon = horizon\n        self.gain = 0.03\n        self.gravity = -9.81\n        if self.gui:\n            try:\n                self.id = p.connect(p.GUI)\n            except:\n                self.id = p.connect(p.DIRECT)\n        else:\n            self.id = p.connect(p.DIRECT)\n        p.setAdditionalSearchPath(pd.getDataPath())\n        self.set_scene()\n        self.setup_camera_rpy()\n        self.action_low = -np.ones(self.n_joints)\n        self.action_high = np.ones(self.n_joints)\n        self.action_space = spaces.Box(low=self.action_low, high=self.action_high, dtype=np.float32) ",
+        "type": "code",
+        "location": "/locomotion/sim.py:1-36"
+    },
+    "435": {
+        "file_id": 25,
+        "content": "The code above imports necessary libraries and defines a class SimpleEnv inheriting from gym.Env for robot simulation in PyBullet. It sets up the environment with parameters such as dt, gui, task, robot_name, frameskip, frameskip_save, horizon, gain, and gravity. It establishes a connection to PyBullet, sets up the scene, configures camera angles, initializes action bounds, and creates the action space using spaces.Box.",
+        "type": "comment"
+    },
+    "436": {
+        "file_id": 25,
+        "content": "        self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(self.n_joints * 2 + 6, ), dtype=np.float32) \n        self.reset()\n    def set_scene(\n        self,\n    ):\n        p.resetSimulation(physicsClientId=self.id)\n        p.setGravity(0, 0, self.gravity, physicsClientId=self.id)\n        planeId = p.loadURDF(\"plane.urdf\", physicsClientId=self.id)\n        self.urdf_ids = {\n            \"plane\": planeId,\n        }\n        self.urdf_paths = {\n            \"plane\": \"plane.urdf\",\n        }\n        self.urdf_scales = {\n            \"plane\": 1.0,\n        }\n        self.init_robot()\n        for _ in range(100):\n            p.stepSimulation(physicsClientId=self.id)\n        self.init_state = p.saveState(physicsClientId=self.id)\n        self.update_robot_ref()\n    def init_robot(self):\n        self.urdf_scales['robot'] = 1.0\n        if self.robot_name == 'a1':\n            self.urdf_paths['robot'] = os.path.join(os.path.dirname(__file__), \"a1/a1.urdf\")\n            init_pos = [0, 0, 0.5]\n            self.robot_id = p.loadURDF(self.urdf_paths['robot'], init_pos, physicsClientId=self.id)",
+        "type": "code",
+        "location": "/locomotion/sim.py:37-73"
+    },
+    "437": {
+        "file_id": 25,
+        "content": "The code initializes the observation space and sets up the simulation environment for a robot. It loads URDF files for a plane and a robot (possibly named \"a1\"), defines their scales, and prepares the initial state of the simulation.",
+        "type": "comment"
+    },
+    "438": {
+        "file_id": 25,
+        "content": "            self.urdf_ids[\"robot\"] = self.robot_id\n            A1_DEFAULT_ABDUCTION_ANGLE = 0\n            A1_DEFAULT_HIP_ANGLE = 0.9\n            A1_DEFAULT_KNEE_ANGLE = -1.8\n            NUM_LEGS = 4\n            INIT_MOTOR_ANGLES = np.array([\n                A1_DEFAULT_ABDUCTION_ANGLE,\n                A1_DEFAULT_HIP_ANGLE,\n                A1_DEFAULT_KNEE_ANGLE\n            ] * NUM_LEGS)\n            self.MOTOR_NAMES = [\n                \"FR_hip_joint\",\n                \"FR_upper_joint\",\n                \"FR_lower_joint\",\n                \"FL_hip_joint\",\n                \"FL_upper_joint\",\n                \"FL_lower_joint\",\n                \"RR_hip_joint\",\n                \"RR_upper_joint\",\n                \"RR_lower_joint\",\n                \"RL_hip_joint\",\n                \"RL_upper_joint\",\n                \"RL_lower_joint\",\n            ]\n        elif self.robot_name == 'atlas':\n            self.urdf_paths['robot'] = os.path.join(os.path.dirname(__file__), \"atlas/atlas_v4_with_multisense.urdf\")\n            self.robot_id = p.loadURDF(self.urdf_paths['robot'], [0,0,1.2], physicsClientId=self.id)",
+        "type": "code",
+        "location": "/locomotion/sim.py:74-102"
+    },
+    "439": {
+        "file_id": 25,
+        "content": "This code defines default values for a robot's body angles and initializes motor names for a 4-legged robot. If the robot name is 'atlas', it loads a specific URDF file and creates the robot model with a given position. The code also loads the robot into the physics engine using the specified ID.",
+        "type": "comment"
+    },
+    "440": {
+        "file_id": 25,
+        "content": "            self.urdf_ids[\"robot\"] = self.robot_id\n            self.MOTOR_NAMES = [\n                'back_bkz',\n                'back_bky',\n                'back_bkx',\n                'l_arm_shz',\n                'l_arm_shx',\n                'l_arm_ely',\n                'l_arm_elx',\n                'l_arm_wry',\n                'l_arm_wrx',\n                'l_arm_wry2',\n                'neck_ry',\n                'r_arm_shz',\n                'r_arm_shx',\n                'r_arm_ely',\n                'r_arm_elx',\n                'r_arm_wry',\n                'r_arm_wrx',\n                'r_arm_wry2',\n                'l_leg_hpz',\n                'l_leg_hpx',\n                'l_leg_hpy',\n                'l_leg_kny',\n                'l_leg_aky',\n                'l_leg_akx',\n                'r_leg_hpz',\n                'r_leg_hpx',\n                'r_leg_hpy',\n                'r_leg_kny',\n                'r_leg_aky',\n                'r_leg_akx',\n            ]\n            INIT_MOTOR_ANGLES = np.zeros(len(self.MOTOR_NAMES))\n        elif self.robot_name == 'anymal':",
+        "type": "code",
+        "location": "/locomotion/sim.py:103-140"
+    },
+    "441": {
+        "file_id": 25,
+        "content": "Code snippet defines the motor names and initializes their angles as zero for a robot named \"RoboGen\" or \"anymal\".",
+        "type": "comment"
+    },
+    "442": {
+        "file_id": 25,
+        "content": "            self.urdf_paths['robot'] = os.path.join(os.path.dirname(__file__), \"anymal/anymal.urdf\")\n            self.robot_id = p.loadURDF(self.urdf_paths['robot'], [0,0,1.0], physicsClientId=self.id)\n            self.urdf_ids[\"robot\"] = self.robot_id\n            self.MOTOR_NAMES = [\n                'LF_HAA',\n                'LF_HFE',\n                'LF_KFE',\n                'RF_HAA',\n                'RF_HFE',\n                'RF_KFE',\n                'LH_HAA',\n                'LH_HFE',\n                'LH_KFE',\n                'RH_HAA',\n                'RH_HFE',\n                'RH_KFE',\n            ]\n            INIT_MOTOR_ANGLES = np.zeros(len(self.MOTOR_NAMES))\n        else:\n            assert False\n        self.joint_ids = []\n        self.joint_limits_lower = []\n        self.joint_limits_upper = []\n        self.n_joints = len(self.MOTOR_NAMES)\n        for j in range(p.getNumJoints(self.robot_id, physicsClientId=self.id)):\n            joint_info = p.getJointInfo(self.robot_id, j, physicsClientId=self.id)\n            name = joint_info[1].decode('utf-8')",
+        "type": "code",
+        "location": "/locomotion/sim.py:141-169"
+    },
+    "443": {
+        "file_id": 25,
+        "content": "Initializing the URDF path and loading the robot model using PyBullet physics engine. Setting initial motor angles to zero for all joints. Iterating through each joint to obtain their information and assigning them to respective lists.",
+        "type": "comment"
+    },
+    "444": {
+        "file_id": 25,
+        "content": "            if name in self.MOTOR_NAMES:\n                self.joint_ids.append(j)\n                if self.robot_name == 'anymal':\n                    self.joint_limits_lower.append(max(-2.0, joint_info[8]))\n                    self.joint_limits_upper.append(min(2.0, joint_info[9]))\n                else:\n                    self.joint_limits_lower.append(joint_info[8])\n                    self.joint_limits_upper.append(joint_info[9])\n        self.joint_limits_lower = np.array(self.joint_limits_lower)\n        self.joint_limits_upper = np.array(self.joint_limits_upper)\n        for index in range(self.n_joints):\n            joint_id = self.joint_ids[index]\n            p.setJointMotorControl2(self.robot_id, joint_id, p.POSITION_CONTROL, INIT_MOTOR_ANGLES[index], physicsClientId=self.id)\n            p.resetJointState(self.robot_id, joint_id, INIT_MOTOR_ANGLES[index], physicsClientId=self.id)\n    def update_robot_ref(self):\n        COM_pos, COM_quat = p.getBasePositionAndOrientation(self.robot_id, physicsClientId=self.id)",
+        "type": "code",
+        "location": "/locomotion/sim.py:170-187"
+    },
+    "445": {
+        "file_id": 25,
+        "content": "Code initializes joint_ids, sets joint limits for 'anymal' robot specifically, and finally updates the robot reference point.",
+        "type": "comment"
+    },
+    "446": {
+        "file_id": 25,
+        "content": "        self.COM_init_pos = np.array(COM_pos)\n    def reset(self):\n        p.restoreState(self.init_state, physicsClientId=self.id)\n        self.time_step = 0\n        self.done = False\n        return self._get_obs()\n    def step(self, action):\n        self.time_step += 1\n        self.take_step(action)\n        obs = self._get_obs()\n        done, info = self._get_done_info()\n        reward = self._compute_reward() ### NOTE: to be implemented by gpt-4\n        success = False\n        self.success = success\n        return obs, reward, done, info\n    def step_(self, action):\n        self.time_step += 1\n        self.act(action)\n        rgbs = []\n        states = []\n        for i in range(self.frameskip):\n            p.stepSimulation(physicsClientId=self.id)       \n            if (i+1) % self.frameskip_save == 0:\n                rgb, depth = self.render()\n                rgbs.append(rgb)\n                states.append(save_env(self))\n        obs = self._get_obs()\n        done, info = self._get_done_info()\n        reward = self._compute_reward() ### NOTE: to be implemented by gpt-4",
+        "type": "code",
+        "location": "/locomotion/sim.py:188-221"
+    },
+    "447": {
+        "file_id": 25,
+        "content": "The code defines a class with methods for resetting, stepping, and getting observations from the environment. It uses numpy for array manipulation, and PyBullet (p) for physics simulation. The reward function needs to be implemented by gpt-4. The frameskip parameter controls how often the environment is saved during simulation.",
+        "type": "comment"
+    },
+    "448": {
+        "file_id": 25,
+        "content": "        return obs, reward, done, info, rgbs, states\n    def take_step(self, action):\n        self.act(action)\n        for _ in range(self.frameskip):\n            p.stepSimulation(physicsClientId=self.id)       \n    def act(self, action):\n        action = np.clip(action, self.action_low, self.action_high)\n        action = (action - self.action_low) / (self.action_high - self.action_low) * (self.joint_limits_upper - self.joint_limits_lower) + self.joint_limits_lower\n        for index in range(self.n_joints):\n            joint_id = self.joint_ids[index]\n            joint_name = self.MOTOR_NAMES[index]\n            p.setJointMotorControl2(self.robot_id, joint_id, p.POSITION_CONTROL, action[index], positionGain=self.gain, physicsClientId=self.id)\n    def _compute_reward(self):\n        return 0\n    def setup_camera_rpy(self, camera_target=[0, 0, 0.3], distance=1.6, rpy=[0, -30, -30], fov=60, camera_width=640, camera_height=480):\n        distance=2.0\n        if self.robot_name == 'atlas':\n            distance = 2.5",
+        "type": "code",
+        "location": "/locomotion/sim.py:222-246"
+    },
+    "449": {
+        "file_id": 25,
+        "content": "The code defines a class with methods for taking steps, performing actions, computing rewards, and setting up cameras. The take_step method executes the action repeatedly to reach the desired position. The act method clips the action and converts it to joint positions within the limits. The _compute_reward method returns 0 by default. The setup_camera_rpy method sets camera parameters for a specific target, distance, rotation, and resolution. If the robot name is Atlas, the distance is set differently.",
+        "type": "comment"
+    },
+    "450": {
+        "file_id": 25,
+        "content": "        self.camera_width = camera_width\n        self.camera_height = camera_height\n        camera_target = np.array([0, 0, 0.3])\n        self.view_matrix = p.computeViewMatrixFromYawPitchRoll(camera_target, distance, rpy[2], rpy[1], rpy[0], 2, physicsClientId=self.id)\n        self.projection_matrix = p.computeProjectionMatrixFOV(fov, camera_width / camera_height, 0.01, 100, physicsClientId=self.id)\n    def render(self, mode=None):\n        assert self.view_matrix is not None, 'You must call env.setup_camera() or env.setup_camera_rpy() before getting a camera image'\n        w, h, img, depth, segmask = p.getCameraImage(self.camera_width, self.camera_height, \n            self.view_matrix, self.projection_matrix, \n            renderer=p.ER_BULLET_HARDWARE_OPENGL, \n            physicsClientId=self.id)\n        img = np.reshape(img, (h, w, 4))[:, :, :3]\n        depth = np.reshape(depth, (h, w))\n        return img, depth\n    def _get_obs(self):\n        obs = np.zeros(self.observation_space.shape[0])\n        cnt = 0",
+        "type": "code",
+        "location": "/locomotion/sim.py:248-269"
+    },
+    "451": {
+        "file_id": 25,
+        "content": "The code defines a class with methods to set up the camera and retrieve rendered images. The `setup_camera` or `setup_camera_rpy` functions are used to configure the camera view matrix, and the `render` method retrieves the rendered image and depth information using PyBullet's `getCameraImage`. These observations are returned by the `_get_obs` function.",
+        "type": "comment"
+    },
+    "452": {
+        "file_id": 25,
+        "content": "        for name, id in self.urdf_ids.items():\n            if name == 'robot':\n                pos, orient = p.getBasePositionAndOrientation(id, physicsClientId=self.id)\n                euler_angle = p.getEulerFromQuaternion(orient)\n                obs[cnt:cnt+3] = [0, 0, pos[2]]\n                obs[cnt+3:cnt+6] = euler_angle\n                cnt += 6\n                for joint_id in self.joint_ids:\n                    joint_state = p.getJointState(id, joint_id, physicsClientId=self.id)\n                    obs[cnt] = joint_state[0]\n                    obs[cnt + 1] = joint_state[1]\n                    cnt += 2\n        return obs\n    def _get_done_info(self):\n        info = {}\n        if not self.done:\n            if self.time_step >= self.horizon:\n                self.done = True\n                info['timeout'] = True\n        return self.done, info\n    def disconnect(self):\n        p.disconnect(self.id)\n    def close(self):\n        p.disconnect(self.id)",
+        "type": "code",
+        "location": "/locomotion/sim.py:270-298"
+    },
+    "453": {
+        "file_id": 25,
+        "content": "This code is a part of the RoboGen/locomotion module. It retrieves the robot's position, orientation, and joint states from physics simulation using PyBullet library. The information is then stored in the obs list which is returned by the function. The _get_done_info() method checks for done status and timeout. The disconnect() and close() methods are used to end the connection with the physics engine.",
+        "type": "comment"
+    },
+    "454": {
+        "file_id": 26,
+        "content": "/manipulation/agent.py",
+        "type": "filepath"
+    },
+    "455": {
+        "file_id": 26,
+        "content": "The Agent class manages the robot's joint control, physics engine interaction, and state retrieval, enforcing joint limits, performing IK, and converting Euler angles to quaternions using PhysX library for manipulation tasks.",
+        "type": "summary"
+    },
+    "456": {
+        "file_id": 26,
+        "content": "import numpy as np\nimport pybullet as p\nclass Agent:\n    def __init__(self):\n        self.base = -1\n        self.body = None\n        self.lower_limits = None\n        self.upper_limits = None\n        self.ik_lower_limits = None\n        self.ik_upper_limits = None\n        self.ik_joint_names = None\n    def init(self, body, id, np_random, indices=None):\n        self.body = body\n        self.id = id\n        self.np_random = np_random\n        self.all_joint_indices = list(range(p.getNumJoints(body, physicsClientId=id)))\n        if indices != -1:\n            pass\n    def control(self, indices, target_angles, gains, forces):\n        if type(gains) in [int, float]:\n            gains = [gains]*len(indices)\n        if type(forces) in [int, float]:\n            forces = [forces]*len(indices)\n        p.setJointMotorControlArray(self.body, jointIndices=indices, controlMode=p.POSITION_CONTROL, targetPositions=target_angles, positionGains=gains, forces=forces, physicsClientId=self.id)\n    def get_joint_angles(self, indices=None):",
+        "type": "code",
+        "location": "/manipulation/agent.py:1-29"
+    },
+    "457": {
+        "file_id": 26,
+        "content": "The Agent class initializes the base and body, sets lower and upper limits for joint angles, and defines the inverse kinematics (IK) joint names. The init function assigns the body, ID, and numpy random object to the agent instance. The control function adjusts joint motor control using position control mode. The get_joint_angles function retrieves the joint angles based on specified indices.",
+        "type": "comment"
+    },
+    "458": {
+        "file_id": 26,
+        "content": "        if indices is None:\n            indices = self.all_joint_indices\n        elif not indices:\n            return []\n        robot_joint_states = p.getJointStates(self.body, jointIndices=indices, physicsClientId=self.id)\n        return np.array([x[0] for x in robot_joint_states])\n    def get_joint_angles_dict(self, indices=None):\n        return {j: a for j, a in zip(indices, self.get_joint_angles(indices))}\n    def get_pos_orient(self, link):\n        # Get the 3D position and orientation (4D quaternion) of a specific link on the body\n        if link == self.base:\n            pos, orient = p.getBasePositionAndOrientation(self.body, physicsClientId=self.id)\n        else:\n            pos, orient = p.getLinkState(self.body, link, physicsClientId=self.id)[:2]\n        return np.array(pos), np.array(orient)\n    def get_base_pos_orient(self):\n        return self.get_pos_orient(self.base)\n    def get_velocity(self, link):\n        if link == self.base:\n            return p.getBaseVelocity(self.body, physicsClientId=self.id)[0]",
+        "type": "code",
+        "location": "/manipulation/agent.py:30-53"
+    },
+    "459": {
+        "file_id": 26,
+        "content": "Method get_joint_angles returns the joint angles for specified indices. If no indices are provided, it defaults to all joints. Method get_joint_angles_dict converts the list of joint angles to a dictionary using zip function. Method get_pos_orient retrieves 3D position and orientation of a specific link on the body, returning as numpy array. The method get_velocity returns the velocity for specified link if it is the base, otherwise it does nothing.",
+        "type": "comment"
+    },
+    "460": {
+        "file_id": 26,
+        "content": "        return p.getLinkState(self.body, link, computeForwardKinematics=True, computeLinkVelocity=True, physicsClientId=self.id)[6]\n    def get_euler(self, quaternion):\n        return np.array(p.getEulerFromQuaternion(np.array(quaternion), physicsClientId=self.id))\n    def get_quaternion(self, euler):\n        return np.array(p.getQuaternionFromEuler(np.array(euler), physicsClientId=self.id))\n    def get_motor_joint_states(self, joints=None):\n        # Get the position, velocity, and torque for nonfixed joint motors\n        joint_states = p.getJointStates(self.body, self.all_joint_indices if joints is None else joints, physicsClientId=self.id)\n        joint_infos = [p.getJointInfo(self.body, i, physicsClientId=self.id) for i in (self.all_joint_indices if joints is None else joints)]\n        motor_states = [j for j, i in zip(joint_states, joint_infos) if i[2] != p.JOINT_FIXED]\n        motor_indices = [i[0] for j, i in zip(joint_states, joint_infos) if i[2] != p.JOINT_FIXED]\n        motor_positions = [state[0] for state in motor_states]",
+        "type": "code",
+        "location": "/manipulation/agent.py:54-68"
+    },
+    "461": {
+        "file_id": 26,
+        "content": "This code snippet is from the RoboGen project, specifically the agent.py file. The function on line 53 returns the link state of an agent's body in terms of position (at index 6) using physics engine functions for forward kinematics and link velocity computations. There are three additional helper functions defined: get_euler, get_quaternion, and get_motor_joint_states. The first two convert between Euler angles and quaternions using the same physics client ID. The last function retrieves joint state information for non-fixed motor joints in the agent's body, filtering out fixed joints, and returns the positions of these joints in a list.",
+        "type": "comment"
+    },
+    "462": {
+        "file_id": 26,
+        "content": "        motor_velocities = [state[1] for state in motor_states]\n        motor_torques = [state[3] for state in motor_states]\n        return motor_indices, motor_positions, motor_velocities, motor_torques\n    def get_joint_max_force(self, indices=None):\n        if indices is None:\n            indices = self.all_joint_indices\n        joint_infos = [p.getJointInfo(self.body, i, physicsClientId=self.id) for i in indices]\n        return [j[10] for j in joint_infos]\n    def set_base_pos_orient(self, pos, orient):\n        p.resetBasePositionAndOrientation(self.body, pos, orient if len(orient) == 4 else self.get_quaternion(orient), physicsClientId=self.id)\n    def update_joint_limits(self, indices=None):\n        if indices is None:\n            indices = self.all_joint_indices\n        self.lower_limits = dict()\n        self.upper_limits = dict()\n        self.ik_lower_limits = []\n        self.ik_upper_limits = []\n        self.ik_joint_names = []\n        for j in indices:\n            joint_info = p.getJointInfo(self.body, j, physicsClientId=self.id)",
+        "type": "code",
+        "location": "/manipulation/agent.py:69-91"
+    },
+    "463": {
+        "file_id": 26,
+        "content": "The code contains functions for manipulating robot joints. It retrieves motor states and torques, sets the base position and orientation of the robot, updates joint limits, and gets maximum force capacity for each joint. The code uses PyBullet physics engine (p) for interaction with the environment.",
+        "type": "comment"
+    },
+    "464": {
+        "file_id": 26,
+        "content": "            joint_name = joint_info[1]\n            joint_type = joint_info[2]\n            lower_limit = joint_info[8]\n            upper_limit = joint_info[9]\n            if lower_limit == 0 and upper_limit == -1:\n                lower_limit = -1e10\n                upper_limit = 1e10\n                if joint_type != p.JOINT_FIXED:\n                    # NOTE: IK only works on non fixed joints, so we build special joint limit lists for IK\n                    self.ik_lower_limits.append(-2*np.pi)\n                    self.ik_upper_limits.append(2*np.pi)\n                    self.ik_joint_names.append([len(self.ik_joint_names)] + list(joint_info[:2]))\n            elif joint_type != p.JOINT_FIXED:\n                self.ik_lower_limits.append(lower_limit)\n                self.ik_upper_limits.append(upper_limit)\n                self.ik_joint_names.append([len(self.ik_joint_names)] + list(joint_info[:2]))\n            self.lower_limits[j] = lower_limit\n            self.upper_limits[j] = upper_limit\n        self.ik_lower_limits = np.array(self.ik_lower_limits)",
+        "type": "code",
+        "location": "/manipulation/agent.py:92-110"
+    },
+    "465": {
+        "file_id": 26,
+        "content": "This code sets joint limits and prepares them for inverse kinematics (IK) calculations. It ensures that all joints have appropriate lower and upper limits, and separates fixed joints from non-fixed ones. If a joint is fixed, it defines special limit values for IK calculations. The code then appends the joint information to lists for joint names, lower limits, and upper limits. Finally, it converts the ik_lower_limits list into a numpy array.",
+        "type": "comment"
+    },
+    "466": {
+        "file_id": 26,
+        "content": "        self.ik_upper_limits = np.array(self.ik_upper_limits)\n    def enforce_joint_limits(self, indices=None):\n        if indices is None:\n            indices = self.all_joint_indices\n        joint_angles = self.get_joint_angles_dict(indices)\n        if self.lower_limits is None or len(indices) > len(self.lower_limits):\n            self.update_joint_limits()\n        for j in indices:\n            if joint_angles[j] < self.lower_limits[j]:\n                p.resetJointState(self.body, jointIndex=j, targetValue=self.lower_limits[j], targetVelocity=0, physicsClientId=self.id)\n            elif joint_angles[j] > self.upper_limits[j]:\n                p.resetJointState(self.body, jointIndex=j, targetValue=self.upper_limits[j], targetVelocity=0, physicsClientId=self.id)\n    def ik(self, target_joint, target_pos, target_orient, ik_indices, max_iterations=1000, use_current_as_rest=True):\n        if target_orient is not None and len(target_orient) < 4:\n            target_orient = self.get_quaternion(target_orient)",
+        "type": "code",
+        "location": "/manipulation/agent.py:111-127"
+    },
+    "467": {
+        "file_id": 26,
+        "content": "The code defines a class with methods for enforcing joint limits and performing inverse kinematics (IK). The `enforce_joint_limits` method checks joint angles against lower and upper limits, while the `ik` method solves IK equations to find suitable joint angles for a given target position and orientation. The `get_quaternion` method converts Euler angles to quaternions.",
+        "type": "comment"
+    },
+    "468": {
+        "file_id": 26,
+        "content": "        if use_current_as_rest:\n            ik_rest_poses = np.array(self.get_motor_joint_states()[1]).tolist()\n        ik_lower_limits = self.ik_lower_limits \n        ik_upper_limits = self.ik_upper_limits \n        ik_joint_ranges = ik_upper_limits - ik_lower_limits\n        if target_orient is not None:\n            if use_current_as_rest:\n                ik_joint_poses = np.array(p.calculateInverseKinematics(\n                    self.body, target_joint, \n                    targetPosition=target_pos, targetOrientation=target_orient, \n                    lowerLimits=ik_lower_limits.tolist(), upperLimits=ik_upper_limits.tolist(), jointRanges=ik_joint_ranges.tolist(), \n                    restPoses=ik_rest_poses, \n                    maxNumIterations=max_iterations, \n                    residualThreshold=1e-4,\n                    physicsClientId=self.id))\n            else:\n                ik_joint_poses = np.array(p.calculateInverseKinematics(self.body, target_joint, targetPosition=target_pos, targetOrientation=target_orient, physicsClientId=self.id))",
+        "type": "code",
+        "location": "/manipulation/agent.py:128-146"
+    },
+    "469": {
+        "file_id": 26,
+        "content": "This code checks if the current joint states should be used as the rest pose for calculating inverse kinematics. If so, it gets the motor joint states and converts them into a list. It also sets up the lower and upper limits for joint movement and calculates the joint ranges. If the target orientation is not None, it calls the calculateInverseKinematics function to find the joint positions for either using the rest pose or the current joint states depending on the condition.",
+        "type": "comment"
+    },
+    "470": {
+        "file_id": 26,
+        "content": "        else:\n            if use_current_as_rest:\n                ik_joint_poses = np.array(p.calculateInverseKinematics(self.body, target_joint, targetPosition=target_pos, restPoses=ik_rest_poses, maxNumIterations=max_iterations, physicsClientId=self.id))\n            else:\n                ik_joint_poses = np.array(p.calculateInverseKinematics(self.body, target_joint, targetPosition=target_pos, maxNumIterations=max_iterations, physicsClientId=self.id))            \n        return ik_joint_poses[ik_indices]\n    def print_joint_info(self, show_fixed=True):\n        joint_names = []\n        for j in self.all_joint_indices:\n            info = p.getJointInfo(self.body, j, physicsClientId=self.id)\n            if show_fixed or info[2] != p.JOINT_FIXED:\n                print(info)\n                joint_names.append((j, info[1]))\n        print(joint_names)\n    def set_joint_angles(self, indices, angles, use_limits=True, velocities=0):\n        for i, (j, a) in enumerate(zip(indices, angles)):\n            p.resetJ",
+        "type": "code",
+        "location": "/manipulation/agent.py:147-166"
+    },
+    "471": {
+        "file_id": 26,
+        "content": "This code snippet appears to be part of a larger program that uses the Python interface for PhysX (p) library. It includes functions for calculating inverse kinematics, printing joint information, and setting joint angles in a robot's body. The functions use arrays and iterate through the joint indices for manipulation tasks.",
+        "type": "comment"
+    },
+    "472": {
+        "file_id": 26,
+        "content": "ointState(self.body, jointIndex=j, targetValue=min(max(a, self.lower_limits[j]), self.upper_limits[j]) if use_limits else a, targetVelocity=velocities if type(velocities) in [int, float] else velocities[i], physicsClientId=self.id)",
+        "type": "code",
+        "location": "/manipulation/agent.py:166-166"
+    },
+    "473": {
+        "file_id": 26,
+        "content": "Sets the state of a robot's joint based on input parameters, taking into account limits and velocities if applicable.",
+        "type": "comment"
+    },
+    "474": {
+        "file_id": 27,
+        "content": "/manipulation/assets/franka_mobile/LICENSE.txt",
+        "type": "filepath"
+    },
+    "475": {
+        "file_id": 27,
+        "content": "The Apache License 2.0 permits software use, modification, distribution, and sublicensing while limiting contributors' and users' liability for damages or losses. It allows redistribution with retained copyright notices and personal obligations for users.",
+        "type": "summary"
+    },
+    "476": {
+        "file_id": 27,
+        "content": "                                 Apache License\n                           Version 2.0, January 2004\n                        http://www.apache.org/licenses/\n   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION\n   1. Definitions.\n      \"License\" shall mean the terms and conditions for use, reproduction,\n      and distribution as defined by Sections 1 through 9 of this document.\n      \"Licensor\" shall mean the copyright owner or entity authorized by\n      the copyright owner that is granting the License.\n      \"Legal Entity\" shall mean the union of the acting entity and all\n      other entities that control, are controlled by, or are under common\n      control with that entity. For the purposes of this definition,\n      \"control\" means (i) the power, direct or indirect, to cause the\n      direction or management of such entity, whether by contract or\n      otherwise, or (ii) ownership of fifty percent (50%) or more of the\n      outstanding shares, or (iii) beneficial ownership of such entity.",
+        "type": "code",
+        "location": "/manipulation/assets/franka_mobile/LICENSE.txt:1-21"
+    },
+    "477": {
+        "file_id": 27,
+        "content": "Apache License Version 2.0 for terms and conditions related to use, reproduction, and distribution, defined by sections 1-9, with Licensor being the copyright owner or authorized entity, and Legal Entity as the union of acting entity and controlled entities.",
+        "type": "comment"
+    },
+    "478": {
+        "file_id": 27,
+        "content": "      \"You\" (or \"Your\") shall mean an individual or Legal Entity\n      exercising permissions granted by this License.\n      \"Source\" form shall mean the preferred form for making modifications,\n      including but not limited to software source code, documentation\n      source, and configuration files.\n      \"Object\" form shall mean any form resulting from mechanical\n      transformation or translation of a Source form, including but\n      not limited to compiled object code, generated documentation,\n      and conversions to other media types.\n      \"Work\" shall mean the work of authorship, whether in Source or\n      Object form, made available under the License, as indicated by a\n      copyright notice that is included in or attached to the work\n      (an example is provided in the Appendix below).\n      \"Derivative Works\" shall mean any work, whether in Source or Object\n      form, that is based on (or derived from) the Work and for which the\n      editorial revisions, annotations, elaborations, or other modifications",
+        "type": "code",
+        "location": "/manipulation/assets/franka_mobile/LICENSE.txt:23-42"
+    },
+    "479": {
+        "file_id": 27,
+        "content": "This code is defining key terms used in the license agreement, such as \"You\", \"Source form\", \"Object form\", \"Work\", and \"Derivative Works\". These terms help clarify the legal conditions for using and modifying the software.",
+        "type": "comment"
+    },
+    "480": {
+        "file_id": 27,
+        "content": "      represent, as a whole, an original work of authorship. For the purposes\n      of this License, Derivative Works shall not include works that remain\n      separable from, or merely link (or bind by name) to the interfaces of,\n      the Work and Derivative Works thereof.\n      \"Contribution\" shall mean any work of authorship, including\n      the original version of the Work and any modifications or additions\n      to that Work or Derivative Works thereof, that is intentionally\n      submitted to Licensor for inclusion in the Work by the copyright owner\n      or by an individual or Legal Entity authorized to submit on behalf of\n      the copyright owner. For the purposes of this definition, \"submitted\"\n      means any form of electronic, verbal, or written communication sent\n      to the Licensor or its representatives, including but not limited to\n      communication on electronic mailing lists, source code control systems,\n      and issue tracking systems that are managed by, or on behalf of, the",
+        "type": "code",
+        "location": "/manipulation/assets/franka_mobile/LICENSE.txt:43-57"
+    },
+    "481": {
+        "file_id": 27,
+        "content": "This code defines the terms \"Derivative Works\" and \"Contribution\" in relation to a software license. Derivative Works are not those that can be separated from or only linked to the original work, and Contributions are intentional submissions to the copyright owner for inclusion in the work.",
+        "type": "comment"
+    },
+    "482": {
+        "file_id": 27,
+        "content": "      Licensor for the purpose of discussing and improving the Work, but\n      excluding communication that is conspicuously marked or otherwise\n      designated in writing by the copyright owner as \"Not a Contribution.\"\n      \"Contributor\" shall mean Licensor and any individual or Legal Entity\n      on behalf of whom a Contribution has been received by Licensor and\n      subsequently incorporated within the Work.\n   2. Grant of Copyright License. Subject to the terms and conditions of\n      this License, each Contributor hereby grants to You a perpetual,\n      worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n      copyright license to reproduce, prepare Derivative Works of,\n      publicly display, publicly perform, sublicense, and distribute the\n      Work and such Derivative Works in Source or Object form.\n   3. Grant of Patent License. Subject to the terms and conditions of\n      this License, each Contributor hereby grants to You a perpetual,\n      worldwide, non-exclusive, no-charge, royalty-free, irrevocable",
+        "type": "code",
+        "location": "/manipulation/assets/franka_mobile/LICENSE.txt:58-75"
+    },
+    "483": {
+        "file_id": 27,
+        "content": "This license grants permission to use, modify, and distribute the work under specific terms. It allows for reproduction, creation of derivative works, public display or performance, sublicensing, and distribution in both source and object form. The patent license is also granted with similar conditions.",
+        "type": "comment"
+    },
+    "484": {
+        "file_id": 27,
+        "content": "      (except as stated in this section) patent license to make, have made,\n      use, offer to sell, sell, import, and otherwise transfer the Work,\n      where such license applies only to those patent claims licensable\n      by such Contributor that are necessarily infringed by their\n      Contribution(s) alone or by combination of their Contribution(s)\n      with the Work to which such Contribution(s) was submitted. If You\n      institute patent litigation against any entity (including a\n      cross-claim or counterclaim in a lawsuit) alleging that the Work\n      or a Contribution incorporated within the Work constitutes direct\n      or contributory patent infringement, then any patent licenses\n      granted to You under this License for that Work shall terminate\n      as of the date such litigation is filed.\n   4. Redistribution. You may reproduce and distribute copies of the\n      Work or Derivative Works thereof in any medium, with or without\n      modifications, and in Source or Object form, provided that You",
+        "type": "code",
+        "location": "/manipulation/assets/franka_mobile/LICENSE.txt:76-91"
+    },
+    "485": {
+        "file_id": 27,
+        "content": "This section grants a patent license for making, using, and transferring the Work, but terminates if patent litigation is initiated against any entity. Redistribution of the Work or Derivative Works is allowed in any medium with modifications, in Source or Object form.",
+        "type": "comment"
+    },
+    "486": {
+        "file_id": 27,
+        "content": "      meet the following conditions:\n      (a) You must give any other recipients of the Work or\n          Derivative Works a copy of this License; and\n      (b) You must cause any modified files to carry prominent notices\n          stating that You changed the files; and\n      (c) You must retain, in the Source form of any Derivative Works\n          that You distribute, all copyright, patent, trademark, and\n          attribution notices from the Source form of the Work,\n          excluding those notices that do not pertain to any part of\n          the Derivative Works; and\n      (d) If the Work includes a \"NOTICE\" text file as part of its\n          distribution, then any Derivative Works that You distribute must\n          include a readable copy of the attribution notices contained\n          within such NOTICE file, excluding those notices that do not\n          pertain to any part of the Derivative Works, in at least one\n          of the following places: within a NOTICE text file distributed\n          as part of the Derivative Works; within the Source form or",
+        "type": "code",
+        "location": "/manipulation/assets/franka_mobile/LICENSE.txt:92-112"
+    },
+    "487": {
+        "file_id": 27,
+        "content": "This code outlines the conditions for distributing and modifying a work under the terms of this license. Recipients must receive a copy of the License, modified files should have prominent notices, copyright, patent, trademark, and attribution notices must be retained in Derivative Works, and if the Work includes a \"NOTICE\" file, it must be included in the Derivative Works.",
+        "type": "comment"
+    },
+    "488": {
+        "file_id": 27,
+        "content": "          documentation, if provided along with the Derivative Works; or,\n          within a display generated by the Derivative Works, if and\n          wherever such third-party notices normally appear. The contents\n          of the NOTICE file are for informational purposes only and\n          do not modify the License. You may add Your own attribution\n          notices within Derivative Works that You distribute, alongside\n          or as an addendum to the NOTICE text from the Work, provided\n          that such additional attribution notices cannot be construed\n          as modifying the License.\n      You may add Your own copyright statement to Your modifications and\n      may provide additional or different license terms and conditions\n      for use, reproduction, or distribution of Your modifications, or\n      for any such Derivative Works as a whole, provided Your use,\n      reproduction, and distribution of the Work otherwise complies with\n      the conditions stated in this License.\n   5. Submission of Contributions. Unless You explicitly state otherwise,",
+        "type": "code",
+        "location": "/manipulation/assets/franka_mobile/LICENSE.txt:113-130"
+    },
+    "489": {
+        "file_id": 27,
+        "content": "This code snippet states that if Derivative Works are created from the original Work, they must include any provided documentation and third-party notices within a display. Additionally, users may add their own attribution notices alongside or as an addendum to the NOTICE text from the Work, but these cannot modify the License. Users can also add their own copyright statement, license terms, and conditions for use, reproduction, or distribution of their modifications or Derivative Works, provided they follow the conditions in the License.",
+        "type": "comment"
+    },
+    "490": {
+        "file_id": 27,
+        "content": "      any Contribution intentionally submitted for inclusion in the Work\n      by You to the Licensor shall be under the terms and conditions of\n      this License, without any additional terms or conditions.\n      Notwithstanding the above, nothing herein shall supersede or modify\n      the terms of any separate license agreement you may have executed\n      with Licensor regarding such Contributions.\n   6. Trademarks. This License does not grant permission to use the trade\n      names, trademarks, service marks, or product names of the Licensor,\n      except as required for reasonable and customary use in describing the\n      origin of the Work and reproducing the content of the NOTICE file.\n   7. Disclaimer of Warranty. Unless required by applicable law or\n      agreed to in writing, Licensor provides the Work (and each\n      Contributor provides its Contributions) on an \"AS IS\" BASIS,\n      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or\n      implied, including, without limitation, any warranties or conditions",
+        "type": "code",
+        "location": "/manipulation/assets/franka_mobile/LICENSE.txt:131-147"
+    },
+    "491": {
+        "file_id": 27,
+        "content": "This code outlines the terms and conditions for using the \"Work\" (software/code) under this license, including submission guidelines, trademark usage, and disclaimer of warranty. It also notes that any additional terms or conditions must not supersede or modify this License unless part of a separate agreement with the Licensor.",
+        "type": "comment"
+    },
+    "492": {
+        "file_id": 27,
+        "content": "      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A\n      PARTICULAR PURPOSE. You are solely responsible for determining the\n      appropriateness of using or redistributing the Work and assume any\n      risks associated with Your exercise of permissions under this License.\n   8. Limitation of Liability. In no event and under no legal theory,\n      whether in tort (including negligence), contract, or otherwise,\n      unless required by applicable law (such as deliberate and grossly\n      negligent acts) or agreed to in writing, shall any Contributor be\n      liable to You for damages, including any direct, indirect, special,\n      incidental, or consequential damages of any character arising as a\n      result of this License or out of the use or inability to use the\n      Work (including but not limited to damages for loss of goodwill,\n      work stoppage, computer failure or malfunction, or any and all\n      other commercial damages or losses), even if such Contributor\n      has been advised of the possibility of such damages.",
+        "type": "code",
+        "location": "/manipulation/assets/franka_mobile/LICENSE.txt:148-163"
+    },
+    "493": {
+        "file_id": 27,
+        "content": "This code section outlines the limitations of liability for contributors and users of the software, stating that they are not responsible for any damages or losses resulting from its use or inability to use it. The user assumes all risks associated with using or redistributing the work.",
+        "type": "comment"
+    },
+    "494": {
+        "file_id": 27,
+        "content": "   9. Accepting Warranty or Additional Liability. While redistributing\n      the Work or Derivative Works thereof, You may choose to offer,\n      and charge a fee for, acceptance of support, warranty, indemnity,\n      or other liability obligations and/or rights consistent with this\n      License. However, in accepting such obligations, You may act only\n      on Your own behalf and on Your sole responsibility, not on behalf\n      of any other Contributor, and only if You agree to indemnify,\n      defend, and hold each Contributor harmless for any liability\n      incurred by, or claims asserted against, such Contributor by reason\n      of your accepting any such warranty or additional liability.\n   END OF TERMS AND CONDITIONS",
+        "type": "code",
+        "location": "/manipulation/assets/franka_mobile/LICENSE.txt:165-176"
+    },
+    "495": {
+        "file_id": 27,
+        "content": "This code is licensing warranty and additional liability when redistributing the work or derivative works, allowing users to charge for acceptance of such obligations on their own behalf but must indemnify, defend, and hold each contributor harmless for any incurred liability or claims against them.",
+        "type": "comment"
+    },
+    "496": {
+        "file_id": 28,
+        "content": "/manipulation/gpt_primitive_api.py",
+        "type": "filepath"
+    },
+    "497": {
+        "file_id": 28,
+        "content": "The code initializes variables, performs approach actions, and resets state as needed for grasping. It also activates suction and deactivates it after approaching the object. The simulation estimates object normals, aligns the robot's arm, adjusts target positions, plans motion with collision avoidance, saves data, considers dynamics for accuracy, handles collisions, and restores environment state if necessary.",
+        "type": "summary"
+    },
+    "498": {
+        "file_id": 28,
+        "content": "import pybullet as p\nimport os\nimport numpy as np\nimport open3d as o3d\nfrom manipulation.motion_planning_utils import motion_planning\nfrom manipulation.grasping_utils import get_pc_and_normal, align_gripper_z_with_normal, align_gripper_x_with_normal\nfrom manipulation.gpt_reward_api import get_link_pc, get_bounding_box, get_link_id_from_name\nfrom manipulation.utils import save_env, load_env\nMOTION_PLANNING_TRY_TIMES=100\ndef get_save_path(simulator):\n    return simulator.primitive_save_path\ndef release_grasp(simulator):\n    simulator.deactivate_suction()\n    save_path = get_save_path(simulator)\n    if not os.path.exists(save_path):\n        os.makedirs(save_path)\n    rgbs = []\n    states = []\n    for t in range(20):\n        p.stepSimulation()\n        rgbs.append(simulator.render()[0])\n        state_save_path = os.path.join(save_path, \"state_{}.pkl\".format(t))\n        save_env(simulator, state_save_path)\n        states.append(state_save_path)\n    return rgbs, states\ndef grasp_object(simulator, object_name):\n    ori_state = save_env(simulator, None)",
+        "type": "code",
+        "location": "/manipulation/gpt_primitive_api.py:1-34"
+    },
+    "499": {
+        "file_id": 28,
+        "content": "The code is initializing the necessary functions and variables for grasping an object. The \"get_save_path\" function returns the path where primitive files will be saved, and \"release_grasp\" deactivates suction and saves the environment state for 20 simulation steps in separate files. Finally, \"grasp_object\" saves the initial environment state before grasping an object with the specified name.",
+        "type": "comment"
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "The code prepares the environment for running RoboGen by setting PYTHONPATH to the current directory, setting CUDA_VISIBLE_DEVICES to 0 (for GPU usage), and activating the appropriate conda environment (robogen).",
+    "details": [
+        {
+            "comment": "The code prepares the environment for running RoboGen by setting PYTHONPATH to the current directory, setting CUDA_VISIBLE_DEVICES to 0 (for GPU usage), and activating the appropriate conda environment (robogen).",
+            "location": "\"/media/root/Prima/works/RoboGen/docs/src/prepare.sh\":0-2",
+            "content": "export PYTHONPATH=${PWD}:$PYTHONPATH\nexport CUDA_VISIBLE_DEVICES=0\nconda activate robogen"
+        }
+    ]
+}

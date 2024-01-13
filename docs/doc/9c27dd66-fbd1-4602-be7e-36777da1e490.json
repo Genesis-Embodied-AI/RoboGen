@@ -1,0 +1,10 @@
+{
+    "summary": "This code uses the \"assimp\" tool to export various mesh files in .dae format into corresponding .obj files. The file names represent different body parts of a robot, and the process seems to be converting the models for further use or processing.",
+    "details": [
+        {
+            "comment": "This code uses the \"assimp\" tool to export various mesh files in .dae format into corresponding .obj files. The file names represent different body parts of a robot, and the process seems to be converting the models for further use or processing.",
+            "location": "\"/media/root/Prima/works/RoboGen/docs/src/locomotion/atlas/meshes_unplugged/convert.bat\":0-18",
+            "content": "assimp export ltorso.dae ltorso.obj\nassimp export l_foot.dae l_foot.obj\nassimp export l_lglut.dae l_lglut.obj\nassimp export l_lleg.dae l_lleg.obj\nassimp export l_talus.dae l_talus.obj\nassimp export l_uglut.dae l_uglut.obj\nassimp export l_uleg.dae l_uleg.obj\nassimp export mtorso.dae mtorso.obj\nassimp export pelvis.dae pelvis.obj\nassimp export r_clav.dae r_clav.obj\nassimp export r_foot.dae r_foot.obj\nassimp export r_lglut.dae r_lglut.obj\nassimp export r_lleg.dae r_lleg.obj\nassimp export r_scap.dae r_scap.obj\nassimp export r_talus.dae r_talus.obj\nassimp export r_uarm.dae r_uarm.obj\nassimp export r_uglut.dae r_uglut.obj\nassimp export r_uleg.dae r_uleg.obj\nassimp export utorso.dae utorso.obj"
+        }
+    ]
+}

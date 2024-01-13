@@ -1,0 +1,10 @@
+{
+    "summary": "This code imports necessary libraries, initializes a device based on GPU availability, and defines a function called \"check_text_similarity\". The function takes in text, a list of texts to check against, and embeddings for comparison. It uses the SentenceTransformer model 'all-mpnet-base-v2' to encode the input text(s) into embeddings, computes cosine similarities between the embeddings, and returns the results as a numpy array.",
+    "details": [
+        {
+            "comment": "This code imports necessary libraries, initializes a device based on GPU availability, and defines a function called \"check_text_similarity\". The function takes in text, a list of texts to check against, and embeddings for comparison. It uses the SentenceTransformer model 'all-mpnet-base-v2' to encode the input text(s) into embeddings, computes cosine similarities between the embeddings, and returns the results as a numpy array.",
+            "location": "\"/media/root/Prima/works/RoboGen/docs/src/gpt_4/verification.py\":0-21",
+            "content": "import torch\nfrom sentence_transformers import SentenceTransformer, util\nfrom PIL import Image\ndevice = \"cuda\" if torch.cuda.is_available() else \"cpu\"\nsentence_bert_model = None\ndef check_text_similarity(text, check_list=None, check_embeddings=None):\n    global sentence_bert_model\n    if sentence_bert_model is None:\n        sentence_bert_model = SentenceTransformer('all-mpnet-base-v2')\n    #Sentences are encoded by calling model.encode()\n    with torch.no_grad():\n        emb1 = sentence_bert_model.encode(text)\n        if check_embeddings is None:\n            emb_to_check = sentence_bert_model.encode(check_list)\n        else:\n            emb_to_check = check_embeddings\n        cos_sim = util.cos_sim(emb1, emb_to_check)\n    return cos_sim.cpu().numpy()"
+        }
+    ]
+}

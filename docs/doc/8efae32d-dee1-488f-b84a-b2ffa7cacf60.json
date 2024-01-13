@@ -1,0 +1,15 @@
+{
+    "summary": "This code defines a Robot class inheriting from Agent, initializing it with joints, end effector, and gripper indices. It sets joint motor control, checks fixed joints, uses PyBullet engine for position control, adjusts gains, and offers instant setting option.",
+    "details": [
+        {
+            "comment": "The code defines a Robot class that inherits from the Agent class. It initializes the robot with controllable joints, right arm joint indices, right end effector, and right gripper indices. The `init` function is called to set the joint maximum forces, update joint limits, and set gripper open position if needed.",
+            "location": "\"/media/root/Prima/works/RoboGen/docs/src/manipulation/robot.py\":0-21",
+            "content": "import numpy as np\nimport pybullet as p\nfrom .agent import Agent\nclass Robot(Agent):\n    def __init__(self, controllable_joints, right_arm_joint_indices, right_end_effector, right_gripper_indices):\n        self.controllable_joints = controllable_joints \n        self.right_arm_joint_indices = right_arm_joint_indices # Controllable arm joints\n        self.controllable_joint_indices = self.right_arm_joint_indices \n        self.right_end_effector = right_end_effector # Used to get the pose of the end effector\n        self.right_gripper_indices = right_gripper_indices # Gripper actuated joints\n        self.motor_forces = 1.0\n        self.motor_gains = 0.05\n        super(Robot, self).__init__()\n    def init(self, body, id, np_random):\n        super(Robot, self).init(body, id, np_random)\n        self.joint_max_forces = self.get_joint_max_force(self.controllable_joint_indices)\n        self.update_joint_limits()\n        self.right_arm_ik_indices = self.right_arm_joint_indices \n    def set_gripper_open_position(self, indices, positions, set_instantly=False, force=500):"
+        },
+        {
+            "comment": "This code sets joint motor control and checks if a joint is fixed. It uses PyBullet physics engine, sets position control mode, adjusts gains, and offers an option to set instantly.",
+            "location": "\"/media/root/Prima/works/RoboGen/docs/src/manipulation/robot.py\":22-28",
+            "content": "        p.setJointMotorControlArray(self.body, jointIndices=indices, controlMode=p.POSITION_CONTROL, targetPositions=positions, positionGains=np.array([0.05]*len(indices)), forces=[force]*len(indices), physicsClientId=self.id)\n        if set_instantly:\n            self.set_joint_angles(indices, positions, use_limits=True)\n    def _is_not_fixed(self, joint_idx):\n        joint_info = p.getJointInfo(self.body, joint_idx)\n        return joint_info[2] != p.JOINT_FIXED"
+        }
+    ]
+}

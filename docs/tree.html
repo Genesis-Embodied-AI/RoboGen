@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="github-markdown.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <title>Project structure of: Genesis-Embodied-AI/RoboGen</title>
+    <style>
+        .directory:hover {
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        :target {
+            background-color: yellow !important;
+        }
+
+        .folded::before {
+            content: '\25B6';
+            margin-right: 8px;
+            /* Add space between marker and text */
+        }
+
+        .expanded::before {
+            content: '\25BC';
+            margin-right: 8px;
+            /* Add space between marker and text */
+        }
+    </style>
+    <script>
+        function toggleVisibility(element) {
+            let mclass = element.getAttribute("class");
+            if (mclass == "expanded") {
+                element.setAttribute('class', 'folded');
+            } else {
+                element.setAttribute('class', 'expanded');
+            }
+            const siblings = element.parentNode.children;
+            for (const sibling of siblings) {
+                if (sibling !== element) {
+                    sibling.style.display = (sibling.style.display === 'none') ? 'block' : 'none';
+                }
+            }
+        }
+    </script>
+    <style>
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+
+            .partial-repository-url {
+                display: none;
+            }
+        }
+
+        ul {
+            list-style: none;
+        }
+        #feeling-lucky:hover{
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <article class="markdown-body">
+        <h2>Project structure<span hierarchy="0" class="partial-repository-url"> of: Genesis-Embodied-AI/RoboGen</span><div style="float: right;"><a title="Document index" style="margin:3.5px;" href="index.html"><i class="bi bi-search"></i></a><a title="Feeling lucky" style="margin:3.5px;" id="feeling-lucky" href="#"><i class="bi bi-dice-3"></i></a><a title="Expand tree" style="margin:3.5px;" href="tree.html?full=true" id="expand-tree"><i class="bi bi-caret-down-square"></i></a></div></h2>
+<ul>
+<li><span hierarchy="0" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/"><code>RoboGen</code></strong> <em>Advanced AI Tools and Utilities</em></span><ul>
+<li><span hierarchy="1" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/cem_policy/"><code>cem&UnderBar;policy</code></strong> <em>Parallel cost calculation and gif saving utilities.</em></span><ul>
+<li><a class="file_link" href="index.html?q=/cem_policy/parallel_worker.py" id="/cem_policy/parallel_worker.py"><code>parallel&UnderBar;worker&period;py</code></a> <em>Parallel multiprocessing cost calculation.</em></li>
+<li><a class="file_link" href="index.html?q=/cem_policy/utils.py" id="/cem_policy/utils.py"><code>utils&period;py</code></a> <em>Saves numpy array images as gif with environment settings.</em></li>
+</ul>
+</li>
+<li><a class="file_link" href="index.html?q=/environment.yaml" id="/environment.yaml"><code>environment&period;yaml</code></a> <em>RoboGen/environment.yaml - Python dependencies for RoboGen environment and data science projects</em></li>
+<li><a class="file_link" href="index.html?q=/execute.py" id="/execute.py"><code>execute&period;py</code></a> <em>Execute.py: Prepares, tests, executes, saves state for RoboGen RL algorithms.</em></li>
+<li><a class="file_link" href="index.html?q=/execute_locomotion.py" id="/execute_locomotion.py"><code>execute&UnderBar;locomotion&period;py</code></a> <em>Optimize cost functions, set up RL in assistive gym envs.</em></li>
+<li><a class="file_link" href="index.html?q=/execute_long_horizon.py" id="/execute_long_horizon.py"><code>execute&UnderBar;long&UnderBar;horizon&period;py</code></a> <em>Executes tasks, writes JSON meta, detects GIFs, saves results, selects best outcome.</em></li>
+<li><span hierarchy="1" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/gpt_4/"><code>gpt&UnderBar;4</code></strong> <em>GPT-4 resources, functions, APIs for text processing.</em></span><ul>
+<li><a class="file_link" href="index.html?q=/gpt_4/adjust_size.py" id="/gpt_4/adjust_size.py"><code>adjust&UnderBar;size&period;py</code></a> <em>Adjust 3D model size based on object type from YAML input.</em></li>
+<li><a class="file_link" href="index.html?q=/gpt_4/bard_verify.py" id="/gpt_4/bard_verify.py"><code>bard&UnderBar;verify&period;py</code></a> <em>Image verification with Bard API.</em></li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/gpt_4/prompts/"><code>prompts</code></strong> <em>Robotics AI tasks, configurations, URDF, parsing for RoboGen.</em></span><ul>
+<li><a class="file_link" href="index.html?q=/gpt_4/prompts/prompt_distractor.py" id="/gpt_4/prompts/prompt_distractor.py"><code>prompt&UnderBar;distractor&period;py</code></a> <em>Distractor config generation for Partnet Mobility task.</em></li>
+<li><a class="file_link" href="index.html?q=/gpt_4/prompts/prompt_from_description.py" id="/gpt_4/prompts/prompt_from_description.py"><code>prompt&UnderBar;from&UnderBar;description&period;py</code></a> <em>Robot arm, tasks, articulation tree, grippers, config paths, distractor files.</em></li>
+<li><a class="file_link" href="index.html?q=/gpt_4/prompts/prompt_locomotion.py" id="/gpt_4/prompts/prompt_locomotion.py"><code>prompt&UnderBar;locomotion&period;py</code></a> <em>Reinforcement learning, GPT tasks, YAML configs for quadruped/humanoid locomotion.</em></li>
+<li><a class="file_link" href="index.html?q=/gpt_4/prompts/prompt_manipulation.py" id="/gpt_4/prompts/prompt_manipulation.py"><code>prompt&UnderBar;manipulation&period;py</code></a> <em>Franka Panda arm household manipulation tasks generator.</em></li>
+<li><a class="file_link" href="index.html?q=/gpt_4/prompts/prompt_manipulation_reward_primitive.py" id="/gpt_4/prompts/prompt_manipulation_reward_primitive.py"><code>prompt&UnderBar;manipulation&UnderBar;reward&UnderBar;primitive&period;py</code></a> <em>Robotic household task completion using primitives, rewards, and Gym.</em></li>
+<li><a class="file_link" href="index.html?q=/gpt_4/prompts/prompt_set_joint_angle.py" id="/gpt_4/prompts/prompt_set_joint_angle.py"><code>prompt&UnderBar;set&UnderBar;joint&UnderBar;angle&period;py</code></a> <em>Calculates joint angles for articulated objects and robots.</em></li>
+<li><a class="file_link" href="index.html?q=/gpt_4/prompts/prompt_spatial_relationship.py" id="/gpt_4/prompts/prompt_spatial_relationship.py"><code>prompt&UnderBar;spatial&UnderBar;relationship&period;py</code></a> <em>Identifies spatial relationships between furniture and drawers in refrigerator.</em></li>
+<li><a class="file_link" href="index.html?q=/gpt_4/prompts/prompt_with_scale.py" id="/gpt_4/prompts/prompt_with_scale.py"><code>prompt&UnderBar;with&UnderBar;scale&period;py</code></a> <em>Robotic arm simulator scales objects realistically with NLP.</em></li>
+<li><a class="file_link" href="index.html?q=/gpt_4/prompts/utils.py" id="/gpt_4/prompts/utils.py"><code>utils&period;py</code></a> <em>YAML configurations, URDF refrigerators, parsing for RoboGen tasks.</em></li>
+</ul>
+</li>
+<li><a class="file_link" href="index.html?q=/gpt_4/query.py" id="/gpt_4/query.py"><code>query&period;py</code></a> <em>Imports openai, defines query function with debugging &amp; API usage.</em></li>
+<li><a class="file_link" href="index.html?q=/gpt_4/verification.py" id="/gpt_4/verification.py"><code>verification&period;py</code></a> <em>Verifies text similarity using GPU-based embeddings</em></li>
+</ul>
+</li>
+<li><a class="file_link" href="index.html?q=/install_ompl_1.5.2.sh" id="/install_ompl_1.5.2.sh"><code>install&UnderBar;ompl&UnderBar;1&period;5&period;2&period;sh</code></a> <em>Install ROS dependencies, libraries, Python packages; optionally install OMPL on Ubuntu.</em></li>
+<li><span hierarchy="1" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/locomotion/"><code>locomotion</code></strong> <em>Locomotion Meshes for Reward Calculation</em></span><ul>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/locomotion/atlas/"><code>atlas</code></strong> <em>Convert .dae to .obj using Assimp for atlas locomotion meshes</em></span><ul>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/locomotion/atlas/meshes_unplugged/"><code>meshes&UnderBar;unplugged</code></strong></span><ul>
+<li><a class="file_link" href="index.html?q=/locomotion/atlas/meshes_unplugged/convert.bat" id="/locomotion/atlas/meshes_unplugged/convert.bat"><code>convert&period;bat</code></a> <em>Convert robot mesh files from .dae to .obj format.</em></li>
+</ul>
+</li>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/locomotion/atlas/meshes_v3/"><code>meshes&UnderBar;v3</code></strong></span><ul>
+<li><a class="file_link" href="index.html?q=/locomotion/atlas/meshes_v3/convert.bat" id="/locomotion/atlas/meshes_v3/convert.bat"><code>convert&period;bat</code></a> <em>Converts DAE to OBJ with Assimp</em></li>
+</ul>
+</li>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/locomotion/atlas/multisense_sl_description/"><code>multisense&UnderBar;sl&UnderBar;description</code></strong></span><ul>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/locomotion/atlas/multisense_sl_description/meshes/"><code>meshes</code></strong></span><ul>
+<li><a class="file_link" href="index.html?q=/locomotion/atlas/multisense_sl_description/meshes/convert.bat" id="/locomotion/atlas/multisense_sl_description/meshes/convert.bat"><code>convert&period;bat</code></a> <em>Convert .dae to .obj using Assimp</em></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="file_link" href="index.html?q=/locomotion/gpt_reward_api.py" id="/locomotion/gpt_reward_api.py"><code>gpt&UnderBar;reward&UnderBar;api&period;py</code></a> <em>Calculates energy reward for controlling robotic movement from PyBullet simulator.</em></li>
+<li><a class="file_link" href="index.html?q=/locomotion/sim.py" id="/locomotion/sim.py"><code>sim&period;py</code></a> <em>Robot simulation setup with PyBullet, observation and action spaces.</em></li>
+</ul>
+</li>
+<li><span hierarchy="1" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/manipulation/"><code>manipulation</code></strong> <em>Robotics manipulation and 3D simulation.</em></span><ul>
+<li><a class="file_link" href="index.html?q=/manipulation/agent.py" id="/manipulation/agent.py"><code>agent&period;py</code></a> <em>Agent: Robot joint, physics engine, state management for manipulation.</em></li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/manipulation/assets/"><code>assets</code></strong></span><ul>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/manipulation/assets/franka_mobile/"><code>franka&UnderBar;mobile</code></strong></span><ul>
+<li><a class="file_link" href="index.html?q=/manipulation/assets/franka_mobile/LICENSE.txt" id="/manipulation/assets/franka_mobile/LICENSE.txt"><code>LICENSE&period;txt</code></a> <em>Apache License 2.0: Use, Modify, Distribute, Liability Limitation</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="file_link" href="index.html?q=/manipulation/gpt_primitive_api.py" id="/manipulation/gpt_primitive_api.py"><code>gpt&UnderBar;primitive&UnderBar;api&period;py</code></a> <em>Grasping primitive API for robot manipulation.</em></li>
+<li><a class="file_link" href="index.html?q=/manipulation/gpt_reward_api.py" id="/manipulation/gpt_reward_api.py"><code>gpt&UnderBar;reward&UnderBar;api&period;py</code></a> <em>Gripper manipulation and reward API.</em></li>
+<li><a class="file_link" href="index.html?q=/manipulation/grasping_utils.py" id="/manipulation/grasping_utils.py"><code>grasping&UnderBar;utils&period;py</code></a> <em>Grasping utils: voxelizing, rotating, aligning grippers with Open3D.</em></li>
+<li><a class="file_link" href="index.html?q=/manipulation/motion_planning_utils.py" id="/manipulation/motion_planning_utils.py"><code>motion&UnderBar;planning&UnderBar;utils&period;py</code></a> <em>Motion planning function for RoboGen using OMPL.</em></li>
+<li><a class="file_link" href="index.html?q=/manipulation/panda.py" id="/manipulation/panda.py"><code>panda&period;py</code></a> <em>Panda class: Robot subclass, URDF initialization with optional params.</em></li>
+<li><a class="file_link" href="index.html?q=/manipulation/partnet_category.py" id="/manipulation/partnet_category.py"><code>partnet&UnderBar;category&period;py</code></a> <em>PartNet dataset: 16 categories for robotic manipulation.</em></li>
+<li><a class="file_link" href="index.html?q=/manipulation/robot.py" id="/manipulation/robot.py"><code>robot&period;py</code></a> <em>Robot control with PyBullet engine, joint and gripper management.</em></li>
+<li><a class="file_link" href="index.html?q=/manipulation/sawyer.py" id="/manipulation/sawyer.py"><code>sawyer&period;py</code></a> <em>Sawyer robot initialization and configuration.</em></li>
+<li><a class="file_link" href="index.html?q=/manipulation/sim.py" id="/manipulation/sim.py"><code>sim&period;py</code></a> <em>Robotics environment simulation with PyBullet, RL, and collision handling</em></li>
+<li><a class="file_link" href="index.html?q=/manipulation/table_utils.py" id="/manipulation/table_utils.py"><code>table&UnderBar;utils&period;py</code></a> <em>Table manipulation utility with varying sizes and position scaling.</em></li>
+<li><a class="file_link" href="index.html?q=/manipulation/ur5.py" id="/manipulation/ur5.py"><code>ur5&period;py</code></a> <em>UR5 class inherits Robot, sets up UR5 robot model.</em></li>
+<li><a class="file_link" href="index.html?q=/manipulation/utils.py" id="/manipulation/utils.py"><code>utils&period;py</code></a> <em>Manipulation utilities for loading, rendering and simulating 3D objects.</em></li>
+</ul>
+</li>
+<li><span hierarchy="1" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/objaverse_utils/"><code>objaverse&UnderBar;utils</code></strong> <em>Objaverse utilities for mapping and object recognition.</em></span><ul>
+<li><a class="file_link" href="index.html?q=/objaverse_utils/embed_all_annotations.py" id="/objaverse_utils/embed_all_annotations.py"><code>embed&UnderBar;all&UnderBar;annotations&period;py</code></a> <em>Embeds BERT-transformed annotations for names/descriptions.</em></li>
+<li><a class="file_link" href="index.html?q=/objaverse_utils/embed_cap3d.py" id="/objaverse_utils/embed_cap3d.py"><code>embed&UnderBar;cap3d&period;py</code></a> <em>Embeds object descriptions for UID mapping.</em></li>
+<li><a class="file_link" href="index.html?q=/objaverse_utils/embed_partnet_annotations.py" id="/objaverse_utils/embed_partnet_annotations.py"><code>embed&UnderBar;partnet&UnderBar;annotations&period;py</code></a> <em>Embed object categories in BERT model for downstream tasks.</em></li>
+<li><a class="file_link" href="index.html?q=/objaverse_utils/find_uid_utils.py" id="/objaverse_utils/find_uid_utils.py"><code>find&UnderBar;uid&UnderBar;utils&period;py</code></a> <em>Finds UIDs for objs in CSV using cache or search, returns similar ones.</em></li>
+<li><a class="file_link" href="index.html?q=/objaverse_utils/utils.py" id="/objaverse_utils/utils.py"><code>utils&period;py</code></a> <em>Loads, checks, prints.</em></li>
+</ul>
+</li>
+<li><a class="file_link" href="index.html?q=/prepare.sh" id="/prepare.sh"><code>prepare&period;sh</code></a> <em>Prepares RoboGen environment.</em></li>
+<li><a class="file_link" href="index.html?q=/readme.md" id="/readme.md"><code>readme&period;md</code></a> <em>RoboGen: AI-powered locomotion tasks execution</em></li>
+<li><span hierarchy="1" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/RL/"><code>RL</code></strong></span><ul>
+<li><a class="file_link" href="index.html?q=/RL/ray_learn.py" id="/RL/ray_learn.py"><code>ray&UnderBar;learn&period;py</code></a> <em>Trains RL agents, saves best models and states.</em></li>
+</ul>
+</li>
+<li><a class="file_link" href="index.html?q=/run.py" id="/run.py"><code>run&period;py</code></a> <em>Python script with argparse, dictionaries, folders, configs, and RL learning.</em></li>
+</ul>
+</li>
+</ul>
+    </article>
+    <script type="text/javascript">
+        function getQueryParams() {
+            var search = window.location.search.substring(1); // Remove leading '?'
+            var queryParams = {};
+            search.split('&').forEach(function (pair) {
+                var parts = pair.split('=');
+                var key = decodeURIComponent(parts[0]);
+                var value = decodeURIComponent(parts[1]);
+                queryParams[key] = value;
+            });
+            return queryParams;
+        }
+
+        const queryParams = getQueryParams(window.location.search);
+        const show_full = queryParams.full == "true";
+        //const is_random = queryParams.random == 'true';
+        function feelingLucky() {
+            var elements = document.getElementsByClassName("file_link");
+            var randomIndex = Math.floor(Math.random() * elements.length);
+            window.location = elements[randomIndex].href;
+        }
+        //if (is_random) {feelingLucky();}
+        document.getElementById("feeling-lucky").onclick = feelingLucky;
+        if (!show_full) {
+            const spans = document.querySelectorAll('span');
+            for (let span of spans) {
+                if (span.getAttribute("hierarchy") == '0') { continue }
+                toggleVisibility(span);
+            }
+        } else {
+            const expand_elem = document.getElementById('expand-tree');
+            expand_elem.setAttribute("href", "tree.html");
+            expand_elem.setAttribute("title", "Undo expand");
+            expand_elem.innerHTML = '<i class="bi bi-caret-up-square"></i>'
+        }
+
+    </script>
+</body>
+
+</html>

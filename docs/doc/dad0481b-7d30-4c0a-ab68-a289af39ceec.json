@@ -1,0 +1,10 @@
+{
+    "summary": "The code imports necessary libraries, reads a CSV file with object descriptions and their corresponding UIDs, creates a SentenceTransformer model using the 'all-mpnet-base-v2' model, encodes all sentence annotations into embeddings using the model, saves the embeddings in a .pt file for further use.",
+    "details": [
+        {
+            "comment": "The code imports necessary libraries, reads a CSV file with object descriptions and their corresponding UIDs, creates a SentenceTransformer model using the 'all-mpnet-base-v2' model, encodes all sentence annotations into embeddings using the model, saves the embeddings in a .pt file for further use.",
+            "location": "\"/media/root/Prima/works/RoboGen/docs/src/objaverse_utils/embed_cap3d.py\":0-17",
+            "content": "import objaverse\nimport os\nimport pandas as pd\nimport numpy as np\nfrom sentence_transformers import SentenceTransformer, util\nimport torch\ncsv = pd.read_csv('objaverse_utils/Cap3D_automated_Objaverse.csv')\ncsv = csv.dropna()\nuids = csv.iloc[:, 0].values\nannotations = csv.iloc[:, 1].values\nsentence_bert_model = SentenceTransformer('all-mpnet-base-v2')\nall_list = list(annotations)\nwith torch.no_grad():\n    all_embeddings = emb_to_check = sentence_bert_model.encode(all_list)\ntorch.save(all_embeddings, \"objaverse_utils/data/cap3d_sentence_bert_embeddings.pt\")"
+        }
+    ]
+}

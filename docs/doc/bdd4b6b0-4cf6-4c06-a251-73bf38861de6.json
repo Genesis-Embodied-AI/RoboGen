@@ -1,0 +1,15 @@
+{
+    "summary": "This code initializes a BERT model for sentence transformation, loads UIDs and their annotations, checks for 'name' or 'description', adds matching tags to the list of names, splits the list into batches, encodes with BERT, and saves embeddings, names, and UIDs in separate files for each batch.",
+    "details": [
+        {
+            "comment": "This code imports necessary libraries and initializes a BERT model for sentence transformation. It then loads unique object identifiers (uids) and their corresponding annotations from the objaverse module. The script checks if each uid has a 'name' or 'description' annotation, and adds any matching tags to a list of matched names. Finally, it splits the list into batches for efficient encoding using the BERT model.",
+            "location": "\"/media/root/Prima/works/RoboGen/docs/src/objaverse_utils/embed_all_annotations.py\":0-31",
+            "content": "import objaverse\nfrom sentence_transformers import SentenceTransformer, util\nimport torch\nimport pickle5 as pickle\nimport pandas as pd\nsentence_bert_model = SentenceTransformer('all-mpnet-base-v2')\nuids = objaverse.load_uids()\nannotations = objaverse.load_annotations(uids)\nmatched_uids = []\nmatched_names = []\nfor uid in uids:\n    if \"name\" in annotations[uid] and annotations[uid]['name'] != \"\":\n        matched_uids.append(uid)\n        matched_names.append(annotations[uid]['name'])\n    if \"description\" in annotations[uid] and annotations[uid]['description'] != \"\":\n        matched_uids.append(uid)\n        matched_names.append(annotations[uid]['description'])\n    for tag in annotations[uid]['tags']:\n        matched_uids.append(uid)\n        matched_names.append(tag['name'])\nall_list = matched_names\nprint(\"all_list length: \", len(all_list))\nbatch_size = 30\nper_batch_size = len(all_list) // batch_size\nfor idx in range(batch_size + 1):\n    print(\"encoding batch: \", idx)\n    to_encode_names = all_list[idx * per_batch_size: (idx + 1) * per_batch_size]"
+        },
+        {
+            "comment": "This code is splitting a list of UIDs into batches, encoding the corresponding names with BERT, and then saving the embeddings, names, and UIDs in separate files for each batch.",
+            "location": "\"/media/root/Prima/works/RoboGen/docs/src/objaverse_utils/embed_all_annotations.py\":32-38",
+            "content": "    to_encode_uids = matched_uids[idx * per_batch_size: (idx + 1) * per_batch_size]\n    with torch.no_grad():\n        all_embeddings = sentence_bert_model.encode(to_encode_names)\n    torch.save(all_embeddings, \"objaverse_utils/data/default_tag_embeddings_{}.pt\".format(idx))\n    torch.save(to_encode_names, \"objaverse_utils/data/default_tag_names_{}.pt\".format(idx))\n    torch.save(to_encode_uids, \"objaverse_utils/data/default_tag_uids_{}.pt\".format(idx))"
+        }
+    ]
+}

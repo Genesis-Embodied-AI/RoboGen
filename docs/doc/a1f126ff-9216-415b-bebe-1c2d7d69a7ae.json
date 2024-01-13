@@ -1,0 +1,10 @@
+{
+    "summary": "This code imports necessary libraries, loads dictionaries and data from JSON files, and checks file existence before using the content. It then prints a value from one of the loaded dictionaries (\"Oven\") when executed as main module.",
+    "details": [
+        {
+            "comment": "This code imports necessary libraries, loads dictionaries and data from JSON files, and checks file existence before using the content. It then prints a value from one of the loaded dictionaries (\"Oven\") when executed as main module.",
+            "location": "\"/media/root/Prima/works/RoboGen/docs/src/objaverse_utils/utils.py\":0-21",
+            "content": "import json\nimport os.path as osp\nfrom collections import defaultdict\nwith open(\"data/partnet_mobility_dict.json\", 'r') as f:\n    partnet_mobility_dict = json.load(f)\nif osp.exists(\"objaverse_utils/text_to_uid.json\"):\n    with open(\"objaverse_utils/text_to_uid.json\", 'r') as f:\n        text_to_uid_dict = json.load(f)\nelse:\n    text_to_uid_dict = {}\nif osp.exists(\"data/sapien_cannot_vhacd_part.json\"):\n    with open(\"data/sapien_cannot_vhacd_part.json\", 'r') as f:\n        sapaien_cannot_vhacd_part_dict = json.load(f)\nelse:\n    sapaien_cannot_vhacd_part_dict = defaultdict(list)\nif __name__ == '__main__':\n    print(partnet_mobility_dict[\"Oven\"])"
+        }
+    ]
+}

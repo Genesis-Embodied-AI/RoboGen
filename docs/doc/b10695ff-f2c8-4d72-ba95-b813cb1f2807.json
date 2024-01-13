@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a list of categories from the PartNet dataset, which is a collection of manipulation tasks involving various objects. Each category represents an object that can be manipulated in different ways, such as Bottle, Box, Bucket, etc. These categories are useful for training and evaluating robotic manipulation models.",
+    "details": [
+        {
+            "comment": "This code defines a list of categories from the PartNet dataset, which is a collection of manipulation tasks involving various objects. Each category represents an object that can be manipulated in different ways, such as Bottle, Box, Bucket, etc. These categories are useful for training and evaluating robotic manipulation models.",
+            "location": "\"/media/root/Prima/works/RoboGen/docs/src/manipulation/partnet_category.py\":0-47",
+            "content": "partnet_categories = [\n    'Bottle',\n    'Box',\n    'Bucket',\n    'Camera',\n    'Cart',\n    'Chair',\n    'Clock',\n    'CoffeeMachine',\n    'Dishwasher',\n    'Dispenser',\n    'Display',\n    'Door',\n    'Eyeglasses',\n    'Fan',\n    'Faucet',\n    'FoldingChair',\n    'Globe',\n    'Kettle',\n    'Keyboard',\n    'KitchenPot',\n    'Knife',\n    'Lamp',\n    'Laptop',\n    'Lighter',\n    'Microwave',\n    'Mouse',\n    'Oven',\n    'Pen',\n    'Phone',\n    'Pliers',\n    'Printer',\n    'Refrigerator',\n    'Remote',\n    'Safe',\n    'Scissors',\n    'Stapler',\n    'StorageFurniture',\n    'Suitcase',\n    'Switch',\n    'Table',\n    'Toaster',\n    'Toilet',\n    'TrashCan',\n    'USB',\n    'WashingMachine',\n    'Window',\n]"
+        }
+    ]
+}

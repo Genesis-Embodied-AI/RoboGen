@@ -1,0 +1,10 @@
+{
+    "summary": "The code uses Assimp library to convert .dae files (Assimp Scene format) into .obj files (Wavefront 3D Object file). It performs the conversion for both \"head.dae\" and \"head_camera.dae\", saving the results as \"head.obj\" and \"head_camera.obj\" respectively.",
+    "details": [
+        {
+            "comment": "The code uses Assimp library to convert .dae files (Assimp Scene format) into .obj files (Wavefront 3D Object file). It performs the conversion for both \"head.dae\" and \"head_camera.dae\", saving the results as \"head.obj\" and \"head_camera.obj\" respectively.",
+            "location": "\"/media/root/Prima/works/RoboGen/docs/src/locomotion/atlas/multisense_sl_description/meshes/convert.bat\":0-1",
+            "content": "assimp export head.dae head.obj\nassimp export head_camera.dae head_camera.obj"
+        }
+    ]
+}

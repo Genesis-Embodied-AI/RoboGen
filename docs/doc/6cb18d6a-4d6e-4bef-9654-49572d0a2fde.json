@@ -1,0 +1,10 @@
+{
+    "summary": "The code is using the Assimp library to convert .dae files to .obj files. It processes three specific files: r_farm.dae, r_hand.dae, and r_larm.dae, and outputs the corresponding .obj files. The \"assimp export\" command seems to be a standard way of utilizing Assimp for file conversion in this context.",
+    "details": [
+        {
+            "comment": "The code is using the Assimp library to convert .dae files to .obj files. It processes three specific files: r_farm.dae, r_hand.dae, and r_larm.dae, and outputs the corresponding .obj files. The \"assimp export\" command seems to be a standard way of utilizing Assimp for file conversion in this context.",
+            "location": "\"/media/root/Prima/works/RoboGen/docs/src/locomotion/atlas/meshes_v3/convert.bat\":0-2",
+            "content": "assimp export r_farm.dae r_farm.obj\nassimp export r_hand.dae r_hand.obj\nassimp export r_larm.dae r_larm.obj"
+        }
+    ]
+}

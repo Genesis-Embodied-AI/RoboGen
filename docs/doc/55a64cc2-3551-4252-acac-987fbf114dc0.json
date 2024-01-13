@@ -1,0 +1,15 @@
+{
+    "summary": "This code retrieves a robot's pose, velocity, and direction from PyBullet simulator, and calculates energy reward based on joint velocities/torques for controlling/analyzing robotic movements. Alpha_energy is multiplied with the energy reward before returning it.",
+    "details": [
+        {
+            "comment": "This code snippet retrieves the robot's pose, velocity, and direction from a PyBullet simulator. It also calculates the energy reward based on joint velocities and torques in the system. These functions can be used to gather necessary information for controlling or analyzing robotic movements within the simulation environment.",
+            "location": "\"/media/root/Prima/works/RoboGen/docs/src/locomotion/gpt_reward_api.py\":0-25",
+            "content": "import pybullet as p\nimport numpy as np\nimport os\ndef get_robot_pose(simulator):\n    COM_pos, COM_quat = p.getBasePositionAndOrientation(simulator.robot_id, physicsClientId=simulator.id)\n    return COM_pos, COM_quat\ndef get_robot_velocity(simulator):\n    COM_vel, COM_ang = p.getBaseVelocity(simulator.robot_id, physicsClientId=simulator.id)\n    return COM_vel, COM_ang\ndef get_robot_direction(simulator, COM_quat):\n    face_dir = np.array(p.getMatrixFromQuaternion(COM_quat)).reshape((3, 3))[:, 0]\n    side_dir = np.array(p.getMatrixFromQuaternion(COM_quat)).reshape((3, 3))[:, 1]\n    up_dir = np.array(p.getMatrixFromQuaternion(COM_quat)).reshape((3, 3))[:, 2]\n    return face_dir, side_dir, up_dir\ndef get_energy_reward(simulator):\n    alpha_energy = 1e-6\n    r_energy = 0.0\n    for joint_id in simulator.joint_ids:\n        joint_state = p.getJointState(simulator.robot_id, joint_id, physicsClientId=simulator.id)\n        joint_vel = joint_state[1]\n        joint_tau = joint_state[3]\n        r_energy += - np.power(joint_vel * joint_tau, 2)"
+        },
+        {
+            "comment": "Multiply the energy reward by alpha_energy and return the result.",
+            "location": "\"/media/root/Prima/works/RoboGen/docs/src/locomotion/gpt_reward_api.py\":26-28",
+            "content": "    r_energy *= alpha_energy\n    return r_energy"
+        }
+    ]
+}

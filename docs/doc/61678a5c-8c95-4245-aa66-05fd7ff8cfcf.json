@@ -1,0 +1,10 @@
+{
+    "summary": "The code imports necessary libraries and a pre-trained BERT model. It reads JSON data from file, extracts object categories, encodes these categories into embeddings using the BERT model, saves all embeddings as a torch tensor in .pt format. This data can be used for downstream tasks involving embedded representations of objects.",
+    "details": [
+        {
+            "comment": "The code imports necessary libraries and a pre-trained BERT model. It reads JSON data from file, extracts object categories, encodes these categories into embeddings using the BERT model, saves all embeddings as a torch tensor in .pt format. This data can be used for downstream tasks involving embedded representations of objects.",
+            "location": "\"/media/root/Prima/works/RoboGen/docs/src/objaverse_utils/embed_partnet_annotations.py\":0-15",
+            "content": "import json\nimport os\nimport pandas as pd\nimport numpy as np\nfrom sentence_transformers import SentenceTransformer, util\nimport torch\nwith open(\"data/partnet_mobility_dict.json\", 'r') as f:\n    partnet_mobility_dict = json.load(f)\nobj_categories = list(partnet_mobility_dict.keys())\nsentence_bert_model = SentenceTransformer('all-mpnet-base-v2')\nwith torch.no_grad():\n    all_embeddings = emb_to_check = sentence_bert_model.encode(obj_categories)\ntorch.save(all_embeddings, \"objaverse_utils/data/partnet_mobility_category_embeddings.pt\")"
+        }
+    ]
+}

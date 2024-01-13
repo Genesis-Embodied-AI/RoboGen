@@ -1,0 +1,547 @@
+{
+    "100": {
+        "file_id": 5,
+        "content": "        :param lower_bound: An array of lower bounds for the sampled data points\n        :param epsilon: A minimum variance. If the maximum variance drops below epsilon, optimization is stopped.\n        \"\"\"\n        super().__init__()\n        self.solution_dim, self.max_iters, self.population_size, self.num_elites = \\\n            solution_dim, max_iters, population_size, num_elites\n        self.plan_n_segs = plan_n_segs\n        self.ub, self.lb = upper_bound.reshape([1, solution_dim]), lower_bound.reshape([1, solution_dim])\n        self.epsilon = epsilon\n        if num_elites > population_size:\n            raise ValueError(\"Number of elites must be at most the population size.\")\n        self.cost_function = cost_function\n    def obtain_solution(self, cur_state, init_mean=None, init_var=None):\n        \"\"\" Optimizes the cost function using the provided initial candidate distribution\n        :param cur_state: Full state of the current environment such that the environment can always be reset to this state",
+        "type": "code",
+        "location": "/execute_locomotion.py:26-44"
+    },
+    "101": {
+        "file_id": 5,
+        "content": "This code defines a class for optimizing a cost function using genetic algorithm. It takes parameters like lower and upper bounds, epsilon (minimum variance), maximum iterations, population size, number of elites, and cost function as inputs. The obtain_solution method is used to optimize the cost function with the provided initial candidate distribution in the current state of the environment.",
+        "type": "comment"
+    },
+    "102": {
+        "file_id": 5,
+        "content": "        :param init_mean: (np.ndarray) The mean of the initial candidate distribution.\n        :param init_var: (np.ndarray) The variance of the initial candidate distribution.\n        :return:\n        \"\"\"\n        mean = (self.ub + self.lb) / 2. if init_mean is None else init_mean\n        var = (self.ub - self.lb) / 4. if init_var is None else init_var\n        t = 0\n        X = stats.norm(loc=np.zeros_like(mean), scale=np.ones_like(mean))\n        while (t < self.max_iters):  # and np.max(var) > self.epsilon:\n            print(\"inside CEM, iteration {}\".format(t))\n            samples = X.rvs(size=[self.population_size, self.solution_dim]) * np.sqrt(var) + mean\n            samples = np.clip(samples, self.lb, self.ub)\n            full_samples = np.tile(samples, [1, self.plan_n_segs])\n            costs_ = self.cost_function(cur_state, full_samples)\n            costs = [_[0] for _ in costs_]\n            print(np.mean(costs), np.min(costs))\n            sort_costs = np.argsort(costs)\n            elites = samples[sort_costs][:self.num_elites]",
+        "type": "code",
+        "location": "/execute_locomotion.py:45-64"
+    },
+    "103": {
+        "file_id": 5,
+        "content": "This function initializes the candidate distribution mean and variance, then iterates through a CEM process to find solutions with lower costs. It clips samples within bounds, tiles them into multiple segments, calculates costs using cost_function, selects elites based on cost, and continues until maximum iterations or epsilon threshold is met.",
+        "type": "comment"
+    },
+    "104": {
+        "file_id": 5,
+        "content": "            mean = np.mean(elites, axis=0)\n            var *= 0.2\n            t += 1\n        sol, solvar = mean, var\n        sol = np.tile(sol, self.plan_n_segs)\n        solvar = np.tile(solvar, [1, self.plan_n_segs])\n        return sol\nclass CEMPolicy(object):\n    \"\"\" Use the ground truth dynamics to optimize a trajectory of actions. \"\"\"\n    def __init__(self, env, env_class, env_kwargs, use_mpc, plan_horizon, plan_n_segs, max_iters, population_size, num_elites):\n        self.env, self.env_class, self.env_kwargs = env, env_class, env_kwargs\n        self.use_mpc = use_mpc\n        self.plan_horizon, self.action_dim = plan_horizon, len(env.action_space.sample())\n        self.plan_n_segs = plan_n_segs\n        self.action_buffer = []\n        self.prev_sol = None\n        self.rollout_worker = ParallelRolloutWorker(env_class, env_kwargs, plan_horizon, self.action_dim)\n        lower_bound = np.tile(env.action_space.low[None], [int(self.plan_horizon / self.plan_n_segs), 1]).flatten()\n        upper_bound = np.tile(env.action_space.high[None], [int(self.plan_horizon / self.plan_n_segs), 1]).flatten()",
+        "type": "code",
+        "location": "/execute_locomotion.py:65-87"
+    },
+    "105": {
+        "file_id": 5,
+        "content": "This code calculates the mean of elites and updates variance. It returns the mean solution and variance, tiled to match the plan's number of segments. The CEMPolicy class initializes environment variables, use_mpc flag, plan horizon, plan segments, action buffer, rollout worker, and action space bounds.",
+        "type": "comment"
+    },
+    "106": {
+        "file_id": 5,
+        "content": "        self.optimizer = CEMOptimizer(self.rollout_worker.cost_function,\n                                      int(self.plan_horizon * self.action_dim / self.plan_n_segs),\n                                      self.plan_n_segs,\n                                      max_iters=max_iters,\n                                      population_size=population_size,\n                                      num_elites=num_elites,\n                                      lower_bound=lower_bound,\n                                      upper_bound=upper_bound, )\n    def reset(self):\n        self.prev_sol = None\n    def get_action(self, state):\n        if len(self.action_buffer) > 0 and not self.use_mpc:\n            action, self.action_buffer = self.action_buffer[0], self.action_buffer[1:]\n            return action\n        env_state = save_env(self.env)\n        soln = self.optimizer.obtain_solution(env_state, self.prev_sol).reshape([-1, self.action_dim])\n        if self.use_mpc:\n            self.prev_sol = np.vstack([np.copy(soln)[1:, :], np.zeros([1, self.action_dim])]).flatten()",
+        "type": "code",
+        "location": "/execute_locomotion.py:88-109"
+    },
+    "107": {
+        "file_id": 5,
+        "content": "This code initializes an optimizer for generating locomotion actions, resets the previous solution, and obtains a new solution from the optimizer when necessary. The optimizer uses a cost function, population size, number of elites, and lower and upper bounds to generate solutions.",
+        "type": "comment"
+    },
+    "108": {
+        "file_id": 5,
+        "content": "        else:\n            self.prev_sol = None\n            self.action_buffer = soln[1:]  # self.action_buffer is only needed for the non-mpc case.\n        load_env(self.env, state=env_state)  # Recover the environment\n        print(\"cem finished planning!\")\n        return soln[0]\nif __name__ == '__main__':\n    import importlib\n    import yaml\n    parser = argparse.ArgumentParser(description='RL for Assistive Gym')\n    parser.add_argument('--env', default='open_the_dishwasher_door-v0',\n                        help='Environment to train on (default: open_the_dishwasher_door-v0)')\n    parser.add_argument('--algo', default='sac',\n                        help='Reinforcement learning algorithm')\n    parser.add_argument('--task_config_path', type=str, default=None)\n    parser.add_argument('--seed', type=int, default=1,\n                        help='Random seed (default: 1)')\n    parser.add_argument('--render', type=int, default=0,\n                        help='whether to use rendering (default: 0)')\n    args = parser.parse_args()",
+        "type": "code",
+        "location": "/execute_locomotion.py:110-133"
+    },
+    "109": {
+        "file_id": 5,
+        "content": "This code is part of a reinforcement learning algorithm for assistive gym environments. It includes the initialization and planning process for a specific environment, as well as arguments for seed, rendering, and task configuration path. The code allows for training on different environments using various reinforcement learning algorithms.",
+        "type": "comment"
+    },
+    "110": {
+        "file_id": 5,
+        "content": "    time_string = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d-%H-%M-%S')\n    robot_name = np.random.choice(['anymal', \"a1\"])\n    horizon = 40\n    config={\n        'gui': args.render,\n        'task': None,\n        'robot_name': robot_name,\n        'frameskip': 10,\n        'frameskip_save': 2,\n        'horizon': horizon,\n    }\n    default_cem_kwargs = {\n        'use_mpc': False,\n        'plan_horizon': horizon,\n        'plan_n_segs': int(horizon/5),\n        'max_iters': 5,\n        'population_size': 6000,\n        'num_elites': 1,\n    }\n    # change this to be the specified task class\n    task_config = yaml.safe_load(open(args.task_config_path, 'r'))\n    solution_path = task_config[0]['solution_path']\n    task_name = solution_path.split(\"/\")[-1][5:]\n    module = importlib.import_module(\"{}.{}\".format(solution_path.replace(\"/\", \".\"), task_name))\n    config[\"task_name\"] = task_name\n    env_class = getattr(module, task_name)\n    env = env_class(**config)\n    cem_config = copy.deepcopy(config)\n    cem_config['gui'] = False",
+        "type": "code",
+        "location": "/execute_locomotion.py:135-166"
+    },
+    "111": {
+        "file_id": 5,
+        "content": "This code loads and sets up a task for a robot using specified configuration. It imports the required module based on the provided solution path, creates an environment instance with the given configuration, and creates a copy of the configuration to use for CEM (Covariance Matrix Adaptation Evolution Strategy) configuration.",
+        "type": "comment"
+    },
+    "112": {
+        "file_id": 5,
+        "content": "    policy = CEMPolicy(env,\n                        env_class,\n                        cem_config,\n                        use_mpc=default_cem_kwargs['use_mpc'],\n                        plan_horizon=default_cem_kwargs['plan_horizon'],\n                        plan_n_segs=default_cem_kwargs['plan_n_segs'],\n                        max_iters=default_cem_kwargs['max_iters'],\n                        population_size=default_cem_kwargs['population_size'],\n                        num_elites=default_cem_kwargs['num_elites'])\n    # Run policy\n    all_rbgs = []\n    all_states = []\n    all_return = []\n    obs = env.reset()\n    rgbs = []\n    states = []\n    ret = 0\n    done = False\n    for idx in range(env.horizon):\n        print(\"step {}\".format(idx))\n        action = policy.get_action(obs)\n        obs, reward, done, _, rgbs_, states_ = env.step_(action)\n        ret += reward\n        rgbs += rgbs_\n        states += states_\n    save_path=f\"{solution_path}/cem/{time_string}_{robot_name}_{ret:.3f}\"\n    if not os.path.exists(save_path):",
+        "type": "code",
+        "location": "/execute_locomotion.py:168-199"
+    },
+    "113": {
+        "file_id": 5,
+        "content": "This code initializes a CEMPolicy object for a given environment, then runs the policy to execute locomotion actions. It collects RGBS and states data at each step, saving it in lists. The code also calculates the total return from rewards. At the end, it creates a save path based on time, robot name, and total return, ensuring that the path doesn't already exist before using it for saving.",
+        "type": "comment"
+    },
+    "114": {
+        "file_id": 5,
+        "content": "        os.makedirs(save_path)\n    save_numpy_as_gif(np.array(rgbs), f\"{save_path}/result.mp4\", fps=60)\n    pickle.dump(states, open(f\"{save_path}/result.pkl\", 'wb'), pickle.HIGHEST_PROTOCOL)\n    p.disconnect(env.id)",
+        "type": "code",
+        "location": "/execute_locomotion.py:200-203"
+    },
+    "115": {
+        "file_id": 5,
+        "content": "Creates directory for save_path, converts numpy array to gif using 'save_numpy_as_gif', saves states as pickle file with highest protocol, disconnects the environment from physics client.",
+        "type": "comment"
+    },
+    "116": {
+        "file_id": 6,
+        "content": "/execute_long_horizon.py",
+        "type": "filepath"
+    },
+    "117": {
+        "file_id": 6,
+        "content": "The code performs complex tasks, writes meta information to JSON, detects GIF files, executes trials, saves results, selects the best outcome, and outputs in text/GIF formats. It also allows customizable configurations for features in a training algorithm and multiple task execution options.",
+        "type": "summary"
+    },
+    "118": {
+        "file_id": 6,
+        "content": "import yaml\nfrom execute import execute_primitive\nfrom manipulation.utils import save_numpy_as_gif, load_gif\nimport subprocess\nimport numpy as np\nimport time, datetime\nimport os\nimport json\ndef execute_multiple_try(\n            task_config_path, \n            time_string=None, resume=False, # these two are combined for resume training.\n            training_algo='cem', \n            gui=False, \n            randomize=False, # whether to randomize the initial state of the environment.\n            use_bard=True, # whether to use the bard to verify the retrieved objects.\n            use_gpt_size=True, # whether to use the size from gpt.\n            use_gpt_joint_angle=True, # whether to initialize the joint angle from gpt.\n            use_gpt_spatial_relationship=True, # whether to use the spatial relationship from gpt.\n            obj_id=0, # which object to use from the list of possible objects.\n            use_motion_planning=True,\n            use_distractor=False,\n            skip=[], # which substeps to skip.",
+        "type": "code",
+        "location": "/execute_long_horizon.py:1-23"
+    },
+    "119": {
+        "file_id": 6,
+        "content": "This code is importing necessary libraries and defining a function named \"execute_multiple_try\" that takes in various parameters such as task configuration path, time string, resume status, training algorithm, gui flag, randomize flag, bard usage, gpt size usage, gpt joint angle initialization, object ID, motion planning usage, and distractor usage. The function seems to be related to executing tasks with some level of complexity, potentially in a robotics or AI context.",
+        "type": "comment"
+    },
+    "120": {
+        "file_id": 6,
+        "content": "            num_try=8,\n):\n    if time_string is None:\n        ts = time.time()\n        time_string = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d-%H-%M-%S')\n    meta_info = {\n        \"using_motion_planning\": use_motion_planning,\n        \"using_bard\": use_bard,\n        \"using_gpt_size\": use_gpt_size,\n        \"using_gpt_joint_angle\": use_gpt_joint_angle,\n        \"using_gpt_spatial_relationship\": use_gpt_spatial_relationship,\n        \"obj_id\": obj_id,\n        \"use_distractor\": use_distractor\n    }\n    all_last_state_files = []\n    with open(task_config_path, 'r') as file:\n        task_config = yaml.safe_load(file)\n    solution_path = None\n    for obj in task_config:\n        if \"solution_path\" in obj:\n            solution_path = obj[\"solution_path\"]\n            break\n    if not os.path.exists(solution_path):\n        os.makedirs(solution_path, exist_ok=True)\n    experiment_path = os.path.join(solution_path, \"experiment\")\n    if not os.path.exists(experiment_path):\n        os.makedirs(experiment_path, exist_ok=True)",
+        "type": "code",
+        "location": "/execute_long_horizon.py:24-57"
+    },
+    "121": {
+        "file_id": 6,
+        "content": "This code segment is responsible for initializing and preparing the necessary paths for an experiment, including creating the required directories if they do not exist. It reads configuration data from a task_config file, extracts the solution path, creates the solution and experiment paths, and stores meta-information such as which models are being used, whether distractors are used, etc.",
+        "type": "comment"
+    },
+    "122": {
+        "file_id": 6,
+        "content": "    with open(os.path.join(experiment_path, \"meta_info_{}.json\".format(time_string)), 'w') as f:\n        json.dump(meta_info, f)\n    all_substeps = os.path.join(solution_path, \"substeps.txt\")\n    with open(all_substeps, 'r') as f:\n        substeps = f.readlines()\n    print(\"all substeps:\\n {}\".format(\"\".join(substeps)))\n    substep_types = os.path.join(solution_path, \"substep_types.txt\")\n    with open(substep_types, 'r') as f:\n        substep_types = f.readlines()\n    print(\"all substep types:\\n {}\".format(\"\".join(substep_types)))\n    action_spaces = os.path.join(solution_path, \"action_spaces.txt\")\n    with open(action_spaces, 'r') as f:\n        action_spaces = f.readlines()\n    print(\"all action spaces:\\n {}\".format(\"\".join(action_spaces)))\n    last_restore_state_file = None\n    all_rgbs = []\n    for step_idx, (substep, substep_type, action_space) in enumerate(zip(substeps, substep_types, action_spaces)):\n        if (skip is not None) and (step_idx < len(skip)) and int(skip[step_idx]):\n            print(\"skip substep: \", substep)",
+        "type": "code",
+        "location": "/execute_long_horizon.py:58-80"
+    },
+    "123": {
+        "file_id": 6,
+        "content": "This code writes meta information to a JSON file, reads substeps and substep types from two separate files, and retrieves action spaces for all steps. It also skips certain substeps if specified in the skip list, and stores the RGB values of the environment at each step into a list called \"all_rgbs\".",
+        "type": "comment"
+    },
+    "124": {
+        "file_id": 6,
+        "content": "            continue\n        substep = substep.lstrip().rstrip()\n        substep_type = substep_type.lstrip().rstrip()\n        action_space = action_space.lstrip().rstrip()\n        print(\"executing for substep:\\n {} {}\".format(substep, substep_type))\n        if substep_type == \"primitive\" and use_motion_planning:\n            save_path = os.path.join(solution_path, \"primitive_states\", time_string, substep.replace(\" \", \"_\"))\n            if not os.path.exists(save_path):\n                os.makedirs(save_path, exist_ok=True)\n            all_files = os.listdir(save_path)\n            all_pkl_files = [f for f in all_files if f.endswith(\".pkl\")]\n            gif_path = os.path.join(save_path, \"execute.gif\")\n            if os.path.exists(gif_path) and resume:\n                print(\"final state already exists, skip {}\".format(substep))\n                sorted_pkl_files = sorted(all_pkl_files, key=lambda x: int(x.split(\"_\")[1].split(\".\")[0]))\n                last_restore_state_file = os.path.join(save_path, sorted_pkl_files[-1])",
+        "type": "code",
+        "location": "/execute_long_horizon.py:81-99"
+    },
+    "125": {
+        "file_id": 6,
+        "content": "This code segment handles the execution of substep for a particular primitive action type in a long-horizon task. It checks if the final state already exists and skips further execution if it does, considering resume option. It also ensures proper file directories are created and maintains a sorted list of pickle files to restore from the latest checkpoint.",
+        "type": "comment"
+    },
+    "126": {
+        "file_id": 6,
+        "content": "                all_rgbs.extend(load_gif(gif_path))\n            else:\n                rgbs, states = execute_primitive(task_config_path, solution_path, substep, last_restore_state_file, save_path, \n                                                 gui=gui, randomize=randomize, use_bard=use_bard, obj_id=obj_id, \n                                                 use_gpt_size=use_gpt_size, use_gpt_joint_angle=use_gpt_joint_angle,\n                                                 use_gpt_spatial_relationship=use_gpt_spatial_relationship,\n                                                 use_distractor=use_distractor)\n                last_restore_state_file = states[-1]\n                all_rgbs.extend(rgbs)\n                save_numpy_as_gif(np.array(rgbs), \"{}/{}.gif\".format(save_path, \"execute\"))\n        if substep_type == \"reward\":\n            save_path = os.path.join(solution_path, training_algo, time_string, substep.replace(\" \", \"_\"))\n            # call execute.py multiple times to learn the reward\n            processes = []",
+        "type": "code",
+        "location": "/execute_long_horizon.py:100-115"
+    },
+    "127": {
+        "file_id": 6,
+        "content": "The code snippet checks if a GIF file exists at the specified path. If it does, the GIF frames are appended to all_rgbs. Otherwise, it executes a primitive task based on the provided configuration and stores the resulting RGB frames in rgbs. The last restore state is saved for future reference. If the substep type is \"reward\", multiple instances of execute.py are called to learn the reward.",
+        "type": "comment"
+    },
+    "128": {
+        "file_id": 6,
+        "content": "            for learning_try in range(num_try):\n                try_save_path = os.path.join(save_path, \"try_\" + str(learning_try))\n                if not os.path.exists(try_save_path):\n                    os.makedirs(try_save_path, exist_ok=True)\n                cmd = [\"python\", \"execute.py\", \"--task_config_path\", task_config_path, \"--only_learn_substep\", str(step_idx), \"--reward_learning_save_path\", try_save_path, \n                       \"--last_restore_state_file\", last_restore_state_file]\n                # Spawn the subprocesses\n                proc = subprocess.Popen(cmd)\n                processes.append(proc)\n                time.sleep(5)\n            # Wait for all subprocesses to finish\n            for proc in processes:\n                proc.wait()\n            best_return = -np.inf\n            best_idx = None\n            for learning_try in range(num_try):\n                best_state_path = os.path.join(save_path, \"try_\" + str(learning_try), \"best_state\")\n                all_return_files = [x for x in os.listdir(best_state_path) if x.endswith(\".txt\")]",
+        "type": "code",
+        "location": "/execute_long_horizon.py:116-136"
+    },
+    "129": {
+        "file_id": 6,
+        "content": "The code executes multiple trials, spawns subprocesses to learn and save results, waits for them to complete, selects the best result from saved data.",
+        "type": "comment"
+    },
+    "130": {
+        "file_id": 6,
+        "content": "                all_return = [float(x.split(\"_\")[1][:-4]) for x in all_return_files]\n                if len(all_return) > 0:\n                    highest_return = max(all_return)\n                    if highest_return > best_return:\n                        best_return = highest_return\n                        best_idx = learning_try\n            best_state_path = os.path.join(save_path, \"try_\" + str(best_idx), \"best_state\")\n            all_pkl_files = [x for x in os.listdir(best_state_path) if x.endswith(\".pkl\")]\n            all_pkl_files = sorted(all_pkl_files, key=lambda x: int(x.split(\"_\")[1].split(\".\")[0]))\n            last_restore_state_file = os.path.join(best_state_path, all_pkl_files[-1])\n            all_rgbs.extend(load_gif(os.path.join(best_state_path, \"best.gif\")))\n            os.system(\"cp -r {} {}\".format(best_state_path, save_path + \"/\"))\n            os.system(\"cp -r {} {}\".format(os.path.join(save_path, \"try_\" + str(best_idx),  \"best_model\"), save_path + \"/\"))\n        all_last_state_files.append(str(last_restore_state_file))",
+        "type": "code",
+        "location": "/execute_long_horizon.py:137-152"
+    },
+    "131": {
+        "file_id": 6,
+        "content": "This code block retrieves the highest return from a list, updates the best return if necessary, and then performs several operations. It extracts the best state path, lists all .pkl files in that directory, sorts them by their numerical prefix, gets the last one, appends corresponding frames to all_rgbs using load_gif function, copies the best state path and model directory to save_path, and adds the last restore state file path to all_last_state_files.",
+        "type": "comment"
+    },
+    "132": {
+        "file_id": 6,
+        "content": "        with open(os.path.join(experiment_path, \"all_last_state_files_{}.txt\".format(time_string)), 'w') as f:\n            f.write(\"\\n\".join(all_last_state_files))\n    # save the final gif\n    save_path = os.path.join(solution_path)\n    save_numpy_as_gif(np.array(all_rgbs), \"{}/{}-{}.gif\".format(save_path, \"all\", time_string))\nif __name__ == \"__main__\":\n    import argparse\n    parser = argparse.ArgumentParser()\n    parser.add_argument('--task_config_path', type=str, default=None)\n    parser.add_argument('--training_algo', type=str, default=\"RL_sac\")\n    parser.add_argument('--resume', type=int, default=0)\n    parser.add_argument('--time_string', type=str, default=None) # which folder to use to resume training.\n    parser.add_argument('--gui', type=int, default=0) \n    parser.add_argument('--randomize', type=int, default=1) # whether to randomize roation of objects in the scene.\n    parser.add_argument('--obj_id', type=int, default=None) # which object from the list of possible objects to use.\n    parser.add_argument('--use_bard', type=int, default=1) # whether to use bard filtered objects.",
+        "type": "code",
+        "location": "/execute_long_horizon.py:153-170"
+    },
+    "133": {
+        "file_id": 6,
+        "content": "This code segment saves the final output of a simulation into two formats: text and GIF. It accepts various parameters like task configuration path, training algorithm, time string for resuming, GUI usage, object randomization, object ID, and usage of BAR filtering. The saved text file contains all last states recorded during the experiment at each timestep, while the GIF is a visual representation of the simulation's final state named \"all\" with a timestamp-based label.",
+        "type": "comment"
+    },
+    "134": {
+        "file_id": 6,
+        "content": "    parser.add_argument('--use_gpt_size', type=int, default=1) # whether to use size outputted from gpt.\n    parser.add_argument('--use_gpt_spatial_relationship', type=int, default=1) # whether to use gpt spatial relationship.\n    parser.add_argument('--use_gpt_joint_angle', type=int, default=1) # whether to use initial joint angle output from gpt.\n    parser.add_argument('--run_training', type=int, default=1) # if to train or just to build the scene.\n    parser.add_argument('--use_motion_planning', type=int, default=1) # if to train or just to build the scene.\n    parser.add_argument('--use_distractor', type=int, default=1) # if to train or just to build the scene.\n    parser.add_argument('--skip', nargs=\"+\", default=[]) # if to train or just to build the scene.\n    parser.add_argument('--num_try', type=int, default=5) # if to train or just to build the scene.\n    args = parser.parse_args()\n    task_config_path = args.task_config_path\n    execute_multiple_try(task_config_path, \n            resume=args.resume, ",
+        "type": "code",
+        "location": "/execute_long_horizon.py:171-183"
+    },
+    "135": {
+        "file_id": 6,
+        "content": "This code sets arguments for different features to use in the training and execution process. These include using size from GPT, spatial relationships, initial joint angles, whether to train or just build the scene, motion planning, distractors, skipping specific tasks, and number of tries. The function parse_args() is used to extract these arguments and task_config_path is assigned the argument's value for this path. Finally, execute_multiple_try is called with these arguments.",
+        "type": "comment"
+    },
+    "136": {
+        "file_id": 6,
+        "content": "            training_algo=args.training_algo, \n            time_string=args.time_string, \n            gui=args.gui, \n            randomize=args.randomize,\n            use_bard=args.use_bard,\n            use_gpt_size=args.use_gpt_size,\n            use_gpt_joint_angle=args.use_gpt_joint_angle,\n            use_gpt_spatial_relationship=args.use_gpt_spatial_relationship,\n            obj_id=args.obj_id,\n            use_motion_planning=args.use_motion_planning,\n            use_distractor=args.use_distractor,\n            skip=args.skip,\n            num_try=args.num_try,\n    )",
+        "type": "code",
+        "location": "/execute_long_horizon.py:184-197"
+    },
+    "137": {
+        "file_id": 6,
+        "content": "This code snippet is creating an instance of a class with multiple parameters. These arguments control the training algorithm, user interface, randomization, Bard usage, GPT-related features, object ID, motion planning, distractor usage, and number of attempts. The purpose is to execute long-horizon tasks with various customizable configurations.",
+        "type": "comment"
+    },
+    "138": {
+        "file_id": 7,
+        "content": "/gpt_4/adjust_size.py",
+        "type": "filepath"
+    },
+    "139": {
+        "file_id": 7,
+        "content": "This code segment extracts object details from a YAML string and adjusts the size based on object type. It appears to be part of a larger program involving 3D models based on user input, creating new content by formatting task description and object details, and processing responses containing YAML data to correct mesh/urdf size values.",
+        "type": "summary"
+    },
+    "140": {
+        "file_id": 7,
+        "content": "from gpt_4.query import query\nfrom gpt_4.prompts.prompt_with_scale import user_contents_v2 as scale_user_contents_v2, assistant_contents_v2 as scale_assistant_contents_v2\nimport yaml\nimport re\nfrom manipulation.utils import parse_center\nimport copy\ndef adjust_size_v2(task_description, yaml_string, save_path, temperature=0.2, model='gpt-4'):\n    # extract object names and sizes\n    object_names = []\n    object_sizes = []\n    object_types = []\n    config = yaml.safe_load(yaml_string)\n    for obj in config:\n        if \"name\" in obj:\n            object_names.append(obj['name'].lower())\n            object_types.append(obj['type'])\n            if obj['type'] == 'mesh' or obj['type'] == 'urdf' or obj['type'] == 'sphere':\n                object_sizes.append(obj['size'])\n            if obj['type'] in ['cylinder', 'cube', 'box']:\n                if isinstance(obj['size'], list):\n                    object_sizes.append([str(x) for x in obj[\"size\"]])\n                else:\n                    object_sizes.append([str(x) for x in parse_center(obj['size'])])",
+        "type": "code",
+        "location": "/gpt_4/adjust_size.py:1-25"
+    },
+    "141": {
+        "file_id": 7,
+        "content": "This function, adjust_size_v2(), extracts object names and sizes from a yaml string. It checks the type of each object and adjusts its size accordingly. If an object is a mesh, urdf, or sphere, it simply appends the size to the list of object sizes. However, if the object is a cylinder, cube, or box, it uses the parse_center() function to extract the center coordinates of the object and converts the size values to strings for storage in the object_sizes list. The extracted names, types, and sizes are then returned as output parameters. This function seems to be part of a larger program that likely involves manipulation or generation of 3D models based on user input.",
+        "type": "comment"
+    },
+    "142": {
+        "file_id": 7,
+        "content": "    new_user_contents = \"```\\n\"\n    better_task_description = re.sub(r'\\d', '', task_description)\n    better_task_description = better_task_description.replace(\"_\", \" \")\n    better_task_description = better_task_description.lstrip()\n    better_task_description = better_task_description.strip()\n    new_user_contents += \"Task: {}\\n\".format(better_task_description)\n    for name, type, size in zip(object_names, object_types, object_sizes):\n        if type in ['mesh', 'urdf', 'sphere']:\n            new_user_contents += \"{}, {}, {}\\n\".format(name, type, size)\n        else:\n            new_content = \"{}, {}, \".format(name, type)\n            size_string = \", \".join(size)\n            new_content = new_content + size_string + \"\\n\"\n            new_user_contents += new_content\n    new_user_contents += \"```\"\n    input_user = copy.deepcopy(scale_user_contents_v2)\n    input_user.append(new_user_contents)\n    system = \"You are a helpful assistant.\"\n    response = query(system, input_user, scale_assistant_contents_v2, save_path=save_path, debug=False, temperature=temperature, model=model)",
+        "type": "code",
+        "location": "/gpt_4/adjust_size.py:27-46"
+    },
+    "143": {
+        "file_id": 7,
+        "content": "This code segment is creating a new user content by formatting task description and object details in a specific format. It then appends this new content to the input_user list for further processing by an assistant model. The system message is set to \"You are a helpful assistant\", and the code calls the query function passing the system, input_user, scale_assistant_contents_v2, save_path, debug, temperature, and model parameters.",
+        "type": "comment"
+    },
+    "144": {
+        "file_id": 7,
+        "content": "    response = response.split('\\n')\n    corrected_names = []\n    corrected_sizes = []\n    for idx, line in enumerate(response):\n        if \"```yaml\" in line:\n            for idx2 in range(idx+1, len(response)):\n                line2 = response[idx2]\n                if \"```\" in line2:\n                    break\n                line2 = line2.split(\", \")\n                corrected_names.append(line2[0].lower())\n                sizes = line2[2:]\n                if len(sizes) > 1:\n                    corrected_sizes.append([float(x) for x in sizes])\n                else:\n                    corrected_sizes.append(float(sizes[0]))\n    # replace the size in yaml\n    for obj in config:\n        if 'type' in obj:\n            if obj['type'] == 'mesh' or obj['type'] == 'urdf':\n                obj['size'] = corrected_sizes[corrected_names.index(obj['name'].lower())]\n    return config",
+        "type": "code",
+        "location": "/gpt_4/adjust_size.py:48-72"
+    },
+    "145": {
+        "file_id": 7,
+        "content": "This code processes a response containing YAML data, extracting and correcting the mesh/urdf size values based on their names. It identifies YAML blocks by searching for \"```yaml\" and \"```\", splits name and size values, converts sizes to float, and updates the 'size' attribute in the 'config' object with corrected size values.",
+        "type": "comment"
+    },
+    "146": {
+        "file_id": 8,
+        "content": "/gpt_4/bard_verify.py",
+        "type": "filepath"
+    },
+    "147": {
+        "file_id": 8,
+        "content": "This code utilizes Google Bard API and defines functions for image verification tasks, downloads images, generates descriptions, checks GPT responses containing \"yes\", and verifies object-action pairs.",
+        "type": "summary"
+    },
+    "148": {
+        "file_id": 8,
+        "content": "import os\nimport requests\nimport objaverse\nfrom PIL import Image\nfrom gpt_4.query import query\nimport torch\nimport numpy as np\nfrom lavis.models import load_model_and_preprocess\nimport os\ndevice = torch.device(\"cuda\" if torch.cuda.is_available() else \"cpu\")\nmodel, vis_processors, _ = load_model_and_preprocess(name=\"blip2_t5\", model_type=\"pretrain_flant5xl\", is_eval=True, device=device)\nos.environ[\"TOKENIZERS_PARALLELISM\"] = \"false\"\ndef bard_verify(image):\n    from bardapi import Bard\n    token = \"\" # replace with your token\n    session = requests.Session()\n    session.headers = {\n                \"Host\": \"bard.google.com\",\n                \"X-Same-Domain\": \"1\",\n                \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36\",\n                \"Content-Type\": \"application/x-www-form-urlencoded;charset=UTF-8\",\n                \"Origin\": \"https://bard.google.com\",\n                \"Referer\": \"https://bard.google.com/\",\n            }\n    session.cookies.set(\"__Secure-1PSID\", token) ",
+        "type": "code",
+        "location": "/gpt_4/bard_verify.py:1-27"
+    },
+    "149": {
+        "file_id": 8,
+        "content": "This code imports necessary libraries, loads a pre-trained model, and sets up an API session with Google Bard. It defines a function \"bard_verify\" which takes an image as input, and utilizes the Bard API for verification tasks using the provided token and session configuration. The model is loaded on the GPU if available; otherwise, it uses the CPU.",
+        "type": "comment"
+    },
+    "150": {
+        "file_id": 8,
+        "content": "    bard = Bard(token=token, session=session)\n    query_string = \"\"\"I will show you an image. Please describe the content of the image. \"\"\"\n    print(\"===================== querying bard: ==========================\")\n    print(query_string)\n    res = bard.ask_about_image(query_string, image)\n    description = res['content']\n    print(\"bard description: \", description)\n    print(\"===============\")\n    return description\ndef blip2_caption(image):\n    # preprocess the image\n    # vis_processors stores image transforms for \"train\" and \"eval\" (validation / testing / inference)\n    image = vis_processors[\"eval\"](image).unsqueeze(0).to(device)\n    # generate caption\n    res = model.generate({\"image\": image})\n    return res[0]\ndef verify_objaverse_object(object_name, uid, task_name=None, task_description=None, use_bard=False, use_blip2=True):\n    annotations = objaverse.load_annotations([uid])[uid]\n    thumbnail_urls = annotations['thumbnails'][\"images\"]\n    max_size = -1000\n    max_url = -1\n    for dict in thumbnail_urls:",
+        "type": "code",
+        "location": "/gpt_4/bard_verify.py:28-55"
+    },
+    "151": {
+        "file_id": 8,
+        "content": "This code snippet includes functions for querying Bard, generating Blip2 captions, and verifying an object's presence in Objaverse. It also preprocesses images and finds the image with the largest size from a list of thumbnail URLs.",
+        "type": "comment"
+    },
+    "152": {
+        "file_id": 8,
+        "content": "        width = dict[\"width\"]\n        if width > max_size:\n            max_size = width\n            max_url = dict[\"url\"]\n    if max_url == -1: # TODO: in this case, we should render the object using blender to get the image.\n        return False\n    # download the image from the url\n    try: \n        raw_image = Image.open(requests.get(max_url, stream=True).raw).convert('RGB')\n    except:\n        return False\n    if not os.path.exists('objaverse_utils/data/images'):\n        os.makedirs('objaverse_utils/data/images')\n    raw_image.save(\"objaverse_utils/data/images/{}.jpeg\".format(uid))\n    bard_image = open(\"objaverse_utils/data/images/{}.jpeg\".format(uid), \"rb\").read()\n    descriptions = []\n    if use_bard:\n        bard_description = bard_verify(bard_image)\n        descriptions.append(bard_description)\n    if use_blip2:\n        blip2_description = blip2_caption(raw_image)\n        descriptions.append(blip2_description)\n    gpt_results = []\n    for description in descriptions:\n        if description:\n            system = \"You are a helpful assistant.\"",
+        "type": "code",
+        "location": "/gpt_4/bard_verify.py:56-87"
+    },
+    "153": {
+        "file_id": 8,
+        "content": "Code snippet downloads the image from a URL, checks if it exists and is not empty, generates descriptions using BARD and BLIP-2 models, and adds the image to the data folder. It also handles exceptions and creates directories if needed.",
+        "type": "comment"
+    },
+    "154": {
+        "file_id": 8,
+        "content": "            query_string = \"\"\"\n            A robotic arm is trying to solve a task to learn a manipulation skill in a simulator.\n        We are trying to find the best objects to load into the simulator to build this task for the robot to learn the skill.\n        The task the robot is trying to learn is: {}. \n        A more detailed description of the task is: {}.\n        As noted, to build the task in the simulator, we need to find this object: {}.\n        We are retrieving the object from an existing database, which provides some language annotations for the object.\n        With the given lanugage annotation, please think if the object can be used in the simulator as {} for learning the task {}.\n        This is the language annotation:\n        {}\n        Please reply first with your reasoning, and then a single line with \"**yes**\" or \"**no**\" to indicate whether this object can be used.\n        \"\"\".format(task_name, task_description, object_name, object_name, task_name, description)\n            if not os.path.exists('data/debug'):",
+        "type": "code",
+        "location": "/gpt_4/bard_verify.py:88-103"
+    },
+    "155": {
+        "file_id": 8,
+        "content": "This code is constructing a query string that describes the robot's task, object, and language annotation for retrieval from a database. The code also checks if a 'data/debug' directory exists and if not, it continues with the process.",
+        "type": "comment"
+    },
+    "156": {
+        "file_id": 8,
+        "content": "                os.makedirs('data/debug')\n            res = query(system, [query_string], [], save_path='data/debug/verify.json', temperature=0)\n            responses = res.split(\"\\n\")\n            useable = False\n            for l_idx, line in enumerate(responses):\n                if \"yes\" in line.lower():\n                    useable = True\n                    break\n            gpt_results.append(useable)\n    return np.alltrue(gpt_results)\nif __name__ == \"__main__\":\n    uid = \"adbd797050f5429daee730a3aad04ee3\"\n    verify_objaverse_object(\"a hamburger\", uid, \"Heat up a hamburger in microwave\", \"The robot arm places a hamburger inside the microwave, closes the door, and sets the microwave timer to heat the soup for an appropriate amount of time.\")",
+        "type": "code",
+        "location": "/gpt_4/bard_verify.py:104-121"
+    },
+    "157": {
+        "file_id": 8,
+        "content": "This code checks if the GPT response contains \"yes\" and stores the result in a list. It then returns True if all results are \"True\", indicating successful verification for each object-action pair. The main function uses the verify_object_action function with specific parameters.",
+        "type": "comment"
+    },
+    "158": {
+        "file_id": 9,
+        "content": "/gpt_4/prompts/prompt_distractor.py",
+        "type": "filepath"
+    },
+    "159": {
+        "file_id": 9,
+        "content": "The code imports libraries, defines task scene fields, addresses collision avoidance, generates responses, and uses Partnet Mobility. It saves the original configuration in YAML format and appends a dictionary to ori_config with distractor_config_path.",
+        "type": "summary"
+    },
+    "160": {
+        "file_id": 9,
+        "content": "import json\nfrom gpt_4.query import query\nimport os\nimport copy\nimport yaml\nimport numpy as np\nimport torch\nimport json\nfrom gpt_4.verification import check_text_similarity\nfrom gpt_4.prompts.utils import parse_response_to_get_yaml\nuser_contents = [\n\"\"\"\nGiven a task, which is for a mobile Franka panda robotic arm to learn a manipulation skill in the simulator, your goal is to add more objects into the task scene such that the scene looks more realistic. The Franka panda arm is mounted on a floor, at location (1, 1, 0). It can move freely on the floor. The z axis is the gravity axis. \nThe input to you includes the following:\nTask name, task description, the essential objects involved in the task, and a config describing the current task scene, which contains only the essential objects needed for the task. The config is a yaml file in the following format:\n```yaml \n- use_table: whether the task requires using a table. This should be decided based on common sense. If a table is used, its location will be fixed at (0, 0, 0). The height of the table will be 0.6m. ",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_distractor.py:1-20"
+    },
+    "161": {
+        "file_id": 9,
+        "content": "Code imports necessary libraries and defines user_contents as a list containing task description and configuration details for a robotic arm task scene.",
+        "type": "comment"
+    },
+    "162": {
+        "file_id": 9,
+        "content": "# for each object involved in the task, we need to specify the following fields for it.\n- type: mesh\n  name: name of the object, so it can be referred to in the simulator\n  size: describe the scale of the object mesh using 1 number in meters. The scale should match real everyday objects. E.g., an apple is of scale 0.08m. You can think of the scale to be the longest dimension of the object. \n  lang: this should be a language description of the mesh. The language should be a bit detailed, such that the language description can be used to search an existing database of objects to find the object.\n  path: this can be a string showing the path to the mesh of the object. \n  on_table: whether the object needs to be placed on the table (if there is a table needed for the task). This should be based on common sense and the requirement of the task.     \n  center: the location of the object center. If there isn't a table needed for the task or the object does not need to be on the table, this center sho",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_distractor.py:21-28"
+    },
+    "163": {
+        "file_id": 9,
+        "content": "This code snippet outlines the required fields for an object involved in a task, such as its type (mesh), name, size (scale), language description, path to mesh, whether it needs to be on the table, and its center location. These fields help define objects for a simulator or to search an existing database of objects.",
+        "type": "comment"
+    },
+    "164": {
+        "file_id": 9,
+        "content": "uld be expressed in the world coordinate system. If there is a table in the task and the object needs to be placed on the table, this center should be expressed in terms of the table coordinate, where (0, 0, 0) is the lower corner of the table, and (1, 1, 1) is the higher corner of the table. In either case, you should try to specify a location such that there is no collision between objects.\n```\nYour task is to think about what other distractor objects can be added into the scene to make the scene more complex and realistic for the robot to learn the task. These distractor objects are not necessary for the task itself, but their existence makes the scene look more interesting and complex. You should output the distractor objects using the same format as the input yaml file. You should try to put these distractor objects at locations such that they don’t collide with objects already in the scene. \nHere is one example:\nInput:\nTask name: Heat up a bowl of soup in the microwave\nTask description",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_distractor.py:28-38"
+    },
+    "165": {
+        "file_id": 9,
+        "content": "This code discusses the concept of specifying a location for an object in either world or table coordinate system to avoid collision with other objects. The goal is to provide a more complex and realistic scene for the robot to learn from, while ensuring there are no collisions between different objects.",
+        "type": "comment"
+    },
+    "166": {
+        "file_id": 9,
+        "content": ": The robot will grab the soup and move it into the microwave, and then set the temperature to heat it.\nObjects involved: Microwave, a bowl of soup\nConfig:\n```yaml\n-   use_table: true\n-   center: (0.3, 0.7, 0)\n    lang: A standard microwave with a turntable and digital timer\n    name: Microwave\n    on_table: true\n    path: microwave.urdf\n    size: 0.6\n    type: urdf\n-   center: (0.2, 0.2, 0)\n    lang: A ceramic bowl full of soup\n    name: Bowl of Soup\n    on_table: true\n    path: bowl_soup.obj\n    size: 0.15\n    type: mesh\n```\nOutput: \n```yaml\n- name: plate # a plate is a common object placed when there is microwave and bowl of soup, in a kitchen setup\n  lang: a common kitchen plate\n  on_table: True\n  center: (0.8, 0.8, 0)\n  type: mesh\n  path: \"plate.obj\"\n  size: 0.15 # a plate is usually of scale 0.15m\n- name: sponge # a sponge is a common object placed when there is microwave and bowl of soup, in a kitchen setup\n  lang: a common sponge\n  on_table: True\n  center: (0.5, 0.2, 0)\n  type: mesh\n  path: \"sponge.obj\"\n  size: 0.1 # a sponge is usually of scale 0.1m",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_distractor.py:38-74"
+    },
+    "167": {
+        "file_id": 9,
+        "content": "The code introduces two new objects, a plate and a sponge, to accompany the microwave and bowl of soup on the table.",
+        "type": "comment"
+    },
+    "168": {
+        "file_id": 9,
+        "content": "- name: Oven # a oven is a common object placed when there is microwave and bowl of soup, in a kitchen setup\n  lang: a kitchen oven\n  on_table: False # an oven is usually a standalone object on the floor\n  center: (1.8, 0.5, 0) # remember robot is at (1, 1, 0) and table is at (0, 0, 0). So the oven is placed at (1.8, 0.5, 0) in the world coordinate system to avoid collision with other objects.\n  type: mesh\n  path: \"oven.obj\"\n  size: 0.8 # an oven is usually of scale 0.8m\n```\nCan you do it for the following task:\n\"\"\"\n]\nassistant_contents = [\n]\ndef generate_distractor(task_config, temperature_dict, model_dict):\n    parent_folder = os.path.dirname(task_config)\n    existing_response = os.path.join(parent_folder, \"gpt_response/task_generation.json\")\n    ori_config = None\n    with open(task_config, 'r') as f:\n        ori_config = yaml.safe_load(f)\n    task_name = None\n    task_description = None\n    for obj in ori_config:\n        if \"task_name\" in obj:\n            task_name = obj[\"task_name\"]\n        if \"task_description\" in obj:",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_distractor.py:75-107"
+    },
+    "169": {
+        "file_id": 9,
+        "content": "The code defines a distractor object for an AI task, specifying its name, language, placement, size, and type. It retrieves the original task configuration file, extracts the task name and description, and reads an existing response file if available. The purpose is to create a distracting object to be placed in the scene during the AI task execution.",
+        "type": "comment"
+    },
+    "170": {
+        "file_id": 9,
+        "content": "            task_description = obj[\"task_description\"]\n    task_number = 1\n    task_names = [task_name]\n    task_descriptions = [task_description]\n    input = \"\"\"\nTask name: {}\nTask description: {}\nInitial config:\n```yaml\n{}\n```\n\"\"\"\n    for idx in range(task_number):\n        task_name = task_names[idx]\n        task_description = task_descriptions[idx]\n        copied_config = copy.deepcopy(ori_config)\n        new_yaml = []\n        for obj in copied_config:\n            if \"task_description\" in obj or \"solution_path\" in obj or \"spatial_relationships\" in obj or \"set_joint_angle_object_name\" in obj:\n                continue\n            if \"uid\" in obj:\n                del obj[\"uid\"]\n            if \"all_uid\" in obj:\n                del obj[\"all_uid\"]\n            if \"reward_asset_path\" in obj.keys():\n                del obj[\"reward_asset_path\"]\n            new_yaml.append(obj)\n        description = f\"{task_description}\".replace(\" \", \"_\").replace(\".\", \"\").replace(\",\", \"\").replace(\"(\", \"\").replace(\")\", \"\")\n        save_name =  description + '.yaml'",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_distractor.py:108-142"
+    },
+    "171": {
+        "file_id": 9,
+        "content": "The code creates tasks with multiple descriptions and configurations by copying the original configuration, removing specific keys, and saving them as new files. It then formats the task description for file naming.",
+        "type": "comment"
+    },
+    "172": {
+        "file_id": 9,
+        "content": "        distractor_save_path = os.path.join(parent_folder, save_name.replace(\".yaml\", \"_distractor.yaml\"))\n        if os.path.exists(distractor_save_path):\n            continue\n        initial_config = yaml.dump(new_yaml)\n        input_filled = copy.deepcopy(input)\n        input_filled = input_filled.format(task_name, task_description, initial_config)\n        input_filled = user_contents[-1] + input_filled\n        save_path = os.path.join(parent_folder, \"gpt_response/distractor-{}.json\".format(task_name.replace(\" \", \"_\")))\n        system = \"You are a helpful assistant.\"\n        task_response = query(system, [input_filled], [], save_path=save_path, debug=False, temperature=0.2)\n        size_save_path = os.path.join(parent_folder, \"gpt_response/size_distractor_{}.json\".format(task_name))\n        response = task_response.split(\"\\n\")\n        parsed_yaml, _ = parse_response_to_get_yaml(response, task_description, save_path=size_save_path, \n                            temperature=temperature_dict[\"size\"], model=model_dict[\"size\"])",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_distractor.py:143-160"
+    },
+    "173": {
+        "file_id": 9,
+        "content": "This code is creating a distractor for a GPT-4 model. It checks if the distractor file already exists, and if not, it generates an initial configuration and fills in user input with task details. Then it queries the GPT-4 model to obtain a response, parses that response into a YAML format, and saves both the original response and parsed YAML as separate files.",
+        "type": "comment"
+    },
+    "174": {
+        "file_id": 9,
+        "content": "        # some post processing: if the object is close enough to sapian object, we retrieve it from partnet mobility\n        sapian_obj_embeddings = torch.load(\"objaverse_utils/data/partnet_mobility_category_embeddings.pt\")\n        sapian_object_dict = None\n        with open(\"data/partnet_mobility_dict.json\", 'r') as f:\n            sapian_object_dict = json.load(f)\n        sapian_object_categories = list(sapian_object_dict.keys())\n        for obj in parsed_yaml:\n            name = obj['name']\n            similarity = check_text_similarity(name, check_embeddings=sapian_obj_embeddings)\n            max_similarity = np.max(similarity)\n            best_category = sapian_object_categories[np.argmax(similarity)]\n            if max_similarity > 0.95:\n                # retrieve the object from partnet mobility\n                obj['type'] = 'urdf'\n                obj['name'] = best_category\n                object_list = sapian_object_dict[best_category]\n                obj['reward_asset_path'] = object_list[np.random.randint(len(object_list))]",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_distractor.py:162-179"
+    },
+    "175": {
+        "file_id": 9,
+        "content": "This code performs post-processing on parsed objects. If an object is similar enough to a Sapian object, it retrieves the object from Partnet Mobility. It first loads category embeddings and creates a dictionary of Sapian object categories. Then, for each object in the parsed list, it checks text similarity using the embeddings, finds the most similar Sapian category, and if the similarity is above 0.95, sets the object type to 'urdf' and name to the best category, then retrieves a random reward asset path from the Sapian object dictionary.",
+        "type": "comment"
+    },
+    "176": {
+        "file_id": 9,
+        "content": "        ori_config.append(dict(distractor_config_path=distractor_save_path))\n        with open(task_config, 'w') as f:\n            yaml.dump(ori_config, f, indent=4)\n        with open(distractor_save_path, 'w') as f:\n            yaml.dump(parsed_yaml, f, indent=4)",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_distractor.py:181-187"
+    },
+    "177": {
+        "file_id": 9,
+        "content": "The code appends a dictionary to ori_config with distractor_config_path, writes the original configuration to task_config file, and writes the parsed YAML to distractor_save_path.",
+        "type": "comment"
+    },
+    "178": {
+        "file_id": 10,
+        "content": "/gpt_4/prompts/prompt_from_description.py",
+        "type": "filepath"
+    },
+    "179": {
+        "file_id": 10,
+        "content": "This code creates a robot arm, assigns tasks, constructs an articulation tree for links and joints, and manipulates objects using appropriate grippers. It also generates config paths and distractor files with customizable temperature and model settings.",
+        "type": "summary"
+    },
+    "180": {
+        "file_id": 10,
+        "content": "from gpt_4.query import query\nfrom gpt_4.prompts.utils import build_task_given_text\nfrom gpt_4.prompts.prompt_distractor import generate_distractor\nimport time, datetime, os, copy\nuser_contents = [\n\"\"\"\nI will give you a task name, which is for a robot arm to learn to manipulate an articulated object in household scenarios. I will provide you with the articulated object’s articulation tree and semantics. Your goal is to expand the task description to more information needed for the task. You can think of the robotic arm as a Franka Panda robot. The task will be built in a simulator for the robot to learn it. \nGiven a task name, please reply with the following additional information in the following format: \nDescription: some basic descriptions of the tasks. \nAdditional Objects: Additional objects other than the provided articulated object required for completing the task. If no additional objects are needed, this should be None. \nLinks: Links of the articulated objects that are required to perform the task. ",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_from_description.py:1-13"
+    },
+    "181": {
+        "file_id": 10,
+        "content": "This code imports functions from various modules, including query, build_task_given_text, and prompt_distractor. It also imports time, datetime, os, and copy modules. The user_contents list contains task descriptions for a robot arm to manipulate articulated objects in household scenarios using a Franka Panda robot in a simulator.",
+        "type": "comment"
+    },
+    "182": {
+        "file_id": 10,
+        "content": "- Link 1: reasons why this link is needed for the task\n- Link 2: reasons why this link is needed for the task\n- …\nJoints: Joints of the articulated objects that are required to perform the task. \n- Joint 1: reasons why this joint is needed for the task\n- Joint 2: reasons why this joint is needed for the task\n- …\nExample Input: \nTask name: Heat a hamburger Inside Oven\n```Oven articulation tree\nlinks: \nbase\nlink_0\nlink_1\nlink_2\nlink_3\nlink_4\nlink_5\nlink_6\nlink_7\njoints: \njoint_name: joint_0 joint_type: revolute parent_link: link_7 child_link: link_0\njoint_name: joint_1 joint_type: continuous parent_link: link_7 child_link: link_1\njoint_name: joint_2 joint_type: continuous parent_link: link_7 child_link: link_2\njoint_name: joint_3 joint_type: continuous parent_link: link_7 child_link: link_3\njoint_name: joint_4 joint_type: continuous parent_link: link_7 child_link: link_4\njoint_name: joint_5 joint_type: continuous parent_link: link_7 child_link: link_5\njoint_name: joint_6 joint_type: continuous parent_link: link_7 child_link: link_6",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_from_description.py:14-44"
+    },
+    "183": {
+        "file_id": 10,
+        "content": "This code represents the articulation tree for a task, including links and joints required to complete the task. Each link is needed for a specific reason related to the task, while each joint has a specified type and parent-child relationship. The example input provides an oven as the task and defines its associated links and joints in the articulation tree format.",
+        "type": "comment"
+    },
+    "184": {
+        "file_id": 10,
+        "content": "joint_name: joint_7 joint_type: fixed parent_link: base child_link: link_7\n```\n```Oven semantics\nlink_0 hinge door\nlink_1 hinge knob\nlink_2 hinge knob\nlink_3 hinge knob\nlink_4 hinge knob\nlink_5 hinge knob\nlink_6 hinge knob\nlink_7 heavy oven_body\n```\nExample output:\nDescription: The robot arm places a hamburger inside the oven, and sets the oven temperature to be appropriate for heating the hamburger.\nAdditional Objects: hamburger\nLinks:\n- link_0: link_0 is the oven door from the semantics. The robot needs to open the door in order to put the hamburger inside the oven.\nlink_1: the robot needs to approach link_1, which is the temperature knob, to rotate it to set the desired temperature.\nJoints:\n- joint_0: from the articulation tree, this is the revolute joint that connects link_0 (the door). Therefore, the robot needs to actuate this joint for opening the door.\n- joint_1: from the articulation tree, joint_1 connects link_1, which is the temperature knob. The robot needs to actuate it to rotate link_1 to the desired temperature.",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_from_description.py:45-67"
+    },
+    "185": {
+        "file_id": 10,
+        "content": "This code defines a robot arm with specific links and joints, and provides a description of the actions performed by the robot in relation to an oven. The links represent different parts of the oven such as the door, knobs, etc., while the joints are the connections between these links. The task is to manipulate the oven by opening the door and setting the temperature using the knob.",
+        "type": "comment"
+    },
+    "186": {
+        "file_id": 10,
+        "content": "Another example:\nInput:\nTask name: Retrieve Item from Safe\n```Safe articulation tree\nlinks: \nbase\nlink_0\nlink_1\nlink_2\njoints: \njoint_name: joint_0 joint_type: revolute parent_link: link_2 child_link: link_0\njoint_name: joint_1 joint_type: continuous parent_link: link_0 child_link: link_1\njoint_name: joint_2 joint_type: fixed parent_link: base child_link: link_2\n```\n```Safe semantics\nlink_0 hinge door\nlink_1 hinge knob\nlink_2 heavy safe_body\n```\nOutput: \nDescription: The robot arm opens the safe, retrieves an item from inside it, and then closes the safe again.\nAdditional Objects: Item to retrieve from safe.\nLinks:\n- link_0: Link_0 is the safe door from the semantics. The robot needs to open the door in order to retrieve the item from the safe.\n- link_1: Link_1 is the safe knob. The robot needs to rotate this knob both to open the safe and to lock it again after retrieving the item.\nJoints:\n- joint_0: From the articulation tree, this is the revolute joint that connects link_0. The robot needs to actuate this joint to open and close the door.",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_from_description.py:69-99"
+    },
+    "187": {
+        "file_id": 10,
+        "content": "This code represents a task where the robot arm needs to open a safe, retrieve an item inside it and then close the safe again. It includes information about the articulation tree structure of the safe, its links (safe door, knob, and safe body), and joints (revolute, continuous, and fixed).",
+        "type": "comment"
+    },
+    "188": {
+        "file_id": 10,
+        "content": "- joint_1: From the articulation tree, joint_1 connects link_1, which is the safe knob. The robot needs to actuate this joint to rotate link_1 and both unlock and lock the safe.\nOne more example:\nTask Name: Open Door\n```Door articulation tree\nlinks: \nbase\nlink_0\nlink_1\nlink_2\njoints: \njoint_name: joint_0 joint_type: revolute parent_link: link_1 child_link: link_0\njoint_name: joint_1 joint_type: fixed parent_link: base child_link: link_1\njoint_name: joint_2 joint_type: revolute parent_link: link_0 child_link: link_2\n```\n```Door semantics\nlink_0 hinge rotation_door\nlink_1 static door_frame\nlink_2 hinge rotation_door\n```\nOutput:\nDescription: The robotic arm will open the door.\nAdditional Objects: None\nLinks:\n- link_0: from the semantics, this is the hinge rotation door. The robot needs to approach this link in order to open it. \nJoints: \n- joint_0: from the articulation tree, this is the revolute joint that connects link_0. Therefore, the robot needs to actuate this joint for opening the door.\nCan you do the same for the following task and object:",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_from_description.py:100-132"
+    },
+    "189": {
+        "file_id": 10,
+        "content": "Task Name: Move Object\n\nObject Articulation Tree:\nLinks: \n- base\n- link_1 (object)\n- link_2 (robot end effector)\nJoints:\n- joint_name: joint_0 joint_type: revolute parent_link: base child_link: link_1\n- joint_name: joint_1 joint_type: revolute parent_link: link_1 child_link: link_2\nObject Semantics: \n- link_1: static object to be moved by the robot. The robot needs to approach this link and actuate the appropriate joints to move the object.\n- link_2: end effector of the robot that will grip the object for manipulation.\n\nOutput: Description: The robotic arm will move the object. Additional Objects: None.",
+        "type": "comment"
+    },
+    "190": {
+        "file_id": 10,
+        "content": "\"\"\"\n]\ndef parse_response(task_response):\n    task_response = '\\n'.join([line for line in task_response.split('\\n') if line.strip()])\n    task_response = task_response.split('\\n')\n    task_description = None\n    additional_objects = None\n    links = None\n    joints = None\n    for l_idx, line in enumerate(task_response):\n        if line.lower().startswith(\"description:\"):\n            task_description = task_response[l_idx].split(\":\")[1].strip()\n            task_description = task_description.replace(\"/\", \" or \").replace(\".\", \"\").replace(\"'\", \"\").replace('\"', \"\").replace(\")\", \"\").replace(\"(\", \"\")\n            additional_objects = task_response[l_idx+1].split(\":\")[1].strip()\n            involved_links = \"\"\n            for link_idx in range(l_idx+3, len(task_response)):\n                if task_response[link_idx].lower().startswith(\"joints:\"):\n                    break\n                else:\n                    involved_links += (task_response[link_idx][2:])\n            links = involved_links\n            involved_joints = \"\"",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_from_description.py:133-155"
+    },
+    "191": {
+        "file_id": 10,
+        "content": "This function parses a task response, extracts description and additional objects, and handles links and joints by looping through the response lines. It removes unnecessary characters from the description and handles multiple lines for involved links and joints.",
+        "type": "comment"
+    },
+    "192": {
+        "file_id": 10,
+        "content": "            for joint_idx in range(link_idx+1, len(task_response)):\n                if not task_response[joint_idx].lower().startswith(\"- \"):\n                    break\n                else:\n                    involved_joints += (task_response[joint_idx][2:])\n            joints = involved_joints\n            break\n    return task_description, additional_objects, links, joints\ndef expand_task_name(task_name, object_category, object_path, meta_path=\"generated_task_from_description\", temperate=0, model=\"gpt-4\"):\n    ts = time.time()\n    time_string = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d-%H-%M-%S')\n    save_folder = \"data/{}/{}_{}_{}_{}\".format(meta_path, task_name.replace(\" \", \"_\"), object_category, object_path, time_string)\n    if not os.path.exists(save_folder + \"/gpt_response\"):\n        os.makedirs(save_folder + \"/gpt_response\")\n    save_path = \"{}/gpt_response/task_generation.json\".format(save_folder)\n    articulation_tree_path = f\"data/dataset/{object_path}/link_and_joint.txt\"\n    with open(articulation_tree_path, 'r') as f:",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_from_description.py:156-177"
+    },
+    "193": {
+        "file_id": 10,
+        "content": "This code aims to find the joints involved in a task description and return them. It starts by iterating through each line of the task response, breaking when a line without a \"- \" prefix is found. The involved joints are then stored in the `involved_joints` variable. The function expands the task name, object category, and object path to create a save folder for gpt_response. It also provides the paths for articulation tree and saves the task generation as a json file.",
+        "type": "comment"
+    },
+    "194": {
+        "file_id": 10,
+        "content": "        articulation_tree = f.readlines()\n    semantics = f\"data/dataset/{object_path}/semantics.txt\"\n    with open(semantics, 'r') as f:\n        semantics = f.readlines()\n    task_user_contents_filled = copy.deepcopy(user_contents[0])\n    task_name_filled = \"Task name: {}\\n\".format(task_name)\n    articulation_tree_filled = \"\"\"\n```{} articulation tree\n{}\n```\"\"\".format(object_category, \"\".join(articulation_tree))\n    semantics_filled = \"\"\"\n```{} semantics\n{}\n```\"\"\".format(object_category, \"\".join(semantics))\n    task_user_contents_filled = task_user_contents_filled + task_name_filled + articulation_tree_filled + semantics_filled\n    system = \"You are a helpful assistant.\"\n    task_response = query(system, [task_user_contents_filled], [], save_path=save_path, debug=False, temperature=0, model=model)\n    ### parse the response\n    task_description, additional_objects, links, joints = parse_response(task_response)    \n    return task_description, additional_objects, links, joints, save_folder, articulation_tree_filled, semantics_filled",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_from_description.py:178-203"
+    },
+    "195": {
+        "file_id": 10,
+        "content": "This code reads articulation tree and semantics from files, generates a filled task user content by combining task name, articulation tree, and semantics, sets up a system as \"You are a helpful assistant\", queries the GPT model with the filled task user content to get a response, parses the response to extract task description, additional objects, links, and joints, and finally returns these results along with other relevant information.",
+        "type": "comment"
+    },
+    "196": {
+        "file_id": 10,
+        "content": "def generate_from_task_name(task_name, object_category, object_path, temperature_dict=None, model_dict=None, meta_path=\"generated_task_from_description\"):\n    expansion_model = model_dict.get(\"expansion\", \"gpt-4\")\n    expansion_temperature = temperature_dict.get(\"expansion\", 0)\n    task_description, additional_objects, links, joints, save_folder, articulation_tree_filled, semantics_filled = expand_task_name(\n        task_name, object_category, object_path, meta_path, temperate=expansion_temperature, model=expansion_model)\n    config_path = build_task_given_text(object_category, task_name, task_description, additional_objects, links, joints, \n                          articulation_tree_filled, semantics_filled, object_path, save_folder, temperature_dict, model_dict)\n    return config_path\nif __name__ == \"__main__\":\n    import argparse\n    import numpy as np\n    from objaverse_utils.utils import partnet_mobility_dict\n    parser = argparse.ArgumentParser()\n    parser.add_argument('--task_description', type=str, default=\"put a pen into the box\")",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_from_description.py:205-220"
+    },
+    "197": {
+        "file_id": 10,
+        "content": "This code defines a function `generate_from_task_name` that takes in a task name, object category, and object path as inputs. It uses these inputs to expand the task name and generates a config path based on the expanded description and additional objects. The code also includes a main function that parses arguments for task description and uses numpy and Objaverse Utils' partnet_mobility_dict function.",
+        "type": "comment"
+    },
+    "198": {
+        "file_id": 10,
+        "content": "    parser.add_argument('--object', type=str, default=\"Box\")\n    parser.add_argument('--object_path', type=str, default=\"100426\")\n    args = parser.parse_args()\n    temperature_dict = {\n        \"reward\": 0,\n        \"yaml\": 0,\n        \"size\": 0,\n        \"joint\": 0,\n        \"spatial_relationship\": 0,\n    }\n    model_dict = {\n        \"reward\": \"gpt-4\",\n        \"yaml\": \"gpt-4\",\n        \"size\": \"gpt-4\",\n        \"joint\": \"gpt-4\",\n        \"spatial_relationship\": \"gpt-4\",\n    }\n    meta_path = \"generated_task_from_description\"\n    assert args.object in partnet_mobility_dict.keys(), \"You should use articulated objects in the PartNet Mobility dataset.\"\n    if args.object_path is None:\n        possible_object_ids = partnet_mobility_dict[args.object]\n        args.object_path = possible_object_ids[np.random.randint(len(possible_object_ids))]\n    config_path = generate_from_task_name(args.task_description, args.object, args.object_path, \n        temperature_dict=temperature_dict, meta_path=meta_path, model_dict=model_dict)",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_from_description.py:221-247"
+    },
+    "199": {
+        "file_id": 10,
+        "content": "This code sets up arguments for an object and its path, then defines dictionaries for temperature and model configurations. It asserts that the selected object is from PartNet Mobility dataset and randomly assigns a valid object_path if not specified. Finally, it generates a configuration file using generate_from_task_name function with provided inputs.",
+        "type": "comment"
+    }
+}

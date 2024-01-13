@@ -1,0 +1,546 @@
+{
+    "300": {
+        "file_id": 13,
+        "content": "                f.write(file_content)\n        elif type == 'primitive':\n            header = primitive_file_header1.format(substep)\n            end = primitive_file_end.format(substep, substep)\n            file_content = header + primitive_file_header2 + reward_or_primitive + end\n            with open(file_name, \"w\") as f:\n                f.write(file_content)\n    return task_save_path",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_manipulation_reward_primitive.py:640-648"
+    },
+    "301": {
+        "file_id": 13,
+        "content": "This code segment writes a file with specific content based on the type. If the type is 'primitive', it constructs the file content by combining a header, some template placeholders, and either another primitive or reward information. The constructed content is then written to the specified file name. Finally, it returns the task save path.",
+        "type": "comment"
+    },
+    "302": {
+        "file_id": 14,
+        "content": "/gpt_4/prompts/prompt_set_joint_angle.py",
+        "type": "filepath"
+    },
+    "303": {
+        "file_id": 14,
+        "content": "This code calculates joint angles for articulated objects, sets angles for robotic lamps and doors, outlines door, faucet, and drawer interactions, and teaches the robot to adjust positions without relying on specific joint angles using OpenAI's GPT-4 model.",
+        "type": "summary"
+    },
+    "304": {
+        "file_id": 14,
+        "content": "from gpt_4.query import query\nimport copy\nuser_contents = [\n\"\"\"\nYour goal is to set the  joint angles of some articulated objects to the right value in the initial state, given a task. The task is for a robot arm to learn the corresponding skills to manipulate the articulated object. \nThe input to you will include the task name, a short description of the task, the articulation tree of the articulated object, a semantic file of the articulated object, the links and joints of the articulated objects that will be involved in the task, and the substeps for doing the task. \nYou should output for each joint involved in the task, what joint value it should be set to. You should output a number in the range [0, 1], where 0 corresponds to the lower limit of that joint angle, and 1 corresponds to the upper limit of the joint angle. You can also output a string of \"random\", which indicates to sample the joint angle within the range.\nBy default, the joints in an object are set to their lower joint limit",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_set_joint_angle.py:1-12"
+    },
+    "305": {
+        "file_id": 14,
+        "content": "This code defines a problem-solving task where the goal is to set the joint angles of articulated objects correctly based on provided input. The input includes details about the task, object, and its links and joints, with output being the ideal joint values for each involved joint (as a number in range [0, 1] or \"random\" for sampling). By default, joints are set to their lower limit initially.",
+        "type": "comment"
+    },
+    "306": {
+        "file_id": 14,
+        "content": "s. You can assume that the lower joint limit corresponds to the natural state of the articulated object. E.g., for a door's hinge joint, 0 means it is closed, and 1 means it is open. For a lever, 0 means it is unpushed, and 1 means it is pushed to the limit. \nHere are two examples:\nInput:\nTask Name: Close the door\nDescription: The robot arm will close the door after it was opened. \n```door articulation tree\nlinks: \nbase\nlink_0\nlink_1\nlink_2\njoints: \njoint_name: joint_0 joint_type: revolute parent_link: link_1 child_link: link_0\njoint_name: joint_1 joint_type: fixed parent_link: base child_link: link_1\njoint_name: joint_2 joint_type: revolute parent_link: link_0 child_link: link_2\n```\n```door semantics\nlink_0 hinge rotation_door\nlink_1 static door_frame\nlink_2 hinge rotation_door\n```\nLinks: \n- link_0: link_0 is the door. This is the part of the door assembly that the robot needs to interact with.\nJoints:\n- joint_0: Joint_0 is the revolute joint connecting link_0 (the door) as per the articulation tree. The robot needs to actuate this joint cautiously to ensure the door is closed.",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_set_joint_angle.py:12-43"
+    },
+    "307": {
+        "file_id": 14,
+        "content": "This code defines the joints and links of an articulated object, such as a door. The first link is the door itself (link_0), while link_1 is the door frame and link_2 is another part of the door. Joint_0 is the revolute joint connecting link_0 to link_1, which needs to be actuated carefully by the robot to close the door.",
+        "type": "comment"
+    },
+    "308": {
+        "file_id": 14,
+        "content": "substeps:\napproach the door\t\nclose the door\nOutput:\nThe goal is for the robot arm to learn to close the door after it is opened. Therefore, the door needs to be initially opened, thus, we are setting its value to 1, which corresponds to the upper joint limit. \n```joint values\njoint_0: 1\n```\nAnother example:\nTask Name: Turn Off Faucet\nDescription: The robotic arm will turn the faucet off by manipulating the switch\n```Faucet articulation tree\nlinks: \nbase\nlink_0\nlink_1\njoints: \njoint_name: joint_0 joint_type: fixed parent_link: base child_link: link_0\njoint_name: joint_1 joint_type: revolute parent_link: link_0 child_link: link_1\n```\n```Faucet semantics\nlink_0 static faucet_base\nlink_1 hinge switch\n```\nLinks: \n- link_0: link_0 is the door. This is the part of the door assembly that the robot needs to interact with.\nJoints:\n- joint_0: Joint_0 is the revolute joint connecting link_0 (the door) as per the articulation tree. The robot needs to actuate this joint cautiously to ensure the door is closed.\nsubsteps:\ngrasp the faucet switch",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_set_joint_angle.py:45-82"
+    },
+    "309": {
+        "file_id": 14,
+        "content": "The code snippet describes the articulation tree and semantics of a door and faucet for a robotic arm to interact with. It explains that link_0 represents the door, joint_0 is the revolute joint connecting link_0, and the robot needs to actuate this joint carefully to close the door. The substeps involve grasping the faucet switch to turn it off.",
+        "type": "comment"
+    },
+    "310": {
+        "file_id": 14,
+        "content": "turn off the faucet\nOutput:\nFor the robot to learn to turn off the faucet, it cannot be already off initially. Therefore, joint_1 should be set to its upper joint limit, or any value that is more than half of the joint range, e.g., 0.8.\n```joint value\njoint_1: 0.8\n```\nOne more example:\nTask Name: Store an item inside the Drawer\nDescription: The robot arm picks up an item and places it inside the drawer of the storage furniture\n```StorageFurniture articulation tree\nlinks: \nbase\nlink_0\nlink_1\nlink_2\njoints: \njoint_name: joint_0 joint_type: revolute parent_link: link_1 child_link: link_0\njoint_name: joint_1 joint_type: fixed parent_link: base child_link: link_1\njoint_name: joint_2 joint_type: prismatic parent_link: link_1 child_link: link_2\n```\n```StorageFurniture semantics\nlink_0 hinge rotation_door\nlink_1 heavy furniture_body\nlink_2 slider drawer\n```\nLinks:\n- link_2: link_2 is the drawer link from the semantics. The robot needs to open this drawer to place the item inside. \nJoints: \n- joint_2: joint_2, from the ar",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_set_joint_angle.py:83-117"
+    },
+    "311": {
+        "file_id": 14,
+        "content": "The code defines a robot arm with three links and joints. The first link, link_0, has a rotational hinge for the rotation of the door. The second link, link_1, is a heavy furniture body. Lastly, link_2 is the drawer that the robot needs to open in order to place an item inside. Joint_0 and joint_1 are revolute and fixed joints respectively while joint_2 is a prismatic joint.",
+        "type": "comment"
+    },
+    "312": {
+        "file_id": 14,
+        "content": "ticulation tree, connects to link_2 (the drawer). Thus, the robot would need to actuate this joint to open the drawer to store the item.\nsubsteps:\n grasp the drawer\n open the drawer\n grasp the item\n put the item into the drawer\n grasp the drawer again\n close the drawer\n release the grasp\nOutput:\nThis task involves putting one item into the drawer of the storage furniture. As noted in the substeps, the robot needs to first open the drawer, put the item in, and then close it. Since the articulated object is initialized with the lower joint limit, i.e., the drawer is initially closed, it aligns with the task where the robot needs to first learn to open the drawer. Therefore, no particular joint angle needs to be set, and we just output None. \n```joint value\nNone\n```\nOne more example:\nTask Name: Direct Lamp light\nDescription: The robot positions both the head and rotation bar to direct the light at a specific object or area\n```Lamp articulation tree\nlinks: \nbase\nlink_0\nlink_1\nlink_2\nlink_3\njoints: \njoint_name: joint_0 joint_type: revolute parent_link: link_3 child_link: link_0",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_set_joint_angle.py:117-150"
+    },
+    "313": {
+        "file_id": 14,
+        "content": "This code sets the joint angle for the articulated object (lamp) to direct light towards a specific object or area. The lamp has a revolute joint between link_3 and link_0, allowing it to rotate and adjust the direction of the light. No particular joint angle needs to be set as the robot will learn to adjust the position accordingly.",
+        "type": "comment"
+    },
+    "314": {
+        "file_id": 14,
+        "content": "joint_name: joint_1 joint_type: revolute parent_link: link_0 child_link: link_1\njoint_name: joint_2 joint_type: fixed parent_link: base child_link: link_2\njoint_name: joint_3 joint_type: revolute parent_link: link_2 child_link: link_3\n```\n```Lamp semantics\nlink_0 hinge rotation_bar\nlink_1 hinge head\nlink_2 free lamp_base\nlink_3 hinge rotation_bar\n```\nLinks:\nlink_0 and link_1: These two links are necessary to direct the lamp light toward a specific area because they represent the rotation bar and lamp head respectively.\nJoints:\njoint_0 and joint_1: These joints connect the rotation bar and the lamp head. By actuating both these joints, the robot can direct the light at a desired location.\nsubsteps:\n grasp the first rotation bar\n rotate the first rotation bar to aim the lamp\n release the first rotation bar\n grasp the lamp head\n rotate the lamp head to aim the lamp\n release the lamp head\nOutput:\nThe task involves directing the lamp light at a specific area. The robot needs to learn to manipulate both the rotat",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_set_joint_angle.py:151-181"
+    },
+    "315": {
+        "file_id": 14,
+        "content": "The code defines the links and joints required for a robot to direct a lamp's light towards a specific area. The links include the rotation bar, lamp head, lamp base, and another rotation bar. Joints are used to connect the links and allow the robot to rotate the rotation bars and lamp head to aim the light.",
+        "type": "comment"
+    },
+    "316": {
+        "file_id": 14,
+        "content": "ion bar and the lamp head to achieve this. Therefore, we need to set the initial joint angles such that the lamp is not already directed at the desired area. We can set both joint_0 and joint_1 to be randomly sampled.\n```joint values\njoint_0: random\njoint_1: random\n```\nCan you do it for the following task:\n\"\"\"\n]\nassistant_contents = []\ndef query_joint_angle(task_name, task_description, articulation_tree, semantics, links, joints, substeps, save_path=None, \n                      temperature=0.1, model='gpt-4'):\n    input = \"\"\"\nTask Name: {}\nDescription: {}\n{}\n{}\nLinks:\n{}\nJoints:\n{}\nsubsteps:\n{}\n\"\"\".format(task_name, task_description, articulation_tree, semantics, links, joints, \"\".join(substeps))\n    new_user_contents = copy.deepcopy(user_contents)\n    new_user_contents[0] = new_user_contents[0] + input\n    if save_path is None:\n        save_path = 'data/debug/{}_joint_angle.json'.format(input_task_name.replace(\" \", \"_\"))\n    system = \"You are a helpful assistant.\"\n    response = query(system, new_user_contents, assistant_contents, save_path=save_path, temperature=temperature, model=model)",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_set_joint_angle.py:181-221"
+    },
+    "317": {
+        "file_id": 14,
+        "content": "This code defines a function, \"query_joint_angle\", which takes task-related information as input and uses it to generate a prompt for OpenAI's GPT-4 model. The prompt includes the task name, description, articulation tree, semantics, links, joints, and substeps. The output is obtained from the model based on the provided input and saved in a file with a specific path if specified; otherwise, it uses a default path.",
+        "type": "comment"
+    },
+    "318": {
+        "file_id": 14,
+        "content": "    # TODO: parse the response to get the joint angles\n    response = response.split(\"\\n\")\n    joint_values = {}\n    for l_idx, line in enumerate(response):\n        if line.lower().startswith(\"```joint values\"):\n            for l_idx_2 in range(l_idx+1, len(response)):\n                if response[l_idx_2].lower().startswith(\"```\"):\n                    break\n                if response[l_idx_2].lower().strip() == \"none\":\n                    continue\n                joint_name, joint_value = response[l_idx_2].split(\":\")\n                joint_values[joint_name.strip().lstrip()] = joint_value.strip().lstrip()\n    return joint_values",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_set_joint_angle.py:223-237"
+    },
+    "319": {
+        "file_id": 14,
+        "content": "This function parses a response to extract joint angles. It searches for \"joint values\" and \"```\" markdown delimiters, ignoring \"none\" lines, then splits each line by \":\". Finally, it returns a dictionary of joint names and their corresponding values.",
+        "type": "comment"
+    },
+    "320": {
+        "file_id": 15,
+        "content": "/gpt_4/prompts/prompt_spatial_relationship.py",
+        "type": "filepath"
+    },
+    "321": {
+        "file_id": 15,
+        "content": "The code defines an articulation tree for a refrigerator and includes a function that utilizes AI (GPT-4) to identify spatial relationships between storage furniture and robot-actuated drawers. It takes input parameters, generates a new input, extracts spatial relationships from the response, and returns them as a list.",
+        "type": "summary"
+    },
+    "322": {
+        "file_id": 15,
+        "content": "from gpt_4.query import query\nimport copy\nuser_contents = [\n\"\"\"\nYour goal is to output any special spatial relationships certain objects should have in the initial state, given a task. The task is for a robot arm to learn the corresponding skills in household scenarios.  \nThe input to you will include \nthe task name, \na short description of the task, \nobjects involved in the task, \nsubsteps for performing the task,\nIf there is an articulated object involved in the task, the articulation tree of the articulated object, the semantic file of the articulated object, and the links and joints of the articulated objects that will be involved in the task. \nWe have the following spatial relationships:\non, obj_A, obj_B: object A is on top of object B, e.g., a fork on the table.\nin, obj_A, obj_B: object A is inside object B, e.g., a gold ring in the safe.\nin, obj_A, obj_B, link_name: object A is inside the link with link_name of object B. For example, a table might have two drawers, represented with link_0, an",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_spatial_relationship.py:1-18"
+    },
+    "323": {
+        "file_id": 15,
+        "content": "The code is importing necessary modules and defining the user_contents, which will contain details about a task, including its name, description, objects involved, subssteps, and other related information. The special spatial relationships are mentioned for better understanding of how certain objects should be placed or positioned in the initial state of the task.",
+        "type": "comment"
+    },
+    "324": {
+        "file_id": 15,
+        "content": "d link_1, and in(pen, table, link_0) would be that a pen is inside one of the drawers that corresponds to link_0. \nGiven the input to you, you should output any needed spatial relationships of the involved objects. \nHere are some examples:\nInput:\nTask Name:Fetch Item from Refrigerator \nDescription: The robotic arm will open a refrigerator door and reach inside to grab an item and then close the door.\nObjects involved: refrigerator, item\n```refrigerator articulation tree\nlinks: \nbase\nlink_0\nlink_1\nlink_2\njoints: \njoint_name: joint_0 joint_type: fixed parent_link: base child_link: link_0\njoint_name: joint_1 joint_type: revolute parent_link: link_0 child_link: link_1\njoint_name: joint_2 joint_type: revolute parent_link: link_0 child_link: link_2\n```\n```refrigerator semantics\nlink_0 heavy refrigerator_body\nlink_1 hinge door\nlink_2 hinge door\n```\nLinks:\nlink_1: The robot needs to approach and open this link, which represents one of the refrigerator doors, to reach for the item inside.\nJoints:\njoint_1: This joint con",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_spatial_relationship.py:18-51"
+    },
+    "325": {
+        "file_id": 15,
+        "content": "The code defines the spatial relationships of a refrigerator and its components, including links (base, link_0, link_1, link_2) and joints (joint_0, joint_1, joint_2), and provides an example input for fetching an item from the refrigerator.",
+        "type": "comment"
+    },
+    "326": {
+        "file_id": 15,
+        "content": "nects link_1, representing one of the doors. The robot needs to actuate this joint to open the door, reach for the item, and close the door. \nsubsteps:\n grasp the refrigerator door\n open the refrigerator door\n grasp the item\n move the item out of the refrigerator\n grasp the refrigerator door again\n close the refrigerator door\nOutput:\nThe goal is for the robot arm to learn to retrieve an item from the refrigerator. Therefore, the item needs to be initially inside the refrigerator. From the refrigerator semantics we know that link_0 is the body of the refrigerator, therefore we should have a spatial relationship as the following:\n```spatial relationship\nIn, item, refrigerator, link_0\n```\nAnother example:\nTask Name: Turn Off Faucet\nDescription: The robotic arm will turn the faucet off by manipulating the switch\nObjects involved: faucet\n```Faucet articulation tree\nlinks: \nbase\nlink_0\nlink_1\njoints: \njoint_name: joint_0 joint_type: fixed parent_link: base child_link: link_0\njoint_name: joint_1 joint_type: revolute parent_link: link_0 child_link: link_1",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_spatial_relationship.py:51-82"
+    },
+    "327": {
+        "file_id": 15,
+        "content": "The code defines the spatial relationship between an item, refrigerator, and link_0 (the body of the refrigerator) to indicate that the item is inside the refrigerator. Additionally, it provides an example of a faucet articulation tree with two links and joints for manipulating the faucet switch.",
+        "type": "comment"
+    },
+    "328": {
+        "file_id": 15,
+        "content": "```\n```Faucet semantics\nlink_0 static faucet_base\nlink_1 hinge switch\n```\nLinks: \nlink_0: link_0 is the door. This is the part of the door assembly that the robot needs to interact with.\nJoints:\njoint_0: Joint_0 is the revolute joint connecting link_0 (the door) as per the articulation tree. The robot needs to actuate this joint cautiously to ensure the door is closed.\nsubsteps:\ngrasp the faucet switch\nturn off the faucet\nOutput:\nThere is only 1 object involved in the task, thus no special spatial relationships are required.\n```spatial relationship\nNone\n```\nOne more example:\nTask Name: Store an item inside the Drawer\nDescription: The robot arm picks up an item and places it inside the drawer of the storage furniture.\nObjects involved: storage furniture, item\n```StorageFurniture articulation tree\nlinks: \nbase\nlink_0\nlink_1\nlink_2\njoints: \njoint_name: joint_0 joint_type: revolute parent_link: link_1 child_link: link_0\njoint_name: joint_1 joint_type: fixed parent_link: base child_link: link_1\njoint_name: joint_2 joint_type: prismatic parent_link: link_1 child_link: link_2",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_spatial_relationship.py:83-120"
+    },
+    "329": {
+        "file_id": 15,
+        "content": "The code describes the articulation tree for a storage furniture with three links (base, link_0, link_2) and three joints (joint_0, joint_1, joint_2). The robot arm is tasked to interact with the drawer by picking up an item and placing it inside. No special spatial relationships are required as only two objects are involved.",
+        "type": "comment"
+    },
+    "330": {
+        "file_id": 15,
+        "content": "```\n```StorageFurniture semantics\nlink_0 hinge rotation_door\nlink_1 heavy furniture_body\nlink_2 slider drawer\n```\nLinks:\nlink_2: link_2 is the drawer link from the semantics. The robot needs to open this drawer to place the item inside. \nJoints: \njoint_2: joint_2, from the articulation tree, connects to link_2 (the drawer). Thus, the robot would need to actuate this joint to open the drawer to store the item.\nsubsteps:\n grasp the drawer\n open the drawer\n grasp the item\n put the item into the drawer\n grasp the drawer again\n close the drawer\n release the grasp\nOutput:\nThis task involves putting one item into the drawer of the storage furniture. The item should initially be outside of the drawer, such that the robot can learn to put it into the drawer. Therefore, no special relationships of in or on are needed. Therefore, no special spatial relationships are needed.\n```spatial relationship\nNone\n```\nCan you do it for the following task: \n\"\"\"\n]\nuser_contents_rigid = [\n\"\"\"\nYour goal is to output any special spatial rel",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_spatial_relationship.py:121-156"
+    },
+    "331": {
+        "file_id": 15,
+        "content": "This code specifies a task involving storage furniture with links to the rotation door, heavy furniture body, and slider drawer. The robot needs to actuate the joint connecting to the drawer link to open it and place an item inside. No special spatial relationships are required for this task as the item should initially be outside of the drawer.",
+        "type": "comment"
+    },
+    "332": {
+        "file_id": 15,
+        "content": "ationships certain objects should have in the initial state, given a task. The task is for a robot arm to learn the corresponding skills in household scenarios.  \nThe input to you will include \nthe task name, \nobjects involved in the task, \nsubsteps for performing the task.\nWe have the following spatial relationships:\non, obj_A, obj_B: object A is on top of object B, e.g., a fork on the table.\nin, obj_A, obj_B: object A is inside object B, e.g., a gold ring in the safe.\nGiven the input to you, you should output any needed spatial relationships of the involved objects. \nHere are some examples:\nInput:\nTask Name:Fetch Item from Refrigerator \nObjects involved: refrigerator, item\nsubsteps:\n grasp the refrigerator door\n open the refrigerator door\n grasp the item\n move the item out of the refrigerator\n grasp the refrigerator door again\n close the refrigerator door\nOutput:\nThe goal is for the robot arm to learn to retrieve an item from the refrigerator. Therefore, the item needs to be initially inside the refrigerator. Therefore we should have a spatial relationship as the following:",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_spatial_relationship.py:156-185"
+    },
+    "333": {
+        "file_id": 15,
+        "content": "The code provides a function that takes input parameters including task name, objects involved in the task and substeps for performing the task. It then identifies any required spatial relationships between the objects and outputs these as needed. This is useful for instructing a robot arm how to interact with household objects in specific scenarios.",
+        "type": "comment"
+    },
+    "334": {
+        "file_id": 15,
+        "content": "```spatial relationship\nIn, item, refrigerator\n```\nAnother example:\nTask Name: Turn Off Faucet\nObjects involved: faucet\nsubsteps:\ngrasp the faucet switch\nturn off the faucet\nOutput:\nThere is only 1 object involved in the task, thus no special spatial relationships are required.\n```spatial relationship\nNone\n```\nOne more example:\nTask Name: Store an item inside the Drawer\nObjects involved: storage furniture, item\nsubsteps:\n grasp the drawer\n open the drawer\n grasp the item\n put the item into the drawer\n grasp the drawer again\n close the drawer\n release the grasp\nOutput:\nThis task involves putting one item into the drawer of the storage furniture. The item should initially be outside of the drawer, such that the robot can learn to put it into the drawer. Therefore, no special relationships of in or on are needed.\n```spatial relationship\nNone\n```\nCan you do it for the following task: \n\"\"\"\n]\nassistant_contents = []\ndef query_spatial_relationship(task_name, task_description, involved_objects, articulation_tree, semantics, links, joints, substeps, save_path=None, ",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_spatial_relationship.py:186-230"
+    },
+    "335": {
+        "file_id": 15,
+        "content": "This code defines a function `query_spatial_relationship` that takes in a task name, description, involved objects, articulation tree, semantics, links, joints, and substeps as parameters. The function determines the spatial relationship between the objects in the task based on their positions and orientation, which could be \"in\", \"on\", or \"none\". It then returns this relationship as output for further processing or decision making.",
+        "type": "comment"
+    },
+    "336": {
+        "file_id": 15,
+        "content": "                               temperature=0.1, model='gpt-4'):\n    input = \"\"\"\nTask Name: {}\nDescription: {}\nObjects involved: {}\n{}\n{}\nLinks:\n{}\nJoints:\n{}\nsubsteps:\n{}\n\"\"\".format(task_name, task_description, involved_objects, articulation_tree, semantics, links, joints, \"\".join(substeps))\n    new_user_contents = copy.deepcopy(user_contents)\n    new_user_contents[0] = new_user_contents[0] + input\n    if save_path is None:\n        save_path = 'data/debug/{}_joint_angle.json'.format(input_task_name.replace(\" \", \"_\"))\n    system = \"You are a helpful assistant.\"\n    response = query(system, new_user_contents, assistant_contents, save_path=save_path, temperature=temperature, model=model)\n    # TODO: parse the response to get the joint angles\n    response = response.split(\"\\n\")\n    spatial_relationships = []\n    for l_idx, line in enumerate(response):\n        if line.lower().startswith(\"```spatial relationship\"):\n            for l_idx_2 in range(l_idx+1, len(response)):\n                if response[l_idx_2].lower().startswith(\"```\"):",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_spatial_relationship.py:231-267"
+    },
+    "337": {
+        "file_id": 15,
+        "content": "The code takes a task description, objects involved, articulation tree, semantics, links, and joints as input. It combines this information into a single input string for the AI model (GPT-4) to process. The code then creates a new user content by appending this combined input to an existing user_contents list. Depending on whether the save_path variable is set or not, it determines the file path for saving the response. It sets the system prompt, and queries the AI model (GPT-4) using the new user contents, assistant contents, save_path, temperature, and model parameters to generate a response. The code then parses this response to extract the spatial relationships.",
+        "type": "comment"
+    },
+    "338": {
+        "file_id": 15,
+        "content": "                    break\n                if response[l_idx_2].lower().strip() == \"none\":\n                    continue\n                spatial_relationships.append(response[l_idx_2].strip().lstrip().lower())\n    return spatial_relationships\ndef query_spatial_relationship_rigid(task_name, involved_objects, substeps, save_path=None, temperature=0.1, model='gpt-4'):\n    input = \"\"\"\nTask Name: {}\nObjects involved: {}\nsubsteps:\n{}\n\"\"\".format(task_name, involved_objects, \"\".join(substeps))\n    new_user_contents = copy.deepcopy(user_contents_rigid)\n    new_user_contents[0] = new_user_contents[0] + input\n    if save_path is None:\n        save_path = 'data/debug/{}_joint_angle.json'.format(input_task_name.replace(\" \", \"_\"))\n    system = \"You are a helpful assistant.\"\n    response = query(system, new_user_contents, assistant_contents, save_path=save_path, temperature=temperature, model=model)\n    # TODO: parse the response to get the joint angles\n    response = response.split(\"\\n\")\n    spatial_relationships = []\n    for l_idx, line in enumerate(response):",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_spatial_relationship.py:268-297"
+    },
+    "339": {
+        "file_id": 15,
+        "content": "This code snippet defines a function called `query_spatial_relationship_rigid` that takes a task name, involved objects, substeps, save path, temperature, and model as input. It generates a new input by concatenating the original user contents with a formatted string containing the task name, involved objects, and substeps. The function then sends this input to an AI model (e.g., GPT-4) to generate a response, which is split into lines and used to create a list of spatial relationships.",
+        "type": "comment"
+    },
+    "340": {
+        "file_id": 15,
+        "content": "        if line.lower().startswith(\"```spatial relationship\"):\n            for l_idx_2 in range(l_idx+1, len(response)):\n                if response[l_idx_2].lower().startswith(\"```\"):\n                    break\n                if response[l_idx_2].lower().strip() == \"none\":\n                    continue\n                spatial_relationships.append(response[l_idx_2].strip().lstrip().lower())\n    return spatial_relationships",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_spatial_relationship.py:298-306"
+    },
+    "341": {
+        "file_id": 15,
+        "content": "This code iterates through a response list, identifies and skips \"none\" lines, and appends all spatial relationship lines (starting with ```spatial relationship) to the spatial_relationships list. It then returns this list of relationships.",
+        "type": "comment"
+    },
+    "342": {
+        "file_id": 16,
+        "content": "/gpt_4/prompts/prompt_with_scale.py",
+        "type": "filepath"
+    },
+    "343": {
+        "file_id": 16,
+        "content": "This code adjusts object sizes in a robotic arm simulator to ensure realistic dimensions and works with natural language processing for task-oriented applications.",
+        "type": "summary"
+    },
+    "344": {
+        "file_id": 16,
+        "content": "user_contents_v2 = [\n\"\"\"\nA robotic arm is trying to manipulate some objects to learn corresponding skills in a simulator. However, the size of the objects might be wrong. Your task is to adjust the size of the objects, such that they match each other when interact with each other; and the size should also match what is commonly seen in everyday life, in household scenarios. \nNow I will give you the name of the task, the object and their sizes, please correct any unreasonable sizes. \nObjects are represented using a mesh file, you can think of size as the longest dimension of the object. \nI will write in the following format:\n```\nTask: task description\nobj1, mesh, size \nobj2, mesh, size\n```\nPlease reply in the following format:\nexplanations of why some size is not reasonable.\n```yaml\nobj1, mesh, corrected_size\nobj2, mesh, corrected_radius\n```\nHere is an example:\nInput: \n```\nTask: The robotic arm lowers the toilet seat from an up position to a down position\nToilet, mesh, 0.2\n```\nOutput:\nA toilet is usually 0.6 -",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_with_scale.py:1-31"
+    },
+    "345": {
+        "file_id": 16,
+        "content": "Code snippet describes a scenario where a robotic arm is interacting with various objects in a simulator and requires adjustment of object sizes for realistic everyday life scenarios. The user needs to identify unreasonable object sizes, provide explanations, and suggest corrected dimensions using the provided mesh files.",
+        "type": "comment"
+    },
+    "346": {
+        "file_id": 16,
+        "content": " 0.8m in its back height, so the size is not reasonable -- it is a bit too small. Below is the corrected size.\n```yaml\nToilet, mesh, 0.7\n```\nAnother example:\nInput:\n```\nTask: Fill a cup with water under the faucet\nFaucet, mesh, 0.25\nCup, mesh, 0.3\n```\nOutput:\nThe size of the faucet makes senes. However, the size of the cup is too large for 2 reasons: it does not match the size of tha faucet for getting water under the faucet; and it is not a common size of cup in everyday life. Below is the corrected size.\n```yaml\nFaucet, mesh, 0.25 \nCup, mesh, 0.12 \n```\nOne more example to show that even if no change is needed, you should still reply with the same size.\nInput:\n```\nTask: Open Table Drawer The robotic arm will open a table drawer\ntable, mesh, 0.8\n```\nOutput:\nThe size of the table is reasonable, so no change is needed.\n```yaml\ntable, mesh, 0.8\n```\nThis is also a good example to show that sometimes, the task description might include two objects, e.g., a table and a drawer, yet there is only one object size provided",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_with_scale.py:31-63"
+    },
+    "347": {
+        "file_id": 16,
+        "content": "The code provides an example of correcting object sizes based on the task description and reasonableness of the given size. It also demonstrates how to keep the same size if no changes are needed.",
+        "type": "comment"
+    },
+    "348": {
+        "file_id": 16,
+        "content": " (here the table). This is not an error, but that the other object is part of the provided object, i.e., here the drawer is part of the table. It's fine, you should then just reply with the corrected size of the object provided, here, the table, in such cases.\nAnother example showing that sometimes we will ask you to adjust distractor objects needed for the task, instead of the main objects themselves. \nIn such case (and in all cases), you just need to adjust the sizes of the provided objects, instead of asking why the main objects are not includes.\nInput:\n```\nTask: Heat up a bowl of soup in the microwave\nplate, mesh, 0.3\nsponge, mesh, 0.1\noven, mesh, 0.4\n```\nOutput:\nThe size of the sponge makse sense. However, the size of the plate is too big, and the size of the oven is too small.\n```yaml\nplate, mesh, 0.15\nsponge, mesh, 0.1\noven, mesh, 0.8\n```\nAs noted, here the main objects for the task, the microwave and the bowl of soup, are not included in the input. Instead, some distractor objects in the scene are provided. This is totally fine, you just need to correct the size of the provided objects.",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_with_scale.py:63-82"
+    },
+    "349": {
+        "file_id": 16,
+        "content": "The code provides instructions to adjust the sizes of objects in a scene where distractor objects are included instead of the main ones. The output corrects the size of the plate and oven while keeping the sponge's size unchanged, as the sponge's size makes sense in this scenario.",
+        "type": "comment"
+    },
+    "350": {
+        "file_id": 16,
+        "content": "\"\"\"\n]\nassistant_contents_v2 = [\n\"\"\"\nSure, I'm ready. Please provide the task and object information.\n\"\"\"\n]",
+        "type": "code",
+        "location": "/gpt_4/prompts/prompt_with_scale.py:83-90"
+    },
+    "351": {
+        "file_id": 16,
+        "content": "This code appears to be part of a larger Python script. It defines a list called \"assistant_contents_v2\" and sets it to the value of an empty string enclosed in triple quotes. The purpose of this code block seems to be related to generating or organizing assistant responses for a task-oriented application, possibly involving natural language processing.",
+        "type": "comment"
+    },
+    "352": {
+        "file_id": 17,
+        "content": "/gpt_4/prompts/utils.py",
+        "type": "filepath"
+    },
+    "353": {
+        "file_id": 17,
+        "content": "This code generates YAML configurations for Franka Panda robotic arm scenes, uses URDF to model refrigerators, parses responses, and saves relevant information as JSON for spatial relationship tasks in RoboGen.",
+        "type": "summary"
+    },
+    "354": {
+        "file_id": 17,
+        "content": "import copy\nimport os\nimport yaml\nfrom gpt_4.prompts.prompt_manipulation_reward_primitive import decompose_and_generate_reward_or_primitive\nfrom gpt_4.prompts.prompt_set_joint_angle import query_joint_angle\nfrom gpt_4.prompts.prompt_spatial_relationship import query_spatial_relationship\nfrom gpt_4.query import query\nfrom gpt_4.adjust_size import adjust_size_v2\ntask_yaml_config_prompt = \"\"\"\nI need you to describe the initial scene configuration for a given task in the following format, using a yaml file. This yaml file will help build the task in a simulator. The task is for a mobile Franka panda robotic arm to learn a manipulation skill in the simulator. The Franka panda arm is mounted on a floor, at location (1, 1, 0). It can move freely on the floor. The z axis is the gravity axis. \nThe format is as follows:\n```yaml \n- use_table: whether the task requires using a table. This should be decided based on common sense. If a table is used, its location will be fixed at (0, 0, 0). The height of the ta",
+        "type": "code",
+        "location": "/gpt_4/prompts/utils.py:1-15"
+    },
+    "355": {
+        "file_id": 17,
+        "content": "Code imports necessary libraries and defines a yaml configuration format for describing an initial scene configuration for a given task, specifically for a mobile Franka panda robotic arm. The configuration includes information about the presence of a table, its location, and other relevant details to build the task in a simulator.",
+        "type": "comment"
+    },
+    "356": {
+        "file_id": 17,
+        "content": "ble will be 0.6m. Usually, if the objects invovled in the task are usually placed on a table (not directly on the ground), then the task requires using a table.\n# for each object involved in the task, we need to specify the following fields for it.\n- type: mesh\n  name: name of the object, so it can be referred to in the simulator\n  size: describe the scale of the object mesh using 1 number in meters. The scale should match real everyday objects. E.g., an apple is of scale 0.08m. You can think of the scale to be the longest dimension of the object. \n  lang: this should be a language description of the mesh. The language should be a concise description of the obejct, such that the language description can be used to search an existing database of objects to find the object.\n  path: this can be a string showing the path to the mesh of the object. \n  on_table: whether the object needs to be placed on the table (if there is a table needed for the task). This should be based on common sense and the requirement of the task. E.g., a microwave is usually placed on the table.",
+        "type": "code",
+        "location": "/gpt_4/prompts/utils.py:15-22"
+    },
+    "357": {
+        "file_id": 17,
+        "content": "For each object in the task, specify its type as 'mesh', provide a name for referencing in the simulator, describe its size using one scale value, define the mesh's language description, input the object's path, and indicate if it should be placed on a table based on common sense and task requirements.",
+        "type": "comment"
+    },
+    "358": {
+        "file_id": 17,
+        "content": "  center: the location of the object center. If there isn't a table needed for the task or the object does not need to be on the table, this center should be expressed in the world coordinate system. If there is a table in the task and the object needs to be placed on the table, this center should be expressed in terms of the table coordinate, where (0, 0, 0) is the lower corner of the table, and (1, 1, 1) is the higher corner of the table. In either case, you should try to specify a location such that there is no collision between objects.\n  movable: if the object is movable or not in the simulator due to robot actions. This option should be falsed for most tasks; it should be true only if the task specifically requires the robot to move the object. This value can also be missing, which means the object is not movable.\n```\nAn example input includes the task names, task descriptions, and objects involved in the task. I will also provide with you the articulation tree and semantics of the articulated object. ",
+        "type": "code",
+        "location": "/gpt_4/prompts/utils.py:23-27"
+    },
+    "359": {
+        "file_id": 17,
+        "content": "The code describes the location and movability of objects within a task context. The center represents the object's position in either world or table coordinates, depending on task requirements. The 'movable' flag determines if the object can be moved by the robot based on task specifications.",
+        "type": "comment"
+    },
+    "360": {
+        "file_id": 17,
+        "content": "This can be useful for knowing what parts are already in the articulated object, and thus you do not need to repeat those parts as separate objects in the yaml file.\nYour task includes two parts:\n1. Output the yaml configuration of the task.\n2. Sometimes, the task description / objects involved will refer to generic/placeholder objects, e.g., to place an \"item\" into the drawer, and to heat \"food\" in the microwave. In the generated yaml config, you should change these placeholder objects to be concrete objects in the lang field, e.g., change \"item\" to be a toy or a pencil, and \"food\" to be a hamburger, a bowl of soup, etc. \nExample input:\nTask Name: Insert Bread Slice \nDescription: The robotic arm will insert a bread slice into the toaster.\nObjects involved: Toaster, bread slice. Only the objects specified here should be included in the yaml file.\n```Toaster articulation tree\nlinks: \nbase\nlink_0\nlink_1\nlink_2\nlink_3\nlink_4\nlink_5\njoints: \njoint_name: joint_0 joint_type: continuous parent_link: link_5 child_link: link_0",
+        "type": "code",
+        "location": "/gpt_4/prompts/utils.py:28-50"
+    },
+    "361": {
+        "file_id": 17,
+        "content": "This code generates a yaml configuration for the task based on the provided task name, description, and objects involved. It replaces generic/placeholder objects with concrete examples in the lang field.",
+        "type": "comment"
+    },
+    "362": {
+        "file_id": 17,
+        "content": "joint_name: joint_1 joint_type: prismatic parent_link: link_5 child_link: link_1\njoint_name: joint_2 joint_type: prismatic parent_link: link_5 child_link: link_2\njoint_name: joint_3 joint_type: prismatic parent_link: link_5 child_link: link_3\njoint_name: joint_4 joint_type: prismatic parent_link: link_5 child_link: link_4\njoint_name: joint_5 joint_type: fixed parent_link: base child_link: link_5\n```\n```Toaster semantics\nlink_0 hinge knob\nlink_1 slider slider\nlink_2 slider button\nlink_3 slider button\nlink_4 slider button\nlink_5 free toaster_body\n```\nAn example output:\n```yaml\n- use_table: True ### Toaster and bread are usually put on a table. \n- type: mesh\n  name: \"Toaster\"\n  on_table: True # Toasters are usually put on a table.\n  center: (0.1, 0.1, 0) # Remember that when an object is placed on the table, the center is expressed in the table coordinate, where (0, 0, 0) is the lower corner and (1, 1, 1) is the higher corner of the table. Here we put the toaster near the lower corner of the table.  \n  size: 0.35 # the size of a toaster is roughly 0.35m",
+        "type": "code",
+        "location": "/gpt_4/prompts/utils.py:51-75"
+    },
+    "363": {
+        "file_id": 17,
+        "content": "This code defines the joint structure and semantics of a toaster, specifying its parts and their connections. The output provides information on how to incorporate this toaster into a scene or simulation, including table placement, positioning, and size.",
+        "type": "comment"
+    },
+    "364": {
+        "file_id": 17,
+        "content": "  lang: \"a common toaster\"\n  path: \"toaster.urdf\"\n- type: mesh\n  name: \"bread slice\"\n  on_table: True # Bread is usually placed on the table as well. \n  center: (0.8, 0.7, 0) # Remember that when an object is placed on the table, the center is expressed in the table coordinate, where (0, 0, 0) is the lower corner and (1, 1, 1) is the higher corner of the table. Here we put the bread slice near the higher corner of the table.  \n  size: 0.1 # common size of a bread slice \n  lang: \"a slice of bread\"\n  Path: \"bread_slice.obj\"\n```\nAnother example input:\nTask Name: Removing Lid From Pot\nDescription: The robotic arm will remove the lid from the pot.\nObjects involved: KitchenPot. Only the objects specified here should be included in the yaml file.\n```KitchenPot articulation tree\nlinks: \nbase\nlink_0\nlink_1\njoints: \njoint_name: joint_0 joint_type: prismatic parent_link: link_1 child_link: link_0\njoint_name: joint_1 joint_type: fixed parent_link: base child_link: link_1\n```\n```KitchenPot semantics\nlink_0 slider lid\nlink_1 free pot_body",
+        "type": "code",
+        "location": "/gpt_4/prompts/utils.py:76-105"
+    },
+    "365": {
+        "file_id": 17,
+        "content": "Code represents an object, a toaster and its components. It describes the language (e.g., \"a common toaster\"), path of toaster file (e.g., \"toaster.urdf\"), type of component (\"bread slice\"), name of component (\"bread slice\"), whether it's on the table or not (True), center coordinates in table coordinates, size of bread slice, language of component (e.g., \"a slice of bread\"), and path of component file (e.g., \"bread_slice.obj\").",
+        "type": "comment"
+    },
+    "366": {
+        "file_id": 17,
+        "content": "```\nOutput:\n```yaml\n- use_table: True # A kitchen pot is usually placed on the table.\n- type: mesh\n  name: \"KitchenPot\"\n  on_table: True # kitchen pots are usually placed on a table. \n  center: (0.3, 0.6, 0) # Remember that when an object is placed on the table, the center is expressed in the table coordinate, where (0, 0, 0) is the lower corner and (1, 1, 1) is the higher corner of the table. Here we put the kitchen pot just at a random location on the table.  \n  size: 0.28 # the size of a common kitchen pot is roughly 0.28m\n  lang: \"a common kitchen pot\"\n  path: \"kitchen_pot.urdf\"\n```\nNote in this example, the kitchen pot already has a lid from the semantics file. Therefore, you do not need to include a separate lid in the yaml file.\nOne more example input:\nTask Name: Push the chair.\nDescription: The robotic arm will push and move the chair to a target location.\nObjects involved: A chair. Only the objects here should be included in the yaml file.\n```Chair articulation tree\nlinks: \nbase\nlink_0\nlink_1\njoints: ",
+        "type": "code",
+        "location": "/gpt_4/prompts/utils.py:106-132"
+    },
+    "367": {
+        "file_id": 17,
+        "content": "In this code snippet, a kitchen pot is defined with properties such as use_table, type, mesh, name, on_table, center, size, lang, and path. The kitchen pot is usually placed on the table and has a random location on the table.",
+        "type": "comment"
+    },
+    "368": {
+        "file_id": 17,
+        "content": "joint_name: joint_0 joint_type: revolute parent_link: link_1 child_link: link_0\njoint_name: joint_1 joint_type: fixed parent_link: base child_link: link_1\n```\n```Chair semantics\nlink_0 hinge seat\nlink_1 free leg\n```\nOutput:\n```yaml\n- use_table: False # A chair is usually just on the ground\n- type: mesh\n  name: \"Chair\"\n  on_table: False # An oven is usually just placed on the floor.\n  center: (1.0, 0, 0) # Remember that when not on a table, the center is expressed in the world coordinate. Since the robot is at (1, 1, 0) and the table is at (0, 0, 0), we place the oven at (1.8, 2, 0) to avoid collision with the table and the robot.\n  size: 1.2 # the size of an oven is roughly 0.9m\n  lang: \"a standard chair\"\n  path: \"chair.urdf\"\n  movable: True # here the task requires the robot to push the chair, so the chair has to be moveable.\n```\nNote in the above example we set the chair to be moveable so the robot can push it for executing the task.\nAnother example:\nTask Name: Put an item into the box drawer\nDescription: The robot will open the drawer of the box, and put an item into it.",
+        "type": "code",
+        "location": "/gpt_4/prompts/utils.py:133-158"
+    },
+    "369": {
+        "file_id": 17,
+        "content": "The code represents the semantics of a chair, specifying its type as \"Chair\" and stating it's not on a table or use_table is False. It also mentions the mesh name as \"Chair\", that it's on the ground, and has a center point at (1.0, 0, 0). The chair size is specified as 1.2, and it's movable for tasks requiring the robot to push it.",
+        "type": "comment"
+    },
+    "370": {
+        "file_id": 17,
+        "content": "Objects involved: A box with drawer, an item to be placed in the drawer. \n```Box articulation tree\nlinks: \nbase\nlink_0\nlink_1\nlink_2\njoints: \njoint_name: joint_0 joint_type: revolute parent_link: link_2 child_link: link_0\njoint_name: joint_1 joint_type: prismatic parent_link: link_2 child_link: link_1\njoint_name: joint_2 joint_type: fixed parent_link: base child_link: link_2\n```\n```Box semantics\nlink_0 hinge rotation_lid\nlink_1 slider drawer\nlink_2 free box_body\n```\nOutput:\n```yaml\n-   use_table: true\n-   center: (0.5, 0.5, 0)\n    lang: \"a wooden box\"\n    name: \"Box\"\n    on_table: true\n    path: \"box.urdf\"\n    size: 0.3\n    type: urdf\n-   path: \"item.obj\"\n    center: (0.2, 0.4, 0)\n    lang: \"A toy\" # Note here, we changed the generic/placeholder \"item\" object to be a more concrete object: a toy. \n    name: \"Item\"\n    on_table: true\n    size: 0.05\n    type: mesh\n```\nOne more example:\nTask Name: Fetch item from refrigerator\nDescription: The robot will open the refrigerator door, and fetch an item from the refrigerator.\nObjects involved: A refrigerator, an item to be fetched from the refrigerator.",
+        "type": "code",
+        "location": "/gpt_4/prompts/utils.py:159-202"
+    },
+    "371": {
+        "file_id": 17,
+        "content": "Code generates a box with articulation tree and semantics, as well as an item object for placement in the drawer of the box. The box is defined using the urdf format, while the item is defined in mesh format. The resulting objects are specified in yaml format, including their names, types, sizes, positions, and other relevant information.",
+        "type": "comment"
+    },
+    "372": {
+        "file_id": 17,
+        "content": "```Refirgerator articulation tree\nlinks: \nbase\nlink_0\nlink_1\nlink_2\njoints: \njoint_name: joint_0 joint_type: fixed parent_link: base child_link: link_0\njoint_name: joint_1 joint_type: revolute parent_link: link_0 child_link: link_1\njoint_name: joint_2 joint_type: revolute parent_link: link_0 child_link: link_2\n```\n```Refrigerator semantics\nlink_0 heavy refrigerator_body\nlink_1 hinge door\nlink_2 hinge door\n```\nOutput:\n```yaml\n-   use_table: true # the fetched item should be placed on the table, after it's moved out of the refrigerator.\n-   center: (1.0, 0.2, 0) # Remember that when not on a table, the center is expressed in the world coordinate. Since the robot is at (1, 1, 0) and the table is at (0, 0, 0), we place the oven at (1.8, 2, 0) to avoid collision with the table and the robot.\n    lang: a common two-door refrigerator\n    name: Refrigerator\n    on_table: false # the refrigerator is usually placed on the floor.\n    path: refrigerator.urdf\n    reward_asset_path: '10612'\n    size: 1.8\n    type: urdf\n-   center: (1.0, 0.2, 0.5) # the soda can is initially placed inside the refrigerator.",
+        "type": "code",
+        "location": "/gpt_4/prompts/utils.py:204-234"
+    },
+    "373": {
+        "file_id": 17,
+        "content": "This code defines a refrigerator model in URDF format with three links (base, door hinge, and door) and joints for articulation. The semantics describe the refrigerator as heavy and having two doors with hinges. The output YAML file includes information such as the use of a table, the center position, language, name, on-table status, path, reward asset path, size, and type.",
+        "type": "comment"
+    },
+    "374": {
+        "file_id": 17,
+        "content": "    lang: a can of soda\n    name: Item\n    on_table: false # the item is initially placed inside the refrigerator\n    path: soda_can.obj\n    size: 0.2\n    type: mesh\n```\nRules: \n- You do not need to include the robot in the yaml file.\n- The yaml file should only include the objects listed in \"Objects involved\".\n- Sometimes, the task description / objects involved will refer to generic/placeholder objects, e.g., to place an \"item\" into the drawer, and to heat \"food\" in the microwave. In the generated yaml config, you should change these placeholder objects to be concrete objects in the lang field, e.g., change \"item\" to be a toy or a pencil, and \"food\" to be a hamburger, a bowl of soup, etc. \nCan you do this for the following task:\nTask Name: {}\nDescription: {}\nObjects involved: {}\n\"\"\"\ndef parse_response_to_get_yaml(response, task_description, save_path, temperature=0.2, model='gpt-4'):\n    yaml_string = []\n    for l_idx, line in enumerate(response):\n        if \"```yaml\" in line:\n            for l_idx_2 in range(l_idx + 1, len(response)):",
+        "type": "code",
+        "location": "/gpt_4/prompts/utils.py:235-259"
+    },
+    "375": {
+        "file_id": 17,
+        "content": "This code snippet is parsing a response to get a YAML file for a given task description. It takes the response, task description, save path, and optional parameters for temperature and model. The code finds the \"```yaml\" line and extracts the YAML content following it. This information could be used to generate a YAML configuration file for a specific task involving objects.",
+        "type": "comment"
+    },
+    "376": {
+        "file_id": 17,
+        "content": "                if response[l_idx_2].lstrip().startswith(\"```\"):\n                    break\n                yaml_string.append(response[l_idx_2])\n            yaml_string = '\\n'.join(yaml_string)\n            description = f\"{task_description}\".replace(\" \", \"_\").replace(\".\", \"\").replace(\",\", \"\").replace(\"(\", \"\").replace(\")\", \"\")\n            save_name =  description + '.yaml'\n            print(\"=\" * 30)\n            print(\"querying GPT to adjust the size of the objects\")\n            print(\"=\" * 30)\n            parsed_size_yaml = adjust_size_v2(description, yaml_string, save_path, temperature, model=model)\n            return parsed_size_yaml, save_name\ndef parse_task_response(task_response):\n    task_names = []\n    task_descriptions = []\n    additional_objects = []\n    links = []\n    joints = []\n    task_response = task_response.split(\"\\n\")\n    for l_idx, line in enumerate(task_response):\n        if line.lower().startswith(\"task name:\"):\n            task_name = line.split(\":\")[1].strip()\n            task_name = task_name.replace(\"/\", \" or \").replace(\".\", \"\").replace(\"'\", \"\").replace('\"', \"\")",
+        "type": "code",
+        "location": "/gpt_4/prompts/utils.py:260-287"
+    },
+    "377": {
+        "file_id": 17,
+        "content": "This code is parsing a task response, extracting task names, descriptions, and additional objects. It preprocesses the task description by replacing spaces, periods, commas, etc., and generates a save name for the YAML file. The function returns parsed size data and the save name after querying GPT to adjust object sizes.",
+        "type": "comment"
+    },
+    "378": {
+        "file_id": 17,
+        "content": "            task_names.append(task_name)\n            task_description = task_response[l_idx+1].split(\":\")[1].strip()\n            task_description = task_description.replace(\"/\", \" or \").replace(\".\", \"\").replace(\"'\", \"\").replace('\"', \"\").replace(\")\", \".\").replace(\"(\", \".\")\n            task_descriptions.append(task_description)\n            additional_objects.append(task_response[l_idx+2].split(\":\")[1].strip())\n            involved_links = \"\"\n            for link_idx in range(l_idx+4, len(task_response)):\n                if task_response[link_idx].lower().startswith(\"joints:\"):\n                    break\n                else:\n                    # involved_links.append(task_response[link_idx].split(\":\")[0][2:])\n                    involved_links += (task_response[link_idx][2:])\n            links.append(involved_links)\n            involved_joints = \"\"\n            for joint_idx in range(link_idx+1, len(task_response)):\n                if not task_response[joint_idx].lower().startswith(\"- \"):\n                    break",
+        "type": "code",
+        "location": "/gpt_4/prompts/utils.py:288-304"
+    },
+    "379": {
+        "file_id": 17,
+        "content": "This code extracts task details from a given response, including task name and description, additional objects involved, links, and joints. It appends these extracted details into respective lists for further use.",
+        "type": "comment"
+    },
+    "380": {
+        "file_id": 17,
+        "content": "                else:\n                    # involved_joints.append(task_response[joint_idx].split(\":\")[0][2:])\n                    involved_joints += (task_response[joint_idx][2:])\n            joints.append(involved_joints)\n    return task_names, task_descriptions, additional_objects, links, joints\ndef build_task_given_text(object_category, task_name, task_description, additional_object, involved_links, involved_joints, \n                          articulation_tree_filled, semantics_filled, object_path, save_folder, temperature_dict, model_dict=None):\n    if model_dict is None:\n        model_dict = {\n            \"task_generation\": \"gpt-4\",\n            \"reward\": \"gpt-4\",\n            \"yaml\": \"gpt-4\",\n            \"size\": \"gpt-4\",\n            \"joint\": \"gpt-4\",\n            \"spatial_relationship\": \"gpt-4\"\n        }\n    task_yaml_config_prompt_filled = copy.deepcopy(task_yaml_config_prompt)\n    if additional_object.lower() == \"none\":\n        task_object = object_category\n    else:\n        task_object = \"{}, {}\".format(object_category, additional_object)",
+        "type": "code",
+        "location": "/gpt_4/prompts/utils.py:305-328"
+    },
+    "381": {
+        "file_id": 17,
+        "content": "Code takes a string input, splits it, and appends the substring to a list. If an additional object is not given, it uses the first argument as the task object.",
+        "type": "comment"
+    },
+    "382": {
+        "file_id": 17,
+        "content": "    task_yaml_config_prompt_filled = task_yaml_config_prompt_filled.format(task_name, task_description, task_object)\n    task_yaml_config_prompt_filled += articulation_tree_filled + semantics_filled\n    system = \"You are a helpful assistant.\"\n    save_path = os.path.join(save_folder, \"gpt_response/task_yaml_config_{}.json\".format(task_name))\n    print(\"=\" * 50)\n    print(\"=\" * 20, \"generating task yaml config\", \"=\" * 20)\n    print(\"=\" * 50)\n    task_yaml_response = query(system, [task_yaml_config_prompt_filled], [], save_path=save_path, debug=False, \n                            temperature=temperature_dict[\"yaml\"], model=model_dict[\"yaml\"])\n    # NOTE: parse the yaml file and generate the task in the simulator.\n    description = f\"{task_name}_{task_description}\".replace(\" \", \"_\").replace(\".\", \"\").replace(\",\", \"\")\n    task_yaml_response = task_yaml_response.split(\"\\n\")\n    size_save_path = os.path.join(save_folder, \"gpt_response/size_{}.json\".format(task_name))\n    parsed_yaml, save_name = parse_response_to_get_yaml(task_yaml_response, description, save_path=size_save_path, ",
+        "type": "code",
+        "location": "/gpt_4/prompts/utils.py:329-343"
+    },
+    "383": {
+        "file_id": 17,
+        "content": "This code generates a task YAML configuration by utilizing GPT-4. It combines prompt filling, articulation tree, and semantics data. The system uses the response from GPT-4 to create a JSON file (task_yaml_config). The code then extracts relevant information, formats it into a new JSON file for size, and saves it. This process is designed to generate task YAML configurations for a simulator.",
+        "type": "comment"
+    },
+    "384": {
+        "file_id": 17,
+        "content": "                                                        temperature=temperature_dict[\"size\"], model=model_dict[\"size\"])\n    # NOTE: post-process such that articulated object is urdf.\n    # NOTE: post-process to include the reward asset path for reward generation. \n    for obj in parsed_yaml:\n        if \"name\" in obj and obj['name'] == object_category:\n            obj['type'] = 'urdf'\n            obj['reward_asset_path'] = object_path\n    # config_path = \"gpt_4/data/parsed_configs_semantic_articulated/{}-{}\".format(object_category, time_string)\n    config_path = save_folder\n    with open(os.path.join(config_path, save_name), 'w') as f:\n        yaml.dump(parsed_yaml, f, indent=4)\n    input_to_reward_config = copy.deepcopy(parsed_yaml)\n    for obj in input_to_reward_config:\n        if \"reward_asset_path\" in obj:\n            input_to_reward_config.remove(obj)\n    initial_config = yaml.safe_dump(parsed_yaml)\n    ### decompose and generate reward\n    yaml_file_path = os.path.join(config_path, save_name)\n    reward_save_path = os.path.join(save_folder, \"gpt_response/reward_{}.json\".format(task_name))",
+        "type": "code",
+        "location": "/gpt_4/prompts/utils.py:344-366"
+    },
+    "385": {
+        "file_id": 17,
+        "content": "This code is creating a configuration file for an articulated object using information from the input. It sets the object type to 'urdf' and adds a reward asset path for reward generation. The generated file is saved at the specified save folder, and a deep copy of the parsed_yaml is made for further processing. Finally, the code decompose the configuration, generates a reward, and saves it in a separate JSON file at the save folder.",
+        "type": "comment"
+    },
+    "386": {
+        "file_id": 17,
+        "content": "    print(\"=\" * 50)\n    print(\"=\" * 20, \"generating reward\", \"=\" * 20)\n    print(\"=\" * 50)\n    solution_path = decompose_and_generate_reward_or_primitive(task_name, task_description, initial_config, \n                                                                articulation_tree_filled, semantics_filled, \n                                                                involved_links, involved_joints, object_path, \n                                                                yaml_file_path, save_path=reward_save_path,\n                                                                temperature=temperature_dict[\"reward\"],\n                                                                model=model_dict[\"reward\"])\n    ### generate joint angle\n    save_path = os.path.join(save_folder, \"gpt_response/joint_angle_{}.json\".format(task_name))\n    substep_file_path = os.path.join(solution_path, \"substeps.txt\")\n    with open(substep_file_path, 'r') as f:\n        substeps = f.readlines()\n    print(\"=\" * 50)\n    print(\"=\" * 20, \"generating initial joint angle\", \"=\" * 20)",
+        "type": "code",
+        "location": "/gpt_4/prompts/utils.py:367-384"
+    },
+    "387": {
+        "file_id": 17,
+        "content": "The code prints headers for different sections and generates a reward or primitive solution, a joint angle file path, and reads substeps from a file.",
+        "type": "comment"
+    },
+    "388": {
+        "file_id": 17,
+        "content": "    print(\"=\" * 50)\n    joint_angle_values = query_joint_angle(task_name, task_description, articulation_tree_filled, semantics_filled, \n                                            involved_links, involved_joints, substeps, save_path=save_path, \n                                            temperature=temperature_dict['joint'], model=model_dict[\"joint\"])\n    joint_angle_values[\"set_joint_angle_object_name\"] = object_category\n    involved_objects = []\n    config = yaml.safe_load(initial_config)\n    for obj in config:\n        if \"name\" in obj:\n            involved_objects.append(obj[\"name\"])\n    involved_objects = \", \".join(involved_objects)\n    save_path = os.path.join(save_folder, \"gpt_response/spatial_relationships_{}.json\".format(task_name))\n    print(\"=\" * 50)\n    print(\"=\" * 20, \"generating initial spatial relationship\", \"=\" * 20)\n    print(\"=\" * 50)\n    spatial_relationships = query_spatial_relationship(task_name, task_description, involved_objects, articulation_tree_filled, semantics_filled, \n   ",
+        "type": "code",
+        "location": "/gpt_4/prompts/utils.py:385-402"
+    },
+    "389": {
+        "file_id": 17,
+        "content": "The code queries joint angle values, sets object name in joint angle dictionary, finds involved objects from config file, creates the save path for spatial relationships JSON file, and then proceeds to query spatial relationships.",
+        "type": "comment"
+    },
+    "390": {
+        "file_id": 17,
+        "content": "                                         involved_links, involved_joints, substeps, save_path=save_path, \n                                            temperature=temperature_dict['spatial_relationship'], model=model_dict[\"spatial_relationship\"])\n    config.append(dict(solution_path=solution_path))\n    config.append(joint_angle_values)\n    config.append(dict(spatial_relationships=spatial_relationships))\n    config.append(dict(task_name=task_name, task_description=task_description))\n    with open(os.path.join(config_path, save_name), 'w') as f:\n        yaml.dump(config, f, indent=4)\n    with open(os.path.join(solution_path, \"config.yaml\"), 'w') as f:\n        yaml.dump(config, f, indent=4)\n    return os.path.join(config_path, save_name)",
+        "type": "code",
+        "location": "/gpt_4/prompts/utils.py:402-414"
+    },
+    "391": {
+        "file_id": 17,
+        "content": "This code saves a configuration file for a spatial relationship task in RoboGen. It appends various information to the config list, including involved links and joints, substeps, solution path, joint angle values, spatial relationships, task name, and task description. Finally, it writes the configuration to two YAML files at specified paths.",
+        "type": "comment"
+    },
+    "392": {
+        "file_id": 18,
+        "content": "/gpt_4/query.py",
+        "type": "filepath"
+    },
+    "393": {
+        "file_id": 18,
+        "content": "The code imports the openai library and defines a function called query, which takes system prompt, user, and assistant inputs. It prints content for debugging, uses the OpenAI API to generate responses, appends messages to a list, calculates execution time, and optionally saves results in JSON format.",
+        "type": "summary"
+    },
+    "394": {
+        "file_id": 18,
+        "content": "import openai\nimport os\nimport time\nimport json\nos.environ[\"OPENAI_API_KEY\"] = os.environ[\"YUFEI_OPENAI_API_KEY\"] # put your api key here\ndef query(system, user_contents, assistant_contents, model='gpt-4', save_path=None, temperature=1, debug=False):\n    for user_content, assistant_content in zip(user_contents, assistant_contents):\n        user_content = user_content.split(\"\\n\")\n        assistant_content = assistant_content.split(\"\\n\")\n        for u in user_content:\n            print(u)\n        print(\"=====================================\")\n        for a in assistant_content:\n            print(a)\n        print(\"=====================================\")\n    for u in user_contents[-1].split(\"\\n\"):\n        print(u)\n    if debug:\n        import pdb; pdb.set_trace()\n        return None\n    print(\"=====================================\")\n    start = time.time()\n    num_assistant_mes = len(assistant_contents)\n    messages = []\n    messages.append({\"role\": \"system\", \"content\": \"{}\".format(system)})\n    for idx in range(num_assistant_mes):",
+        "type": "code",
+        "location": "/gpt_4/query.py:1-35"
+    },
+    "395": {
+        "file_id": 18,
+        "content": "This code imports openai, defines a function called query which takes system prompt and user/assistant content as inputs. It then prints the contents for debugging purposes and calls the openAI API with the given model (default is gpt-4). It returns None if debug mode is on.",
+        "type": "comment"
+    },
+    "396": {
+        "file_id": 18,
+        "content": "        messages.append({\"role\": \"user\", \"content\": user_contents[idx]})\n        messages.append({\"role\": \"assistant\", \"content\": assistant_contents[idx]})\n    messages.append({\"role\": \"user\", \"content\": user_contents[-1]})\n    openai.api_key = os.environ[\"OPENAI_API_KEY\"]\n    response = openai.ChatCompletion.create(\n        model=model,\n        messages=messages,\n        temperature=temperature\n    )\n    result = ''\n    for choice in response.choices: \n        result += choice.message.content \n    end = time.time()\n    used_time = end - start\n    print(result)\n    if save_path is not None:\n        with open(save_path, \"w\") as f:\n            json.dump({\"used_time\": used_time, \"res\": result, \"system\": system, \"user\": user_contents, \"assistant\": assistant_contents}, f, indent=4)\n    return result",
+        "type": "code",
+        "location": "/gpt_4/query.py:36-59"
+    },
+    "397": {
+        "file_id": 18,
+        "content": "The code is appending user and assistant messages to a list, setting the OpenAI API key, creating an OpenAI ChatCompletion instance with the model, messages, and temperature, extracting the content from response choices, calculating execution time, printing the result, and optionally saving it in JSON format.",
+        "type": "comment"
+    },
+    "398": {
+        "file_id": 19,
+        "content": "/gpt_4/verification.py",
+        "type": "filepath"
+    },
+    "399": {
+        "file_id": 19,
+        "content": "This code imports necessary libraries, initializes a device based on GPU availability, and defines a function called \"check_text_similarity\". The function takes in text, a list of texts to check against, and embeddings for comparison. It uses the SentenceTransformer model 'all-mpnet-base-v2' to encode the input text(s) into embeddings, computes cosine similarities between the embeddings, and returns the results as a numpy array.",
+        "type": "summary"
+    }
+}

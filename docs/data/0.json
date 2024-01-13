@@ -1,0 +1,546 @@
+{
+    "0": {
+        "file_id": 0,
+        "content": "/RL/ray_learn.py",
+        "type": "filepath"
+    },
+    "1": {
+        "file_id": 0,
+        "content": "This code trains reinforcement learning agents, saves best models and states, evaluates performance, creates GIFs, registers environments, and returns policy paths for given configurations.",
+        "type": "summary"
+    },
+    "2": {
+        "file_id": 0,
+        "content": "import os, sys, ray, shutil, glob\nimport numpy as np\nfrom ray.rllib.agents import ppo, sac\nfrom ray import tune\nfrom manipulation.utils import save_env, save_numpy_as_gif\nimport pickle\nimport datetime\nfrom ray.tune.logger import UnifiedLogger\nimport time\ndef custom_log_creator(custom_path, custom_str):\n    ts = time.time()\n    time_string = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d-%H-%M-%S')\n    logdir_prefix = \"{}_{}\".format(custom_str, time_string)\n    log_dir = os.path.join(custom_path, logdir_prefix)\n    def logger_creator(config):\n        if not os.path.exists(log_dir):\n            os.makedirs(log_dir)\n        return UnifiedLogger(config, log_dir, loggers=None)\n    return logger_creator\ndef setup_config(algo, seed=0, env_config={}, eval=False):\n    if algo == 'ppo':\n        config = ppo.DEFAULT_CONFIG.copy()\n        config['train_batch_size'] = 128 * 100\n        config['num_sgd_iter'] = 50\n        config['sgd_minibatch_size'] = 128\n        config['lambda'] = 0.95\n        config['model']['fcnet_hiddens'] = [128, 128]",
+        "type": "code",
+        "location": "/RL/ray_learn.py:1-33"
+    },
+    "3": {
+        "file_id": 0,
+        "content": "Code imports necessary libraries and defines two functions, `custom_log_creator` and `setup_config`. The `custom_log_creator` function creates a custom logger with a specified prefix and time stamp. The `setup_config` function sets up a configuration for the PPO algorithm, including batch size, mini-batch size, hyperparameters, and model architecture.",
+        "type": "comment"
+    },
+    "4": {
+        "file_id": 0,
+        "content": "    elif algo == 'sac':\n        config = sac.DEFAULT_CONFIG.copy()\n        config['timesteps_per_iteration'] = 400\n        config['learning_starts'] = 1000\n        config['Q_model']['fcnet_hiddens'] = [256, 256, 256]\n        config['policy_model']['fcnet_hiddens'] = [256, 256, 256]\n    config['framework'] = 'torch'\n    if not eval:\n        config['num_workers'] = 8\n    else:\n        config['num_workers'] = 1\n    config['seed'] = seed\n    config['log_level'] = 'ERROR'\n    config[\"env_config\"] = env_config\n    return config\ndef load_policy(algo, env_name, policy_path=None, seed=0, env_config={}, eval=False):\n    if algo == 'ppo':\n        agent = ppo.PPOTrainer(setup_config(algo, seed, env_config, eval=eval), env_name,\n                               logger_creator=custom_log_creator(\"data/local/ray_results\", env_name)\n        )\n    elif algo == 'sac':\n        agent = sac.SACTrainer(setup_config(algo, seed, env_config, eval=eval), env_name, \n                               logger_creator=custom_log_creator(\"data/local/ray_results\", env_name)",
+        "type": "code",
+        "location": "/RL/ray_learn.py:34-58"
+    },
+    "5": {
+        "file_id": 0,
+        "content": "If the algorithm is SAC (Stochastic Actor-Critic), this code sets up the corresponding configuration and returns it. The configuration includes parameters such as the number of timesteps per iteration, learning starts, hidden layers for Q model and policy model, framework to use (Torch), number of workers, seed value for randomness, log level, and environment configuration. Additionally, a policy agent is created either using PPOTrainer or SACTrainer depending on the algorithm chosen. The logger creator function is also specified to customize logging output.",
+        "type": "comment"
+    },
+    "6": {
+        "file_id": 0,
+        "content": "        )\n    if policy_path is not None:\n        if 'checkpoint' in policy_path:\n            agent.restore(policy_path)\n        else:\n            # Find the most recent policy in the directory\n            directory = os.path.join(policy_path, algo, env_name)\n            files = [f.split('_')[-1] for f in glob.glob(os.path.join(directory, 'checkpoint_*'))]\n            files_ints = [int(f) for f in files]\n            if files:\n                checkpoint_max = max(files_ints)\n                checkpoint_num = files_ints.index(checkpoint_max)\n                checkpoint_path = os.path.join(directory, 'checkpoint_%s' % files[checkpoint_num], 'checkpoint-%d' % checkpoint_max)\n                agent.restore(checkpoint_path)\n            return agent, None\n    return agent, None\ndef train(env_name, algo, timesteps_total=2000000, save_dir='./trained_models/', load_policy_path='', seed=0, \n          env_config={}, eval_interval=20000, render=False):\n    if not ray.is_initialized():\n        ray.init(num_cpus=8, ignore_reinit_error=True, log_to_driver=False)",
+        "type": "code",
+        "location": "/RL/ray_learn.py:59-80"
+    },
+    "7": {
+        "file_id": 0,
+        "content": "This code restores or loads a policy from a specified directory and initializes the Ray environment for training an agent. If a policy path is provided, it checks if it contains 'checkpoint' and restores the agent using that path. If not, it finds the most recent checkpoint in the given directory and restores the agent with that checkpoint. It then returns the trained agent or initializes the Ray environment if it's not already initialized.",
+        "type": "comment"
+    },
+    "8": {
+        "file_id": 0,
+        "content": "    agent, checkpoint_path = load_policy(algo, env_name, load_policy_path, env_config=env_config, seed=seed)\n    env = make_env(env_config, render=render)\n    best_model_save_path = os.path.join(save_dir, 'best_model')\n    best_state_save_path = os.path.join(save_dir, 'best_state')\n    if not os.path.exists(best_state_save_path):\n        os.makedirs(best_state_save_path)\n    timesteps = 0\n    eval_time = 1\n    best_ret = -np.inf\n    best_rgbs = None\n    best_state_files = None\n    while timesteps < timesteps_total:\n        result = agent.train()\n        timesteps = result['timesteps_total']\n        print(f\"Iteration: {result['training_iteration']}, total timesteps: {result['timesteps_total']}, total time: {result['time_total_s']:.1f}, FPS: {result['timesteps_total']/result['time_total_s']:.1f}, mean reward: {result['episode_reward_mean']:.1f}, min/max reward: {result['episode_reward_min']:.1f}/{result['episode_reward_max']:.1f}\")\n        sys.stdout.flush()\n        # Delete the old saved policy\n        if checkpoint_path is not None:",
+        "type": "code",
+        "location": "/RL/ray_learn.py:81-102"
+    },
+    "9": {
+        "file_id": 0,
+        "content": "This code loads a policy and trains an agent using reinforcement learning. It saves the best model, state files, and tracks performance metrics such as timesteps, mean/min/max rewards, and training iteration. If a checkpoint path exists, it deletes the old saved policy.",
+        "type": "comment"
+    },
+    "10": {
+        "file_id": 0,
+        "content": "            shutil.rmtree(os.path.dirname(checkpoint_path), ignore_errors=True)\n        # Save the recently trained policy\n        checkpoint_path = agent.save(save_dir)\n        if timesteps > eval_time * eval_interval:\n            obs = env.reset()\n            done = False\n            ret = 0\n            rgbs = []\n            state_files = []\n            states = []\n            t_idx = 0\n            state_save_path = os.path.join(save_dir, \"eval_{}\".format(eval_time))\n            if not os.path.exists(state_save_path):\n                os.makedirs(state_save_path)\n            while not done:\n                # Compute the next action using the trained policy\n                action = agent.compute_action(obs, explore=False)\n                # Step the simulation forward using the action from our trained policy\n                obs, reward, done, info = env.step(action)\n                ret += reward\n                rgb, depth = env.render()\n                rgbs.append(rgb)\n                state_file_path = os.path.join(state_save_path, \"state_{}.pkl\".format(t_idx))",
+        "type": "code",
+        "location": "/RL/ray_learn.py:103-127"
+    },
+    "11": {
+        "file_id": 0,
+        "content": "Saves recently trained policy, then evaluates it using a loop to take actions in the environment, saving states and visuals for evaluation.",
+        "type": "comment"
+    },
+    "12": {
+        "file_id": 0,
+        "content": "                state = save_env(env, save_path=state_file_path)\n                state_files.append(state_file_path)\n                states.append(state)\n                t_idx += 1\n            save_numpy_as_gif(np.array(rgbs), \"{}/{}.gif\".format(state_save_path, \"execute\"))\n            print(\"evaluating at {} return is {}\".format(timesteps, ret))\n            eval_time += 1\n            if ret > best_ret:\n                best_ret = ret\n                best_model_path = agent.save(best_model_save_path)\n                best_rgbs = rgbs\n                best_state_files = state_files\n                for idx, state in enumerate(states):\n                    with open(os.path.join(best_state_save_path, \"state_{}.pkl\".format(idx)), 'wb') as f:\n                        pickle.dump(state, f, pickle.HIGHEST_PROTOCOL)\n                with open(os.path.join(best_state_save_path, \"return_{}.txt\".format(round(ret, 3))), 'w') as f:\n                    f.write(str(ret))\n                save_numpy_as_gif(np.array(best_rgbs), \"{}/{}.gif\".format(best_state_save_path, \"best\"))",
+        "type": "code",
+        "location": "/RL/ray_learn.py:128-147"
+    },
+    "13": {
+        "file_id": 0,
+        "content": "This code block saves the environment state at each timestep and evaluates the agent's performance. If the return is better than the previous best, it saves the model, states, and RGBs. It then creates separate GIF files for all states and the best execution.",
+        "type": "comment"
+    },
+    "14": {
+        "file_id": 0,
+        "content": "    env.disconnect()\n    return best_model_path, best_rgbs, best_state_files\ndef render_policy(env, env_name, algo, policy_path, seed=0, n_episodes=1, env_config={}):\n    ray.init(num_cpus=1, ignore_reinit_error=True, log_to_driver=False)\n    if env is None:\n        env = make_env(env_name)\n    test_agent, _ = load_policy(algo, env_name, policy_path, seed, env_config, eval=True)\n    env.render()\n    frames = []\n    for episode in range(n_episodes):\n        obs = env.reset()\n        done = False\n        while not done:\n            # Compute the next action using the trained policy\n            action = test_agent.compute_action(obs)\n            # Step the simulation forward using the action from our trained policy\n            obs, reward, done, info = env.step(action)\n            env.render()\n    env.disconnect()\ndef make_env(config, render=False):\n    import yaml\n    from manipulation.utils import build_up_env\n    print(config)\n    task_config_path = config['task_config_path']\n    task_name = config['task_name']",
+        "type": "code",
+        "location": "/RL/ray_learn.py:149-179"
+    },
+    "15": {
+        "file_id": 0,
+        "content": "The code initializes a Ray environment, renders the policy for a given algorithm and policy path, and returns the best model path, RGB frames, and state files. It also makes an environment using a task configuration file and prints it before rendering.",
+        "type": "comment"
+    },
+    "16": {
+        "file_id": 0,
+        "content": "    last_restore_state_file = config['last_restore_state_file']\n    solution_path = config['solution_path']\n    action_space = config['action_space']\n    env, safe_config = build_up_env(\n            task_config_path, \n            solution_path, \n            task_name, \n            last_restore_state_file, \n            render=render, \n            action_space=action_space, \n            randomize=config['randomize'], \n            obj_id=config['obj_id'],\n        )\n    return env\ndef run_RL(task_config_path, solution_path, task_name, last_restore_state_file, save_path, \n           action_space='delta-translation', algo=\"sac\", timesteps_total=1000000, load_policy_path=None, seed=0, \n           render=False, randomize=False, use_bard=True, obj_id=0, \n           use_gpt_size=True, use_gpt_joint_angle=True, use_gpt_spatial_relationship=True,\n           use_distractor=False):\n    env_name = task_name\n    env_config = {\n        \"task_config_path\": task_config_path,\n        \"solution_path\": solution_path,\n        \"task_name\": task_name,",
+        "type": "code",
+        "location": "/RL/ray_learn.py:180-208"
+    },
+    "17": {
+        "file_id": 0,
+        "content": "This code builds a robotic environment based on the provided configuration. It takes in parameters like task_config_path, solution_path, task_name, last_restore_state_file, save_path, action_space, algo, timesteps_total, load_policy_path, seed, render, randomize, use_bard, obj_id, use_gpt_size, use_gpt_joint_angle, use_gpt_spatial_relationship, and use_distractor. It returns the built environment for use in reinforcement learning tasks.",
+        "type": "comment"
+    },
+    "18": {
+        "file_id": 0,
+        "content": "        \"last_restore_state_file\": last_restore_state_file,\n        \"action_space\": action_space,\n        \"randomize\": randomize,\n        \"use_bard\": use_bard,\n        \"obj_id\": obj_id,\n        \"use_gpt_size\": use_gpt_size,\n        \"use_gpt_joint_angle\": use_gpt_joint_angle,\n        \"use_gpt_spatial_relationship\": use_gpt_spatial_relationship,\n        \"use_distractor\": use_distractor\n    }\n    timesteps_total = 1000000 \n    eval_interval = 20000 \n    tune.register_env(env_name, lambda config: make_env(config))\n    best_policy_path, rgbs, best_traj_state_paths = train(env_name, algo, timesteps_total=timesteps_total, \n                            load_policy_path=load_policy_path, save_dir=save_path, seed=seed, env_config=env_config, render=render,\n                            eval_interval=eval_interval)\n    return best_policy_path, rgbs, best_traj_state_paths",
+        "type": "code",
+        "location": "/RL/ray_learn.py:209-228"
+    },
+    "19": {
+        "file_id": 0,
+        "content": "This code registers an environment, trains a policy using the registered environment, and returns the best policy path, RGB values, and best trajectory state paths. It also takes in several configurations and sets up evaluation intervals.",
+        "type": "comment"
+    },
+    "20": {
+        "file_id": 1,
+        "content": "/cem_policy/parallel_worker.py",
+        "type": "filepath"
+    },
+    "21": {
+        "file_id": 1,
+        "content": "The code utilizes multiprocessing to calculate costs for state-action trajectories and applies a cost function in parallel using a Pool context. An instance of the ParallelRolloutWorker class is created and actions are sampled to obtain costs.",
+        "type": "summary"
+    },
+    "22": {
+        "file_id": 1,
+        "content": "import multiprocessing as mp\nfrom multiprocessing import Pool\nimport numpy as np\nimport pybullet as p\nfrom .utils import *\n# env = None\ndef get_cost(args):\n    cur_state, action_trajs, env_class, env_kwargs, worker_i = args\n    # global env\n    # if env is None:\n    #     # Need to create the env inside the function such that the GPU buffer is associated with the child process and avoid any deadlock.\n    #     # Use the global variable to access the child process-specific memory\n    # import pdb; pdb.set_trace()\n    print(\"env \", env_kwargs)\n    env = env_class(**env_kwargs)\n    env.reset()\n    N = action_trajs.shape[0]\n    costs = []\n    for i in range(N):\n        # print(worker_i, f'{i}/{N}')\n        load_env(env, state=cur_state)\n        ret = 0\n        rewards = []\n        for action in action_trajs[i, :]:\n            _, reward, _, _ = env.step(action)\n            ret += reward\n            rewards.append(reward)\n        costs.append([-ret, rewards])\n        # print('get_cost {}: {}'.format(i, ret))\n    p.disconnect(env.id)",
+        "type": "code",
+        "location": "/cem_policy/parallel_worker.py:1-33"
+    },
+    "23": {
+        "file_id": 1,
+        "content": "This function uses multiprocessing to calculate costs for a given state and action trajectories. It creates a new environment for each process, resets it, calculates the rewards for each action in the trajectory, and returns the total negative reward and the individual rewards as the cost.",
+        "type": "comment"
+    },
+    "24": {
+        "file_id": 1,
+        "content": "    return costs\nclass ParallelRolloutWorker(object):\n    \"\"\" Rollout a set of trajectory in parallel. \"\"\"\n    def __init__(self, env_class, env_kwargs, plan_horizon, action_dim, num_worker=32):\n        self.num_worker = num_worker\n        self.plan_horizon, self.action_dim = plan_horizon, action_dim\n        self.env_class, self.env_kwargs = env_class, env_kwargs\n        self.pool = Pool(processes=num_worker)\n    def cost_function(self, init_state, action_trajs):\n        action_trajs = action_trajs.reshape([-1, self.plan_horizon, self.action_dim])\n        splitted_action_trajs = np.array_split(action_trajs, self.num_worker)\n        ret = self.pool.map(get_cost, [(init_state, splitted_action_trajs[i], self.env_class, self.env_kwargs, i) for i in range(self.num_worker)])\n        # ret = get_cost((init_state, action_trajs, self.env_class, self.env_kwargs))\n        flat_costs = [item for sublist in ret for item in sublist]  # ret is indexed first by worker_num then traj_num\n        return flat_costs\nif __name__ == '__main__':",
+        "type": "code",
+        "location": "/cem_policy/parallel_worker.py:34-55"
+    },
+    "25": {
+        "file_id": 1,
+        "content": "Class for parallel rollout of trajectories in RoboGen's cem_policy package. Initializes worker number, planning horizon, action dimension and environment class and kwargs. Defines cost_function that splits action trajectories into chunks and applies get_cost function in a Pool (parallel) context to calculate costs. Returns a flattened list of costs.",
+        "type": "comment"
+    },
+    "26": {
+        "file_id": 1,
+        "content": "    # Can be used to benchmark the system\n    from manipulation.sim import SimpleEnv\n    import copy\n    from RL.train_RL_api import default_config\n    import pickle\n    task_config = \"gpt_4/data/parsed_configs_semantic_articulated/test_without_table.yaml\"\n    config = copy.deepcopy(default_config)\n    config['config_path'] = task_config\n    config['gui'] = False\n    env = SimpleEnv(**config)\n    env.reset()\n    env_class = SimpleEnv\n    env_kwargs = config\n    initial_state = \"manipulation/gpt_tasks/Load_Dishes_into_Dishwasher/12594/RL/open_the_dishwasher_door/best_final_state.pkl\"\n    with open(initial_state, 'rb') as f:\n        initial_state = pickle.load(f)\n    action_trajs = []\n    for i in range(700):\n        action = env.action_space.sample()\n        action_trajs.append(action)\n    action_trajs = np.array(action_trajs)\n    rollout_worker = ParallelRolloutWorker(env_class, env_kwargs, 10, 7)\n    cost = rollout_worker.cost_function(initial_state, action_trajs)\n    print('cost:', cost)",
+        "type": "code",
+        "location": "/cem_policy/parallel_worker.py:56-83"
+    },
+    "27": {
+        "file_id": 1,
+        "content": "The code initializes a simple environment, sets the task configuration, and creates an instance of the ParallelRolloutWorker class. It then samples actions and calculates the cost associated with those actions using the rollout worker's cost function. Finally, it prints the calculated cost.",
+        "type": "comment"
+    },
+    "28": {
+        "file_id": 2,
+        "content": "/cem_policy/utils.py",
+        "type": "filepath"
+    },
+    "29": {
+        "file_id": 2,
+        "content": "\"save_numpy_as_gif\" function utilizes moviepy to save numpy array images as gif. The code defines a function that takes environment and save path, stores joint angles, and sets environment parameters based on the given state.",
+        "type": "summary"
+    },
+    "30": {
+        "file_id": 2,
+        "content": "import pickle\nfrom moviepy.editor import ImageSequenceClip\nimport os\nimport pybullet as p\ndef save_numpy_as_gif(array, filename, fps=20, scale=1.0):\n    \"\"\"Creates a gif given a stack of images using moviepy\n    Notes\n    -----\n    works with current Github version of moviepy (not the pip version)\n    https://github.com/Zulko/moviepy/commit/d4c9c37bc88261d8ed8b5d9b7c317d13b2cdf62e\n    Usage\n    -----\n    >>> X = randn(100, 64, 64)\n    >>> gif('test.gif', X)\n    Parameters\n    ----------\n    filename : string\n        The filename of the gif to write to\n    array : array_like\n        A numpy array that contains a sequence of images\n    fps : int\n        frames per second (default: 10)\n    scale : float\n        how much to rescale each image by (default: 1.0)\n    \"\"\"\n    # ensure that the file has the .gif extension\n    fname, _ = os.path.splitext(filename)\n    filename = fname + '.mp4'\n    # copy into the color dimension if the images are black and white\n    if array.ndim == 3:\n        array = array[..., np.newaxis] * np.ones(3)",
+        "type": "code",
+        "location": "/cem_policy/utils.py:1-34"
+    },
+    "31": {
+        "file_id": 2,
+        "content": "This function, \"save_numpy_as_gif\", takes a numpy array containing images and saves them as a gif using the moviepy library. It works with the current version of moviepy from Github and requires specifying the filename, frames per second (default: 20), and scaling factor for each image. The function ensures that the file has the .gif extension by appending it to the provided filename.",
+        "type": "comment"
+    },
+    "32": {
+        "file_id": 2,
+        "content": "    # make the moviepy clip\n    # clip = ImageSequenceClip(list(array), fps=fps).resize(scale)\n    # clip.write_gif(filename, fps=fps)\n    clip = ImageSequenceClip(list(array), fps=fps)\n    clip.write_videofile(filename, bitrate='50000k', fps=fps, logger=None)\n    return clip\ndef save_env(env, save_path=None):\n    object_joint_angle_dicts = {}\n    object_joint_name_dicts = {}\n    object_link_name_dicts = {}\n    for obj_name, obj_id in env.urdf_ids.items():\n        num_links = p.getNumJoints(obj_id, physicsClientId=env.id)\n        object_joint_angle_dicts[obj_name] = []\n        object_joint_name_dicts[obj_name] = []\n        object_link_name_dicts[obj_name] = []\n        for link_idx in range(0, num_links):\n            joint_angle = p.getJointState(obj_id, link_idx, physicsClientId=env.id)[0]\n            object_joint_angle_dicts[obj_name].append(joint_angle)\n            joint_name = p.getJointInfo(obj_id, link_idx, physicsClientId=env.id)[1].decode('utf-8')\n            object_joint_name_dicts[obj_name].append(joint_name)",
+        "type": "code",
+        "location": "/cem_policy/utils.py:36-58"
+    },
+    "33": {
+        "file_id": 2,
+        "content": "This code defines a function that takes an environment and save path as arguments, returns a Moviepy clip of image frames. The code also includes three dictionaries to store the names and joint angle values for each object in the environment. These dictionaries are populated by iterating over the objects and links in the environment, retrieving their corresponding joint angles and names using PyBullet physics engine functions.",
+        "type": "comment"
+    },
+    "34": {
+        "file_id": 2,
+        "content": "            link_name = p.getJointInfo(obj_id, link_idx, physicsClientId=env.id)[12].decode('utf-8')\n            object_link_name_dicts[obj_name].append(link_name)\n    object_base_position = {}\n    for obj_name, obj_id in env.urdf_ids.items():\n        object_base_position[obj_name] = p.getBasePositionAndOrientation(obj_id, physicsClientId=env.id)[0]\n    object_base_orientation = {}\n    for obj_name, obj_id in env.urdf_ids.items():\n        object_base_orientation[obj_name] = p.getBasePositionAndOrientation(obj_id, physicsClientId=env.id)[1]\n    state = {\n        'object_joint_angle_dicts': object_joint_angle_dicts,\n        'object_joint_name_dicts': object_joint_name_dicts,\n        'object_link_name_dicts': object_link_name_dicts,\n        'object_base_position': object_base_position,\n        'object_base_orientation': object_base_orientation,     \n        'done': env.done,\n        'time_step': env.time_step,\n        'urdf_paths': env.urdf_paths,\n        'urdf_scales': env.urdf_scales,\n    }\n    if save_path is not None:",
+        "type": "code",
+        "location": "/cem_policy/utils.py:59-82"
+    },
+    "35": {
+        "file_id": 2,
+        "content": "This code is retrieving object joint information, link names, base positions, and base orientations from the environment (env). It then creates a state dictionary containing this information. If a save path is provided, it stores the state. The env contains urdf_ids for objects, urdf_paths, and urdf_scales. This code seems to be used in an environment with dynamic objects where state retrieval is necessary.",
+        "type": "comment"
+    },
+    "36": {
+        "file_id": 2,
+        "content": "        with open(save_path, 'wb') as f:\n            pickle.dump(state, f, pickle.HIGHEST_PROTOCOL)\n    return state\ndef load_env(env, load_path=None, state=None):\n    # print(\"state is: \", state)\n    if load_path is not None:\n        with open(load_path, 'rb') as f:\n            state = pickle.load(f)\n    ### set env to stored object position and orientation\n    for obj_name, obj_id in env.urdf_ids.items():\n        p.resetBasePositionAndOrientation(obj_id, state['object_base_position'][obj_name], state['object_base_orientation'][obj_name], physicsClientId=env.id)\n    ### set env to stored object joint angles\n    for obj_name, obj_id in env.urdf_ids.items():\n        num_links = p.getNumJoints(obj_id, physicsClientId=env.id)\n        for link_idx in range(0, num_links):\n            joint_angle = state['object_joint_angle_dicts'][obj_name][link_idx]\n            p.resetJointState(obj_id, link_idx, joint_angle, physicsClientId=env.id)\n    env.done = state['done']\n    env.time_step = state['time_step']\n    if \"urdf_paths\" in state:",
+        "type": "code",
+        "location": "/cem_policy/utils.py:83-110"
+    },
+    "37": {
+        "file_id": 2,
+        "content": "The function at line 82 defines a method to save the current state of an environment in a pickle format, while the function at line 90 loads a previously saved state into the environment. The code resets the positions and orientations of objects within the environment based on the stored data, then resets the joint angles for each object. Finally, it updates the environment's \"done\" and \"time_step\" variables with the corresponding values from the saved state.",
+        "type": "comment"
+    },
+    "38": {
+        "file_id": 2,
+        "content": "        env.urdf_paths = state[\"urdf_paths\"]\n    if \"urdf_scales\" in state:\n        env.urdf_scales = state[\"urdf_scales\"]\n    return state",
+        "type": "code",
+        "location": "/cem_policy/utils.py:111-116"
+    },
+    "39": {
+        "file_id": 2,
+        "content": "The code is setting environment parameters based on the given state. It assigns the \"urdf_paths\" from the state to the environment variable \"env.urdf_paths\", and if \"urdf_scales\" is present in the state, it assigns that value to the environment variable \"env.urdf_scales\". The function then returns the state.",
+        "type": "comment"
+    },
+    "40": {
+        "file_id": 3,
+        "content": "/environment.yaml",
+        "type": "filepath"
+    },
+    "41": {
+        "file_id": 3,
+        "content": "The \"RoboGen/environment.yaml\" file lists Python dependencies for data science, web development, and RoboGen environment such as numpy, nltk, plotly, Flask, FFMpy. The code specifies packages including networking, machine learning, and data processing libraries for the RoboGen project.",
+        "type": "summary"
+    },
+    "42": {
+        "file_id": 3,
+        "content": "name: robogen\nchannels:\n  - anaconda\n  - pytorch\n  - nvidia\n  - conda-forge\n  - defaults\ndependencies:\n  - _libgcc_mutex=0.1=main\n  - _openmp_mutex=5.1=1_gnu\n  - antlr-python-runtime=4.9.3=pyhd8ed1ab_1\n  - blas=1.0=mkl\n  - boost=1.78.0=py39hac2352c_0\n  - boost-cpp=1.78.0=he72f1d9_0\n  - bottleneck=1.3.5=py39h7deecbd_0\n  - brotlipy=0.7.0=py39h27cfd23_1003\n  - bzip2=1.0.8=h7b6447c_0\n  - ca-certificates=2023.7.22=hbcca054_0\n  - certifi=2023.7.22=pyhd8ed1ab_0\n  - charset-normalizer=2.0.4=pyhd3eb1b0_0\n  - cryptography=39.0.1=py39h9ce1e76_0\n  - cuda-cudart=11.7.99=0\n  - cuda-cupti=11.7.101=0\n  - cuda-libraries=11.7.1=0\n  - cuda-nvrtc=11.7.99=0\n  - cuda-nvtx=11.7.91=0\n  - cuda-runtime=11.7.1=0\n  - ffmpeg=4.3=hf484d3e_0\n  - flit-core=3.6.0=pyhd3eb1b0_0\n  - freetype=2.12.1=h4a9f257_0\n  - giflib=5.2.1=h5eee18b_3\n  - gmp=6.2.1=h295c915_3\n  - gmpy2=2.1.2=py39heeb90bb_0\n  - gnutls=3.6.15=he1e5248_0\n  - icu=70.1=h27087fc_0\n  - idna=3.4=py39h06a4308_0\n  - igl=2.2.1=py39h86c447d_1\n  - intel-openmp=2021.4.0=h06a4308_3561\n  - jinja2=3.1.2=py39h06a4308_0",
+        "type": "code",
+        "location": "/environment.yaml:1-39"
+    },
+    "43": {
+        "file_id": 3,
+        "content": "This code specifies the environment for a project called RoboGen. It includes channels such as Anaconda, PyTorch, Nvidia, Conda-Forge and dependencies including _libgcc_mutex, _openmp_mutex, antlr-python-runtime, blas and more. The dependencies are versioned and belong to different categories like BLAS, Boost, Bottleneck, BrotliPy and so on. They are marked for specific python versions (py39) and have unique hashes associated with them. This environment file likely specifies the packages that will be installed or used by RoboGen.",
+        "type": "comment"
+    },
+    "44": {
+        "file_id": 3,
+        "content": "  - jpeg=9e=h5eee18b_1\n  - lame=3.100=h7b6447c_0\n  - lcms2=2.12=h3be6417_0\n  - ld_impl_linux-64=2.38=h1181459_1\n  - lerc=3.0=h295c915_0\n  - libblas=3.9.0=12_linux64_mkl\n  - libcblas=3.9.0=12_linux64_mkl\n  - libcublas=11.10.3.66=0\n  - libcufft=10.7.2.124=h4fbf590_0\n  - libcufile=1.6.0.25=0\n  - libcurand=10.3.2.56=0\n  - libcusolver=11.4.0.1=0\n  - libcusparse=11.7.4.91=0\n  - libdeflate=1.17=h5eee18b_0\n  - libffi=3.4.2=h6a678d5_6\n  - libgcc-ng=11.2.0=h1234567_1\n  - libgfortran-ng=11.2.0=h00389a5_1\n  - libgfortran5=11.2.0=h1234567_1\n  - libgomp=11.2.0=h1234567_1\n  - libiconv=1.16=h7f8727e_2\n  - libidn2=2.3.2=h7f8727e_0\n  - libnpp=11.7.4.75=0\n  - libnvjpeg=11.8.0.2=0\n  - libpng=1.6.39=h5eee18b_0\n  - libstdcxx-ng=11.2.0=h1234567_1\n  - libtasn1=4.16.0=h27cfd23_0\n  - libtiff=4.5.0=h6a678d5_2\n  - libunistring=0.9.10=h27cfd23_0\n  - libwebp=1.2.4=h11a3e52_1\n  - libwebp-base=1.2.4=h5eee18b_1\n  - lz4-c=1.9.4=h6a678d5_0\n  - markupsafe=2.1.1=py39h7f8727e_0\n  - mkl=2021.4.0=h06a4308_640\n  - mkl-service=2.4.0=py39h7f8727e_0\n  - mkl_fft=1.3.1=py39hd3c417c_0",
+        "type": "code",
+        "location": "/environment.yaml:40-74"
+    },
+    "45": {
+        "file_id": 3,
+        "content": "This code is a list of software libraries and their corresponding versions, likely for a specific project or system configuration. The libraries include various functionalities such as image processing, mathematical computations, file handling, and more. They are identified by unique hashes to ensure the correct and secure installation.",
+        "type": "comment"
+    },
+    "46": {
+        "file_id": 3,
+        "content": "  - mkl_random=1.2.2=py39h51133e4_0\n  - mpc=1.1.0=h10f8cd9_1\n  - mpfr=4.0.2=hb69a4c5_1\n  - mpmath=1.2.1=py39h06a4308_0\n  - ncurses=6.4=h6a678d5_0\n  - nettle=3.7.3=hbbd107a_1\n  - networkx=2.8.4=py39h06a4308_1\n  - numexpr=2.8.4=py39he184ba9_0\n  - numpy-base=1.23.5=py39h31eccc5_0\n  - omegaconf=2.3.0=pyhd8ed1ab_0\n  - openh264=2.1.1=h4ff587b_0\n  - openssl=1.1.1v=h7f8727e_0\n  - packaging=23.0=py39h06a4308_0\n  - pandas=1.5.2=py39h417a72b_0\n  - pillow=9.4.0=py39h6a678d5_0\n  - pip=23.0.1=py39h06a4308_0\n  - pooch=1.4.0=pyhd3eb1b0_0\n  - pycparser=2.21=pyhd3eb1b0_0\n  - pyopenssl=23.0.0=py39h06a4308_0\n  - pysocks=1.7.1=py39h06a4308_0\n  - python=3.9.16=h7a1cb2a_2\n  - python-dateutil=2.8.2=pyhd3eb1b0_0\n  - python_abi=3.9=2_cp39\n  - pytorch=2.0.0=py3.9_cuda11.7_cudnn8.5.0_0\n  - pytorch-cuda=11.7=h778d358_3\n  - pytorch-mutex=1.0=cuda\n  - pytz=2022.7=py39h06a4308_0\n  - pyyaml=6.0=py39h5eee18b_1\n  - readline=8.2=h5eee18b_0\n  - requests=2.28.1=py39h06a4308_1\n  - setuptools=65.6.3=py39h06a4308_0\n  - six=1.16.0=pyhd3eb1b0_1\n  - sqlite=3.41.1=h5eee18b_0",
+        "type": "code",
+        "location": "/environment.yaml:75-107"
+    },
+    "47": {
+        "file_id": 3,
+        "content": "This code is a list of packages and their respective versions used in the RoboGen environment. Each line represents a package, its version, and any dependencies or build information. The list includes both Python-specific libraries (such as pandas, numpy) and non-Python packages (such as mkl_random, openssl).",
+        "type": "comment"
+    },
+    "48": {
+        "file_id": 3,
+        "content": "  - sympy=1.11.1=py39hf3d152e_2\n  - tk=8.6.12=h1ccaba5_0\n  - torchaudio=2.0.0=py39_cu117\n  - torchtriton=2.0.0=py39\n  - torchvision=0.15.0=py39_cu117\n  - urllib3=1.26.14=py39h06a4308_0\n  - wheel=0.38.4=py39h06a4308_0\n  - xz=5.2.10=h5eee18b_1\n  - yaml=0.2.5=h7b6447c_0\n  - zlib=1.2.13=h5eee18b_0\n  - zstd=1.5.2=ha4553b6_0\n  - pip:\n      - absl-py==1.4.0\n      - accelerate==0.21.0\n      - addict==2.4.0\n      - aiofiles==22.1.0\n      - aiohttp==3.8.4\n      - aiohttp-cors==0.7.0\n      - aiorwlock==1.3.0\n      - aiosignal==1.3.1\n      - aiosqlite==0.19.0\n      - altair==5.0.1\n      - ansi2html==1.8.0\n      - anyio==3.7.1\n      - appdirs==1.4.4\n      - argon2-cffi==23.1.0\n      - argon2-cffi-bindings==21.2.0\n      - arrow==1.2.3\n      - asttokens==2.2.1\n      - async-timeout==4.0.2\n      - attrs==23.1.0\n      - babel==2.12.1\n      - backcall==0.2.0\n      - beautifulsoup4==4.12.2\n      - bleach==6.0.0\n      - blessed==1.20.0\n      - blinker==1.6.2\n      - blis==0.7.10\n      - braceexpand==0.1.7\n      - browser-cookie3==0.19.1\n      - cachetools==5.3.1",
+        "type": "code",
+        "location": "/environment.yaml:108-148"
+    },
+    "49": {
+        "file_id": 3,
+        "content": "This code contains a list of packages and their respective versions that the RoboGen environment uses. It includes both standalone packages and those installed via pip, indicating the required versions for compatibility and proper functioning.",
+        "type": "comment"
+    },
+    "50": {
+        "file_id": 3,
+        "content": "      - catalogue==2.0.9\n      - cffi==1.14.2\n      - cfgv==3.3.1\n      - chamferdist==1.0.0\n      - click==8.0.4\n      - cloudpickle==2.2.1\n      - colorama==0.4.6\n      - colorful==0.5.5\n      - comm==0.1.4\n      - confection==0.1.0\n      - configargparse==1.7\n      - contexttimer==0.3.3\n      - contourpy==1.1.0\n      - cycler==0.11.0\n      - cymem==2.0.7\n      - dash==2.12.1\n      - dash-core-components==2.0.0\n      - dash-html-components==2.0.0\n      - dash-table==5.0.0\n      - dataclasses-json==0.5.14\n      - debugpy==1.6.7.post1\n      - decorator==4.4.2\n      - decord==0.6.0\n      - deep-translator==1.11.4\n      - defusedxml==0.7.1\n      - deprecated==1.2.14\n      - deprecation==2.1.0\n      - diffusers==0.16.0\n      - dill==0.3.6\n      - distlib==0.3.7\n      - dm-tree==0.1.8\n      - docker-pycreds==0.4.0\n      - einops==0.6.1\n      - entrypoints==0.4\n      - exceptiongroup==1.1.2\n      - executing==1.2.0\n      - fairscale==0.4.4\n      - farama-notifications==0.0.4\n      - fastapi==0.100.1\n      - fastjsonschema==2.18.0",
+        "type": "code",
+        "location": "/environment.yaml:149-188"
+    },
+    "51": {
+        "file_id": 3,
+        "content": "This code chunk lists dependencies for a Python project, with each line specifying a package and its version to be installed. These packages are required by the application and will be used during runtime.",
+        "type": "comment"
+    },
+    "52": {
+        "file_id": 3,
+        "content": "      - ffmpy==0.3.1\n      - filelock==3.12.2\n      - flask==2.2.5\n      - fonttools==4.40.0\n      - fqdn==1.5.1\n      - freetype-py==2.4.0\n      - frozenlist==1.3.3\n      - fsspec==2023.6.0\n      - ftfy==6.1.1\n      - geomloss==0.2.6\n      - git-filter-repo==2.38.0\n      - gitdb==4.0.10\n      - gitpython==3.1.31\n      - glfw==2.6.2\n      - gpustat==1.1.1\n      - gradio==3.39.0\n      - gradio-client==0.3.0\n      - gym==0.21.0\n      - gym-notices==0.0.8\n      - h11==0.14.0\n      - h2==4.1.0\n      - h5py==3.9.0\n      - hpack==4.0.0\n      - html-testrunner==1.2.1\n      - httpcore==0.17.3\n      - httpx==0.24.1\n      - huggingface-hub==0.15.1\n      - hyperframe==6.0.1\n      - identify==2.5.26\n      - imageio==2.26.0\n      - imageio-ffmpeg==0.4.8\n      - importlib-metadata==6.7.0\n      - importlib-resources==5.12.0\n      - iopath==0.1.10\n      - ipykernel==6.25.1\n      - ipython==8.11.0\n      - ipython-genutils==0.2.0\n      - ipywidgets==8.1.0\n      - isoduration==20.11.0\n      - itsdangerous==2.1.2\n      - jax-jumpy==1.0.0\n      - jedi==0.18.2",
+        "type": "code",
+        "location": "/environment.yaml:189-230"
+    },
+    "53": {
+        "file_id": 3,
+        "content": "This code snippet lists various software dependencies required for a project, including libraries like Flask, FFMpy, Freetype-Py, and more. These dependencies are specified in the \"RoboGen/environment.yaml\" file with their respective versions.",
+        "type": "comment"
+    },
+    "54": {
+        "file_id": 3,
+        "content": "      - jeepney==0.8.0\n      - joblib==1.3.1\n      - json5==0.9.14\n      - jsonpointer==2.4\n      - jsonschema==4.18.6\n      - jsonschema-specifications==2023.7.1\n      - jupyter-client==7.4.9\n      - jupyter-core==5.3.1\n      - jupyter-events==0.7.0\n      - jupyter-packaging==0.12.3\n      - jupyter-server==2.7.1\n      - jupyter-server-fileid==0.9.0\n      - jupyter-server-terminals==0.4.4\n      - jupyter-server-ydoc==0.8.0\n      - jupyter-ydoc==0.2.5\n      - jupyterlab==3.6.5\n      - jupyterlab-pygments==0.2.2\n      - jupyterlab-server==2.24.0\n      - jupyterlab-widgets==3.0.8\n      - kaggle==1.5.16\n      - kiwisolver==1.4.4\n      - langcodes==3.3.0\n      - lazy-loader==0.1\n      - linkify-it-py==2.0.2\n      - lxml==4.9.3\n      - lz4==4.3.2\n      - markdown==3.4.3\n      - markdown-it-py==2.2.0\n      - markdown2==2.4.10\n      - marshmallow==3.20.1\n      - matplotlib==3.7.1\n      - matplotlib-inline==0.1.6\n      - mdit-py-plugins==0.3.3\n      - mdurl==0.1.2\n      - meshio==5.3.4\n      - meshtaichi-patcher==0.0.19\n      - mistune==3.0.1",
+        "type": "code",
+        "location": "/environment.yaml:231-267"
+    },
+    "55": {
+        "file_id": 3,
+        "content": "This code snippet is from a YAML file listing Python packages and their respective versions. The list includes various libraries used for data science, machine learning, and web application development. These packages are likely being installed or managed by the codebase to facilitate functionality related to environment setup, data manipulation, visualization, and more.",
+        "type": "comment"
+    },
+    "56": {
+        "file_id": 3,
+        "content": "      - moviepy==1.0.3\n      - msgpack==1.0.5\n      - mujoco==2.3.7\n      - multidict==6.0.4\n      - murmurhash==1.0.9\n      - mypy-extensions==1.0.0\n      - natsort==8.4.0\n      - nbclassic==1.0.0\n      - nbclient==0.8.0\n      - nbconvert==7.7.4\n      - nbformat==5.7.0\n      - nest-asyncio==1.5.7\n      - nh3==0.2.14\n      - ninja==1.11.1\n      - nltk==3.8.1\n      - nodeenv==1.8.0\n      - notebook==6.5.5\n      - notebook-shim==0.2.3\n      - numpy==1.23\n      - nvidia-ml-py==12.535.108\n      - oauthlib==3.2.2\n      - objaverse==0.0.7\n      - open3d==0.14.1\n      - openai==0.27.8\n      - opencensus==0.11.2\n      - opencensus-context==0.1.3\n      - opencv-python==4.8.0.76\n      - opencv-python-headless==4.5.5.64\n      - opendatasets==0.1.22\n      - orjson==3.9.2\n      - overrides==7.4.0\n      - pandocfilters==1.5.0\n      - parso==0.8.3\n      - pathtools==0.1.2\n      - pathy==0.10.2\n      - pexpect==4.8.0\n      - pickleshare==0.7.5\n      - platformdirs==3.10.0\n      - plotly==5.15.0\n      - portalocker==2.7.0\n      - pre-commit==3.3.3",
+        "type": "code",
+        "location": "/environment.yaml:268-308"
+    },
+    "57": {
+        "file_id": 3,
+        "content": "This code snippet is importing a long list of packages that are needed for the RoboGen environment to function properly. These packages include popular libraries such as numpy, nltk, and plotly, along with others like objaverse and open3d which may be specific to the RoboGen project.",
+        "type": "comment"
+    },
+    "58": {
+        "file_id": 3,
+        "content": "      - preshed==3.0.8\n      - proglog==0.1.10\n      - prometheus-client==0.17.1\n      - prompt-toolkit==3.0.38\n      - proto-plus==1.22.3\n      - protobuf==3.20.0\n      - psutil==5.9.5\n      - ptyprocess==0.7.0\n      - pure-eval==0.2.2\n      - py-spy==0.3.14\n      - pyarrow==12.0.1\n      - pyasn1==0.5.0\n      - pyasn1-modules==0.3.0\n      - pyassimp==5.2.5\n      - pybind11==2.11.1\n      - pybind11-global==2.11.1\n      - pycocoevalcap==1.2\n      - pycocotools==2.0.6\n      - pycollada==0.6\n      - pycryptodomex==3.18.0\n      - pydantic==1.10.9\n      - pydeck==0.8.0\n      - pydprint==0.0.4\n      - pydub==0.25.1\n      - pygccxml==2.4.0\n      - pyglet==2.0.9\n      - pygltflib==1.16.0\n      - pygments==2.14.0\n      - pympler==1.0.1\n      - pyopengl==3.1.7\n      - pyparsing==3.1.0\n      - pyplusplus==1.8.2\n      - pyquaternion==0.9.9\n      - python-json-logger==2.0.7\n      - python-magic==0.4.27\n      - python-multipart==0.0.6\n      - python-slugify==8.0.1\n      - pytz-deprecation-shim==0.1.0.post0\n      - pyvista==0.41.1\n      - pywavelets==1.4.1",
+        "type": "code",
+        "location": "/environment.yaml:309-348"
+    },
+    "59": {
+        "file_id": 3,
+        "content": "This code snippet lists various Python packages used by the RoboGen project, with their respective versions. These packages are required for the functionality of the project and are specified in the \"RoboGen/environment.yaml\" file.",
+        "type": "comment"
+    },
+    "60": {
+        "file_id": 3,
+        "content": "      - pyzmq==24.0.1\n      - ray==1.13.0\n      - referencing==0.30.0\n      - regex==2023.6.3\n      - requests-oauthlib==1.3.1\n      - retrying==1.3.4\n      - rfc3339-validator==0.1.4\n      - rfc3986-validator==0.1.1\n      - rich==13.3.2\n      - rpds-py==0.9.2\n      - rsa==4.9\n      - ruamel-yaml==0.17.32\n      - ruamel-yaml-clib==0.2.7\n      - safetensors==0.3.1\n      - salesforce-lavis==1.0.2\n      - scikit-image==0.20.0\n      - scikit-learn==1.3.0\n      - scipy==1.9.1\n      - scooby==0.7.2\n      - semantic-version==2.10.0\n      - send2trash==1.8.2\n      - sentence-transformers==2.2.2\n      - sentencepiece==0.1.99\n      - sentry-sdk==1.26.0\n      - setproctitle==1.3.2\n      - shortuuid==1.0.11\n      - smart-open==6.3.0\n      - smmap==5.0.0\n      - sniffio==1.3.0\n      - soupsieve==2.4.1\n      - sourceinspect==0.0.4\n      - spacy==3.6.0\n      - spacy-legacy==3.0.12\n      - spacy-loggers==1.0.4\n      - srsly==2.4.7\n      - stack-data==0.6.2\n      - starlette==0.27.0\n      - streamlit==1.25.0\n      - supervision==0.11.1\n      - svgwrite==1.4.3",
+        "type": "code",
+        "location": "/environment.yaml:349-388"
+    },
+    "61": {
+        "file_id": 3,
+        "content": "This code snippet lists Python libraries required for the project. These libraries are necessary for various functionalities such as networking, machine learning, data processing, and more.",
+        "type": "comment"
+    },
+    "62": {
+        "file_id": 3,
+        "content": "      - tabulate==0.9.0\n      - tenacity==8.2.2\n      - terminado==0.17.1\n      - tetgen==0.6.3\n      - text-unidecode==1.3\n      - thinc==8.1.10\n      - threadpoolctl==3.1.0\n      - tifffile==2023.3.15\n      - tiktoken==0.4.0\n      - timm==0.4.12\n      - tinycss2==1.2.1\n      - tokenizers==0.13.3\n      - toml==0.10.2\n      - tomli==2.0.1\n      - tomlkit==0.12.1\n      - toolz==0.12.0\n      - torchtyping==0.1.4\n      - tornado==6.3.2\n      - tqdm==4.65.0\n      - traitlets==5.9.0\n      - transforms3d==0.4.1\n      - trimesh==3.20.2\n      - typeguard==4.0.0\n      - typer==0.9.0\n      - typing-extensions==4.7.1\n      - typing-inspect==0.9.0\n      - tzdata==2023.3\n      - tzlocal==4.3.1\n      - uc-micro-py==1.0.2\n      - uri-template==1.3.0\n      - uvicorn==0.23.2\n      - validators==0.20.0\n      - virtualenv==20.21.0\n      - vtk==9.2.6\n      - wandb==0.15.4\n      - wasabi==1.1.2\n      - watchdog==3.0.0\n      - wavedrom==2.0.3.post3\n      - wcwidth==0.2.6\n      - webcolors==1.13\n      - webdataset==0.2.48\n      - webencodings==0.5.1",
+        "type": "code",
+        "location": "/environment.yaml:389-430"
+    },
+    "63": {
+        "file_id": 3,
+        "content": "This code snippet lists various libraries and dependencies required for a software project, with each line representing a different library. The libraries range from data handling to user interface development, indicating the diverse functionalities needed in the project.",
+        "type": "comment"
+    },
+    "64": {
+        "file_id": 3,
+        "content": "      - websocket-client==1.6.1\n      - websockets==11.0.3\n      - werkzeug==2.2.3\n      - widgetsnbextension==4.0.8\n      - wrapt==1.15.0\n      - y-py==0.6.0\n      - yacs==0.1.8\n      - yapf==0.40.1\n      - yarl==1.9.2\n      - ypy-websocket==0.8.4\n      - zipp==3.15.0\n      - git+https://github.com/dsdanielpark/Bard-API.git",
+        "type": "code",
+        "location": "/environment.yaml:431-442"
+    },
+    "65": {
+        "file_id": 3,
+        "content": "This code snippet lists the packages and dependencies required for the project. It includes versions for each package, a git repository link, and follows the standard format of line breaks and indentation to separate each entry. These packages are likely used in the RoboGen environment to ensure proper functioning and compatibility with other software components.",
+        "type": "comment"
+    },
+    "66": {
+        "file_id": 4,
+        "content": "/execute.py",
+        "type": "filepath"
+    },
+    "67": {
+        "file_id": 4,
+        "content": "This code prepares an environment, performs tests/training, executes primitives or rewards based on substep type, saves state, and initializes RoboGen objects for RL algorithms. It creates directories, checks simulation conditions, and allows resumption from saved states with argparse options.",
+        "type": "summary"
+    },
+    "68": {
+        "file_id": 4,
+        "content": "import yaml\nimport os\nfrom RL.ray_learn import run_RL\nimport numpy as np\nimport pybullet as p\nimport time, datetime\nimport json\nfrom manipulation.utils import save_numpy_as_gif, save_env, take_round_images, build_up_env, load_gif\ndef execute_primitive(task_config, solution_path, substep, last_restore_state_file, save_path, \n                      gui=False, randomize=False, obj_id=0):\n    # build the env\n    task_name = substep.replace(\" \", \"_\")\n    env, safe_config = build_up_env(task_config, solution_path, task_name, last_restore_state_file, \n                                    render=gui, randomize=randomize, obj_id=obj_id)\n    env.primitive_save_path = save_path\n    # execute the primitive\n    max_retry = 1\n    cnt = 0\n    # we retry at most 10 times till we get a successful execution.\n    while cnt < max_retry:\n        env.reset()\n        rgbs, states, success = env.execute()\n        if success:\n            break\n        cnt += 1\n    p.disconnect(env.id)\n    return rgbs, states\ndef test_env(solution_path, ti",
+        "type": "code",
+        "location": "/execute.py:1-34"
+    },
+    "69": {
+        "file_id": 4,
+        "content": "execute_primitive: builds an environment and executes a primitive, retrying if necessary.\ntest_env: tests the environment with a given solution path and task information.",
+        "type": "comment"
+    },
+    "70": {
+        "file_id": 4,
+        "content": "me_string, substeps, action_spaces, meta_info, randomize=False, obj_id=0, gui=False, move_robot=False,):\n    if not move_robot:\n        save_path = os.path.join(solution_path, \"blip2\", time_string)\n        if not os.path.exists(save_path):\n            os.makedirs(save_path)\n    else:\n        save_path = os.path.join(solution_path, \"teaser\", time_string)\n        if not os.path.exists(save_path):\n            os.makedirs(save_path)\n    substep = substeps[0].lstrip().rstrip()\n    action_space = action_spaces[0].lstrip().rstrip()\n    task_name = substep.replace(\" \", \"_\")\n    env, safe_config = build_up_env(\n        task_config_path, solution_path, task_name, None, return_env_class=False, \n        action_space=action_space,\n        render=gui, randomize=randomize, \n        obj_id=obj_id,\n    )\n    env.reset()\n    center = None\n    if env.use_table:\n        center = np.array([0, 0, 0.4])\n    else:\n        for name in env.urdf_ids:\n            if name in ['robot', 'plane', 'init_table']:\n                continue\n            if env.urdf_types[name] != \"urdf\":",
+        "type": "code",
+        "location": "/execute.py:34-61"
+    },
+    "71": {
+        "file_id": 4,
+        "content": "This code determines the save path based on whether to move the robot or not, and then creates an environment (env) by building up an environment class with a specific task configuration. It also resets the environment and checks if there is a center point for the environment.",
+        "type": "comment"
+    },
+    "72": {
+        "file_id": 4,
+        "content": "                continue\n            object_id = env.urdf_ids[name]\n            min_aabb, max_aabb = env.get_aabb(object_id)\n            center = (min_aabb + max_aabb) / 2\n            break\n    if center is None:\n        center = np.array([0, 0, 0.4])\n    name = None\n    for obj_name in env.urdf_types:\n        if env.urdf_types[obj_name] == \"urdf\":\n            name = obj_name\n            break\n    if move_robot:\n        from manipulation.gpt_primitive_api import approach_object\n        env.primitive_save_path = save_path\n        primitive_rgbs, primitive_states = approach_object(env, name)\n    rgbs, depths = take_round_images(env, center=center, distance=1.6, azimuth_interval=5)\n    if move_robot:\n        all_rgbs = primitive_rgbs + rgbs\n    else:\n        all_rgbs = rgbs\n    save_numpy_as_gif(np.array(all_rgbs), \"{}/{}.gif\".format(save_path, \"construction\"), fps=10)\n    save_env(env, os.path.join(save_path, \"env.pkl\"))\n    with open(os.path.join(save_path, \"meta_info.json\"), 'w') as f:\n        json.dump(meta_info, f)",
+        "type": "code",
+        "location": "/execute.py:62-88"
+    },
+    "73": {
+        "file_id": 4,
+        "content": "This code retrieves an object's center and then proceeds to take images from different angles around it. If \"move_robot\" is set, the approach_object function is called first to ensure the robot approaches the object before taking images. The code saves a GIF of all captured images with corresponding metadata. Additionally, it saves the environment state and meta-information to disk for future use.",
+        "type": "comment"
+    },
+    "74": {
+        "file_id": 4,
+        "content": "    return \ndef execute(task_config_path, \n            time_string=None, resume=False, # these two are combined for resume training.\n            training_algo='RL_sac', \n            gui=False, \n            randomize=False, # whether to randomize the initial state of the environment.\n            use_bard=True, # whether to use the bard to verify the retrieved objects.\n            use_gpt_size=True, # whether to use the size from gpt.\n            use_gpt_joint_angle=True, # whether to initialize the joint angle from gpt.\n            use_gpt_spatial_relationship=True, # whether to use the spatial relationship from gpt.\n            run_training=True, # whether to actually train the policy or just build the environment.\n            obj_id=0, # which object to use from the list of possible objects.\n            use_motion_planning=True,\n            use_distractor=False,\n            skip=[], # which substeps to skip.\n            move_robot=False, # whether to move the robot to the initial state.\n            only_learn_substep=None,",
+        "type": "code",
+        "location": "/execute.py:89-106"
+    },
+    "75": {
+        "file_id": 4,
+        "content": "This function takes in various configuration parameters such as task file path, time string (optional), and whether to resume training. It also includes options for algorithm selection, GUI usage, randomization of initial state, using Bard for verification, and utilizing data from GPT. Additionally, it has options for running training, selecting an object, enabling motion planning, using a distractor, and skipping substeps.",
+        "type": "comment"
+    },
+    "76": {
+        "file_id": 4,
+        "content": "            reward_learning_save_path=None,\n            last_restore_state_file=None,\n):\n    if time_string is None:\n        ts = time.time()\n        time_string = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d-%H-%M-%S')\n    meta_info = {\n        \"using_motion_planning\": use_motion_planning,\n        \"using_bard\": use_bard,\n        \"using_gpt_size\": use_gpt_size,\n        \"using_gpt_joint_angle\": use_gpt_joint_angle,\n        \"using_gpt_spatial_relationship\": use_gpt_spatial_relationship,\n        \"obj_id\": obj_id,\n        \"use_distractor\": use_distractor\n    }\n    all_last_state_files = []\n    with open(task_config_path, 'r') as file:\n        task_config = yaml.safe_load(file)\n    solution_path = None\n    for obj in task_config:\n        if \"solution_path\" in obj:\n            solution_path = obj[\"solution_path\"]\n            break\n    if not os.path.exists(solution_path):\n        os.makedirs(solution_path, exist_ok=True)\n    experiment_path = os.path.join(solution_path, \"experiment\")\n    if not os.path.exists(experiment_path):",
+        "type": "code",
+        "location": "/execute.py:107-140"
+    },
+    "77": {
+        "file_id": 4,
+        "content": "This code is initializing variables, reading a task configuration file using yaml format and creating required directories. It also checks if the solution path exists, and if not, it creates the directories for solution and experiment paths. The code will be executed in a function that seems to relate to RoboGen's execution process.",
+        "type": "comment"
+    },
+    "78": {
+        "file_id": 4,
+        "content": "        os.makedirs(experiment_path, exist_ok=True)\n    with open(os.path.join(experiment_path, \"meta_info_{}.json\".format(time_string)), 'w') as f:\n        json.dump(meta_info, f)\n    all_substeps = os.path.join(solution_path, \"substeps.txt\")\n    with open(all_substeps, 'r') as f:\n        substeps = f.readlines()\n    print(\"all substeps:\\n {}\".format(\"\".join(substeps)))\n    substep_types = os.path.join(solution_path, \"substep_types.txt\")\n    with open(substep_types, 'r') as f:\n        substep_types = f.readlines()\n    print(\"all substep types:\\n {}\".format(\"\".join(substep_types)))\n    action_spaces = os.path.join(solution_path, \"action_spaces.txt\")\n    with open(action_spaces, 'r') as f:\n        action_spaces = f.readlines()\n    print(\"all action spaces:\\n {}\".format(\"\".join(action_spaces)))\n    if not run_training:\n        test_env(solution_path, time_string, substeps, action_spaces, meta_info, randomize=randomize, obj_id=obj_id, gui=gui, move_robot=move_robot)\n        exit()\n    all_rgbs = []\n    for ",
+        "type": "code",
+        "location": "/execute.py:141-165"
+    },
+    "79": {
+        "file_id": 4,
+        "content": "This code creates directories and files for an experiment, writes metadata to a JSON file, reads information from txt files, prints the content of each file, and performs testing if not running training.",
+        "type": "comment"
+    },
+    "80": {
+        "file_id": 4,
+        "content": "step_idx, (substep, substep_type, action_space) in enumerate(zip(substeps, substep_types, action_spaces)):\n        if (skip is not None) and (step_idx < len(skip)) and int(skip[step_idx]):\n            print(\"skip substep: \", substep)\n            continue\n        if only_learn_substep is not None and step_idx != only_learn_substep:\n            print(\"skip substep: \", substep)\n            continue\n        substep = substep.lstrip().rstrip()\n        substep_type = substep_type.lstrip().rstrip()\n        action_space = action_space.lstrip().rstrip()\n        print(\"executing for substep:\\n {} {}\".format(substep, substep_type))\n        if substep_type == \"primitive\" and use_motion_planning:\n            save_path = os.path.join(solution_path, \"primitive_states\", time_string, substep.replace(\" \", \"_\"))\n            if not os.path.exists(save_path):\n                os.makedirs(save_path, exist_ok=True)\n            all_files = os.listdir(save_path)\n            all_pkl_files = [f for f in all_files if f.endswith(\".pkl\")]",
+        "type": "code",
+        "location": "/execute.py:165-184"
+    },
+    "81": {
+        "file_id": 4,
+        "content": "This code snippet iterates through substeps, skipping certain ones based on provided conditions. It trims unnecessary whitespaces from substep names and prints the executing substep before checking if it's a \"primitive\" type and if motion planning should be used. If so, it creates directories for primitive state saves.",
+        "type": "comment"
+    },
+    "82": {
+        "file_id": 4,
+        "content": "            gif_path = os.path.join(save_path, \"execute.gif\")\n            if os.path.exists(gif_path) and resume:\n                print(\"final state already exists, skip {}\".format(substep))\n                sorted_pkl_files = sorted(all_pkl_files, key=lambda x: int(x.split(\"_\")[1].split(\".\")[0]))\n                last_restore_state_file = os.path.join(save_path, sorted_pkl_files[-1])\n                all_rgbs.extend(load_gif(gif_path))\n            else:\n                rgbs, states = execute_primitive(task_config_path, solution_path, substep, last_restore_state_file, save_path, \n                                                 gui=gui, randomize=randomize, obj_id=obj_id,)\n                last_restore_state_file = states[-1]\n                all_rgbs.extend(rgbs)\n                save_numpy_as_gif(np.array(rgbs), \"{}/{}.gif\".format(save_path, \"execute\"))\n        if substep_type == \"reward\":\n            save_path = os.path.join(solution_path, training_algo, time_string, substep.replace(\" \", \"_\"))\n            if reward_learning_save_path is not None:",
+        "type": "code",
+        "location": "/execute.py:185-201"
+    },
+    "83": {
+        "file_id": 4,
+        "content": "The code checks if the \"execute.gif\" file exists at the specified save_path and if the simulation should be resumed. If it already exists, it loads the last restore state from a pickle file, skips execution for this substep, and extends the list of all rgbs with frames from the existing gif file. If not, it calls the execute_primitive function to perform the task, saving the final state as a pickle file. It also saves the rgb frames into a gif file named \"execute\" at the save path. For reward substep type, it sets the save path to include the training algorithm and current time. If there is a specified reward_learning_save_path, it proceeds further with the code execution.",
+        "type": "comment"
+    },
+    "84": {
+        "file_id": 4,
+        "content": "                save_path = reward_learning_save_path\n            if not os.path.exists(save_path):\n                os.makedirs(save_path)\n            all_files = os.listdir(save_path)\n            pkl_dir = os.path.join(save_path, \"best_state\")\n            gif_path = os.path.join(save_path, \"execute.gif\")\n            if os.path.exists(gif_path) and resume:\n                all_files = os.listdir(pkl_dir)\n                all_pkl_files = [f for f in all_files if f.endswith(\".pkl\")]\n                sorted_pkl_files = sorted(all_pkl_files, key=lambda x: int(x.split(\"_\")[1].split(\".\")[0]))\n                print(\"final state already exists, skip {}\".format(substep))\n                last_restore_state_file = os.path.join(pkl_dir, sorted_pkl_files[-1])\n                all_rgbs.extend(load_gif(gif_path))\n            else:\n                algo = training_algo.split(\"_\")[1]\n                task_name = substep.replace(\" \", \"_\")\n                best_model_path, rgbs, state_files = run_RL(task_config_path, solution_path, task_name, ",
+        "type": "code",
+        "location": "/execute.py:202-220"
+    },
+    "85": {
+        "file_id": 4,
+        "content": "The code checks if the final state already exists and skips if it does, otherwise it runs an RL algorithm to find the best model path, rgbs, and state files. It also creates a gif file if it doesn't exist and resumes from the last saved state if instructed.",
+        "type": "comment"
+    },
+    "86": {
+        "file_id": 4,
+        "content": "                                                            last_restore_state_file, save_path=save_path, action_space=action_space,\n                                                            algo=algo, render=gui, timesteps_total=1000000, \n                                                            randomize=randomize,\n                                                            use_bard=use_bard,\n                                                            obj_id=obj_id,\n                                                            use_gpt_size=use_gpt_size,\n                                                            use_gpt_joint_angle=use_gpt_joint_angle,\n                                                            use_gpt_spatial_relationship=use_gpt_spatial_relationship,\n                                                            use_distractor=use_distractor,\n                                                            )\n                last_restore_state_file = state_files[-1]\n                all_rgbs.extend(rgbs)",
+        "type": "code",
+        "location": "/execute.py:221-232"
+    },
+    "87": {
+        "file_id": 4,
+        "content": "This code is initializing an object, likely a robot or AI agent, with specific parameters and arguments. It's setting the last restore state file, saving path, action space, algorithm, rendering mode, number of timesteps, randomization, usage of GPT-based features, distractor usage, etc. Finally, it extends the list of all RGB values with current RGB values.",
+        "type": "comment"
+    },
+    "88": {
+        "file_id": 4,
+        "content": "                save_numpy_as_gif(np.array(rgbs), \"{}/{}.gif\".format(save_path, \"execute\"))\n            if only_learn_substep is not None:\n                return\n        all_last_state_files.append(str(last_restore_state_file))\n        with open(os.path.join(experiment_path, \"all_last_state_files_{}.txt\".format(time_string)), 'w') as f:\n            f.write(\"\\n\".join(all_last_state_files))\n    # save the final gif\n    save_path = os.path.join(solution_path)\n    save_numpy_as_gif(np.array(all_rgbs), \"{}/{}-{}.gif\".format(save_path, \"all\", time_string))\nif __name__ == \"__main__\":\n    import argparse\n    parser = argparse.ArgumentParser()\n    parser.add_argument('--task_config_path', type=str, default=None)\n    parser.add_argument('--training_algo', type=str, default=\"RL_sac\")\n    parser.add_argument('--resume', type=int, default=0)\n    parser.add_argument('--time_string', type=str, default=None)\n    parser.add_argument('--gui', type=int, default=0) \n    parser.add_argument('--randomize', type=int, default=0) # whether to randomize roation of objects in the scene.",
+        "type": "code",
+        "location": "/execute.py:233-255"
+    },
+    "89": {
+        "file_id": 4,
+        "content": "This code appears to be part of a Python script for executing a task configuration and saving the final results as a GIF. It uses the RoboGen library, handles time-stamping, and allows for resuming from a previous state if needed. The code also utilizes argument parsing through argparse and includes options for task configuration path, training algorithm, resume flag, time string, gui mode, and randomization of object rotations.",
+        "type": "comment"
+    },
+    "90": {
+        "file_id": 4,
+        "content": "    parser.add_argument('--obj_id', type=int, default=0) # which object from the list of possible objects to use.\n    parser.add_argument('--use_bard', type=int, default=1) # whether to use bard filtered objects.\n    parser.add_argument('--use_gpt_size', type=int, default=1) # whether to use size outputted from gpt.\n    parser.add_argument('--use_gpt_spatial_relationship', type=int, default=1) # whether to use gpt spatial relationship.\n    parser.add_argument('--use_gpt_joint_angle', type=int, default=1) # whether to use initial joint angle output from gpt.\n    parser.add_argument('--run_training', type=int, default=1) # if to train or just to build the scene.\n    parser.add_argument('--use_motion_planning', type=int, default=1) # if to train or just to build the scene.\n    parser.add_argument('--use_distractor', type=int, default=1) # if to train or just to build the scene.\n    parser.add_argument('--skip', nargs=\"+\", default=[]) # if to train or just to build the scene.\n    parser.add_argument('--move_robot', type=int, default=0) # if to train or just to build the scene.",
+        "type": "code",
+        "location": "/execute.py:256-265"
+    },
+    "91": {
+        "file_id": 4,
+        "content": "The code above defines command-line arguments using the argparse module in Python. These arguments control various aspects of the program's behavior, including which object to use, whether to utilize Bard or GPT features, and whether to run training or just build the scene. The defaults are provided for each argument, allowing users to override them if needed.",
+        "type": "comment"
+    },
+    "92": {
+        "file_id": 4,
+        "content": "    parser.add_argument('--only_learn_substep', type=int, default=None) # if to run learning for a substep.\n    parser.add_argument('--reward_learning_save_path', type=str, default=None) # where to store the learning result of RL training. \n    parser.add_argument('--last_restore_state_file', type=str, default=None) # whether to start from a specific state.\n    args = parser.parse_args()\n    task_config_path = args.task_config_path\n    execute(task_config_path, resume=args.resume, training_algo=args.training_algo, time_string=args.time_string, \n            gui=args.gui, \n            randomize=args.randomize,\n            use_bard=args.use_bard,\n            use_gpt_size=args.use_gpt_size,\n            use_gpt_joint_angle=args.use_gpt_joint_angle,\n            use_gpt_spatial_relationship=args.use_gpt_spatial_relationship,\n            run_training=args.run_training,\n            obj_id=args.obj_id,\n            use_motion_planning=args.use_motion_planning,\n            use_distractor=args.use_distractor,\n            skip=args.skip,",
+        "type": "code",
+        "location": "/execute.py:266-283"
+    },
+    "93": {
+        "file_id": 4,
+        "content": "The code snippet is part of a Python script that uses the argparse module to parse command-line arguments. These arguments determine which features to run or skip in the program's execution, such as learning for a substep, saving learning results, and restoring from a specific state. The script then calls the execute function with these arguments, controlling its behavior based on user input.",
+        "type": "comment"
+    },
+    "94": {
+        "file_id": 4,
+        "content": "            move_robot=args.move_robot,\n            only_learn_substep=args.only_learn_substep,\n            reward_learning_save_path=args.reward_learning_save_path,\n            last_restore_state_file=args.last_restore_state_file\n    )",
+        "type": "code",
+        "location": "/execute.py:284-288"
+    },
+    "95": {
+        "file_id": 4,
+        "content": "This code snippet is creating an object of some class (possibly RoboGen) with four parameters: move_robot, only_learn_substep, reward_learning_save_path, and last_restore_state_file. These parameters are taken from the args dictionary in Python's argparse module. The function is likely used to initialize or configure an instance of this class based on user input.",
+        "type": "comment"
+    },
+    "96": {
+        "file_id": 5,
+        "content": "/execute_locomotion.py",
+        "type": "filepath"
+    },
+    "97": {
+        "file_id": 5,
+        "content": "The CEMOptimizer class optimizes cost functions using the CEM algorithm, and sets up a reinforcement learning algorithm in assistive gym environments. It saves states as pickle files with highest protocol, converts numpy arrays to gifs, disconnects from physics clients.",
+        "type": "summary"
+    },
+    "98": {
+        "file_id": 5,
+        "content": "import time\nimport datetime\nimport copy\nimport os, sys, shutil, argparse\nimport pickle\nimport numpy as np\nimport scipy.stats as stats\nfrom tqdm import tqdm\nfrom cem_policy.parallel_worker import ParallelRolloutWorker\nimport os\nimport pybullet as p\nfrom cem_policy.utils import *\nclass CEMOptimizer(object):\n    def __init__(self, cost_function, solution_dim, plan_n_segs, max_iters, population_size, num_elites,\n                 upper_bound=None, lower_bound=None, epsilon=0.05):\n        \"\"\"\n        :param cost_function: Takes input one or multiple data points in R^{sol_dim}\\\n        :param solution_dim: The dimensionality of the problem space\n        :param max_iters: The maximum number of iterations to perform during optimization\n        :param population_size: The number of candidate solutions to be sampled at every iteration\n        :param num_elites: The number of top solutions that will be used to obtain the distribution\n                            at the next iteration.\n        :param upper_bound: An array of upper bounds for the sampled data points",
+        "type": "code",
+        "location": "/execute_locomotion.py:1-25"
+    },
+    "99": {
+        "file_id": 5,
+        "content": "The code defines a class called \"CEMOptimizer\" with an initializer that takes in parameters like cost_function, solution_dim, plan_n_segs, max_iters, population_size, num_elites, upper_bound, lower_bound and epsilon. The class aims to optimize a given cost function in a multi-dimensional space using a CEM (Covariance Matrix Adaptation Evolution Strategy) algorithm with specified parameters.",
+        "type": "comment"
+    }
+}

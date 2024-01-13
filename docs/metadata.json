@@ -1,0 +1,250 @@
+{
+    "url": {
+        "full": "https://github.com/Genesis-Embodied-AI/RoboGen",
+        "partial": "Genesis-Embodied-AI/RoboGen"
+    },
+    "file_mapping": {
+        "0": {
+            "filepath": "/RL/ray_learn.py",
+            "entry_id": 0,
+            "language_id": "python"
+        },
+        "1": {
+            "filepath": "/cem_policy/parallel_worker.py",
+            "entry_id": 20,
+            "language_id": "python"
+        },
+        "2": {
+            "filepath": "/cem_policy/utils.py",
+            "entry_id": 28,
+            "language_id": "python"
+        },
+        "3": {
+            "filepath": "/environment.yaml",
+            "entry_id": 40,
+            "language_id": "yaml"
+        },
+        "4": {
+            "filepath": "/execute.py",
+            "entry_id": 66,
+            "language_id": "python"
+        },
+        "5": {
+            "filepath": "/execute_locomotion.py",
+            "entry_id": 96,
+            "language_id": "python"
+        },
+        "6": {
+            "filepath": "/execute_long_horizon.py",
+            "entry_id": 116,
+            "language_id": "python"
+        },
+        "7": {
+            "filepath": "/gpt_4/adjust_size.py",
+            "entry_id": 138,
+            "language_id": "python"
+        },
+        "8": {
+            "filepath": "/gpt_4/bard_verify.py",
+            "entry_id": 146,
+            "language_id": "python"
+        },
+        "9": {
+            "filepath": "/gpt_4/prompts/prompt_distractor.py",
+            "entry_id": 158,
+            "language_id": "python"
+        },
+        "10": {
+            "filepath": "/gpt_4/prompts/prompt_from_description.py",
+            "entry_id": 178,
+            "language_id": "python"
+        },
+        "11": {
+            "filepath": "/gpt_4/prompts/prompt_locomotion.py",
+            "entry_id": 202,
+            "language_id": "python"
+        },
+        "12": {
+            "filepath": "/gpt_4/prompts/prompt_manipulation.py",
+            "entry_id": 228,
+            "language_id": "python"
+        },
+        "13": {
+            "filepath": "/gpt_4/prompts/prompt_manipulation_reward_primitive.py",
+            "entry_id": 246,
+            "language_id": "python"
+        },
+        "14": {
+            "filepath": "/gpt_4/prompts/prompt_set_joint_angle.py",
+            "entry_id": 302,
+            "language_id": "python"
+        },
+        "15": {
+            "filepath": "/gpt_4/prompts/prompt_spatial_relationship.py",
+            "entry_id": 320,
+            "language_id": "python"
+        },
+        "16": {
+            "filepath": "/gpt_4/prompts/prompt_with_scale.py",
+            "entry_id": 342,
+            "language_id": "python"
+        },
+        "17": {
+            "filepath": "/gpt_4/prompts/utils.py",
+            "entry_id": 352,
+            "language_id": "python"
+        },
+        "18": {
+            "filepath": "/gpt_4/query.py",
+            "entry_id": 392,
+            "language_id": "python"
+        },
+        "19": {
+            "filepath": "/gpt_4/verification.py",
+            "entry_id": 398,
+            "language_id": "python"
+        },
+        "20": {
+            "filepath": "/install_ompl_1.5.2.sh",
+            "entry_id": 402,
+            "language_id": "shell"
+        },
+        "21": {
+            "filepath": "/locomotion/atlas/meshes_unplugged/convert.bat",
+            "entry_id": 414,
+            "language_id": "batch"
+        },
+        "22": {
+            "filepath": "/locomotion/atlas/meshes_v3/convert.bat",
+            "entry_id": 418,
+            "language_id": "batch"
+        },
+        "23": {
+            "filepath": "/locomotion/atlas/multisense_sl_description/meshes/convert.bat",
+            "entry_id": 422,
+            "language_id": "batch"
+        },
+        "24": {
+            "filepath": "/locomotion/gpt_reward_api.py",
+            "entry_id": 426,
+            "language_id": "python"
+        },
+        "25": {
+            "filepath": "/locomotion/sim.py",
+            "entry_id": 432,
+            "language_id": "python"
+        },
+        "26": {
+            "filepath": "/manipulation/agent.py",
+            "entry_id": 454,
+            "language_id": "python"
+        },
+        "27": {
+            "filepath": "/manipulation/assets/franka_mobile/LICENSE.txt",
+            "entry_id": 474,
+            "language_id": "plain-text"
+        },
+        "28": {
+            "filepath": "/manipulation/gpt_primitive_api.py",
+            "entry_id": 496,
+            "language_id": "python"
+        },
+        "29": {
+            "filepath": "/manipulation/gpt_reward_api.py",
+            "entry_id": 530,
+            "language_id": "python"
+        },
+        "30": {
+            "filepath": "/manipulation/grasping_utils.py",
+            "entry_id": 558,
+            "language_id": "python"
+        },
+        "31": {
+            "filepath": "/manipulation/motion_planning_utils.py",
+            "entry_id": 566,
+            "language_id": "python"
+        },
+        "32": {
+            "filepath": "/manipulation/panda.py",
+            "entry_id": 576,
+            "language_id": "python"
+        },
+        "33": {
+            "filepath": "/manipulation/partnet_category.py",
+            "entry_id": 582,
+            "language_id": "python"
+        },
+        "34": {
+            "filepath": "/manipulation/robot.py",
+            "entry_id": 586,
+            "language_id": "python"
+        },
+        "35": {
+            "filepath": "/manipulation/sawyer.py",
+            "entry_id": 592,
+            "language_id": "python"
+        },
+        "36": {
+            "filepath": "/manipulation/sim.py",
+            "entry_id": 598,
+            "language_id": "python"
+        },
+        "37": {
+            "filepath": "/manipulation/table_utils.py",
+            "entry_id": 694,
+            "language_id": "python"
+        },
+        "38": {
+            "filepath": "/manipulation/ur5.py",
+            "entry_id": 700,
+            "language_id": "python"
+        },
+        "39": {
+            "filepath": "/manipulation/utils.py",
+            "entry_id": 706,
+            "language_id": "python"
+        },
+        "40": {
+            "filepath": "/objaverse_utils/embed_all_annotations.py",
+            "entry_id": 764,
+            "language_id": "python"
+        },
+        "41": {
+            "filepath": "/objaverse_utils/embed_cap3d.py",
+            "entry_id": 770,
+            "language_id": "python"
+        },
+        "42": {
+            "filepath": "/objaverse_utils/embed_partnet_annotations.py",
+            "entry_id": 774,
+            "language_id": "python"
+        },
+        "43": {
+            "filepath": "/objaverse_utils/find_uid_utils.py",
+            "entry_id": 778,
+            "language_id": "python"
+        },
+        "44": {
+            "filepath": "/objaverse_utils/utils.py",
+            "entry_id": 788,
+            "language_id": "python"
+        },
+        "45": {
+            "filepath": "/prepare.sh",
+            "entry_id": 792,
+            "language_id": "shell"
+        },
+        "46": {
+            "filepath": "/readme.md",
+            "entry_id": 796,
+            "language_id": "markdown"
+        },
+        "47": {
+            "filepath": "/run.py",
+            "entry_id": 812,
+            "language_id": "python"
+        }
+    },
+    "project_name": "RoboGen",
+    "split_count": 9
+}
