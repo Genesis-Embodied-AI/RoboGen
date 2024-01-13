@@ -1,0 +1,7 @@
+.*
+imgs
+LICENSE
+*.{stl,dae,urdf,xarco,gif,png,jpg,jpeg,obj,mtl,STL,DAE,csv,json}
+example_tasks
+pybullet_ompl
+docs
