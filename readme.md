@@ -136,4 +136,15 @@ In `example_tasks` we include a number of generated tasks from RoboGen. We hope 
 - The interface between OMPL and pybullet is based on [pybullet_ompl](https://github.com/lyfkyle/pybullet_ompl).
 - Part of the objaverse annotations are from [Scalable 3D Captioning with Pretrained Models](https://arxiv.org/abs/2306.07279)
 
+## Citation
+If you use find this codebased/paper useful for your research, please consider citing:
+```
+@article{wang2023robogen,
+  title={Robogen: Towards unleashing infinite data for automated robot learning via generative simulation},
+  author={Wang, Yufei and Xian, Zhou and Chen, Feng and Wang, Tsun-Hsuan and Wang, Yian and Fragkiadaki, Katerina and Erickson, Zackory and Held, David and Gan, Chuang},
+  journal={arXiv preprint arXiv:2311.01455},
+  year={2023}
+}
+```
+
 
