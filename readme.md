@@ -137,7 +137,7 @@ In `example_tasks` we include a number of generated tasks from RoboGen. We hope 
 - Part of the objaverse annotations are from [Scalable 3D Captioning with Pretrained Models](https://arxiv.org/abs/2306.07279)
 
 ## Citation
-If you find this codebased/paper useful for your research, please consider citing:
+If you find this codebase/paper useful for your research, please consider citing:
 ```
 @article{wang2023robogen,
   title={Robogen: Towards unleashing infinite data for automated robot learning via generative simulation},
