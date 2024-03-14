@@ -129,6 +129,13 @@ python execute.py --task_config_path example_tasks/Change_Lamp_Direction/Change_
 python execute_locomotion.py --task_config_path example_tasks/task_Turn_right/Turn_right.yaml
 ```
 
+After running the above commands, to check the skill learning results, 
+- For manipulation tasks,
+  - For substeps using RL: we use SAC implemented in [RAY-RLlib](https://docs.ray.io/en/latest/rllib/index.html) for RL training. Ray RLlib will log the learning progress at data/local/ray_results/{task_name}_{time_stamp}. You can check that folder for visualizations of the reward curves. For example, you can plot episode_reward_mean field in progress.csv to show the evaluation episode reward during training. Ray RLlib also uses tensorboard to store the results in events.out.tfevents*, so one can also use tensorboard for visualization.
+The final skill learned by RL will be stored at {path_to_your_task}/RL_sac/{time_stamp}/{substep_name}, e.g., data/example_tasks/close_the_oven_door_Oven_101940_2023-09-21-22-28-23/task_close_the_oven_door/RL_sac/2023-09-22-02-05-05/close_the_oven_door. A gif showing the execution of the learned RL policy, all the simulation states during the policy execution, and the best policy weights will be stored there. RL training can take 1-2 hours for convergence. We are working to switch to better RL learning libraries, and will update the repo once the tests are done. 
+  - For substeps using motion planning based action primitives: The results of the primitives will be stored at {path_to_your_task}/primitive_states/{time_stamp}/{substep_name}, e.g., data/example_tasks/close_the_oven_door_Oven_101940_2023-09-21-22-28-23/task_close_the_oven_door/primitive_states/2023-10-06-03-00-07/grasp_the_oven_door. A gif showing the execution of the primitive, as well as all the simulation states during the primitive execution will be stored. Motion planning based action primitive should take less than 10 minutes to finish. 
+- For locomotion tasks, we use CEM to solve it. The learning results should be stored at {path_to_your_task}/cem/, e.g., data/generated_tasks/locomotion_2023-10-30-17-43-31/task_Turn_right/cem/. A mp4 showing the results and all simulation states during the execution will be stored. CEM usally takes ~10 minutes to finish. NOTE: The program might end with an error message of "AttributeError:'NoneType' object has no attribute 'dumps'". This can be safely ignored if the mp4 file is successfully generated. 
+
 ### Pre-generated tasks
 In `example_tasks` we include a number of generated tasks from RoboGen. We hope this could be useful for, e.g., language conditioned multi-task learning & transfer learning & low-level skill learning. We hope to keep updating the list! 
 
