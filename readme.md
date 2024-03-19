@@ -56,7 +56,11 @@ If installing from this yaml file doesn't work, manual installation of missing p
 
 ### Open Motion Planning Library
 RoboGen leverages [Open Motion Planning Library (OMPL)](https://ompl.kavrakilab.org/) for motion planning as part of the pipeline to solve the generated task. 
-To install OMPL, run
+
+Note: if you are having trouble building OMPL from source, the maintainer of OMPL has suggested to use the prebuilt python wheels at here: https://github.com/ompl/ompl/releases/tag/prerelease. Use the wheel that matches your python version, e.g., if you are using python3.9, download [this wheel](https://github.com/ompl/ompl/releases/download/prerelease/ompl-1.6.0-cp39-cp39-manylinux_2_28_x86_64.whl), and then run `pip install ompl-1.6.0-cp39-cp39-manylinux_2_28_x86_64.whl`.
+They also plan to release on PyPI soon, so stay tuned. For more info, check [this issue](https://github.com/Genesis-Embodied-AI/RoboGen/issues/8#issuecomment-1918092507).
+
+To install OMPL from source, run
 ```
 ./install_ompl_1.5.2.sh --python
 ```
@@ -67,7 +71,7 @@ echo "path_to_your_ompl_installation_from_last_step/OMPL/ompl-1.5.2/py-bindings"
 ```
 remember to change the path to be your ompl installed path and conda environment path.
 
-Note: if you are having trouble building OMPL from source, the maintainer of OMPL has suggested to use the prebuilt python wheels at here: https://github.com/ompl/ompl/releases/tag/prerelease. They also plan to release on PyPI soon, so stay tuned. For more info, check [this issue](https://github.com/Genesis-Embodied-AI/RoboGen/issues/8#issuecomment-1918092507).
+
 
 ### Dataset
 RoboGen uses [PartNet-Mobility](https://sapien.ucsd.edu/browse) for task generation and scene population. We provide a parsed version [here](https://drive.google.com/file/d/1d-1txzcg_ke17NkHKAolXlfDnmPePFc6/view?usp=sharing) (which parses the urdf to extract the articulation tree as a shortened input to GPT-4). After downloading, please unzip it and put it in the `data` folder, so it looks like `data/dataset`.
