@@ -6,7 +6,6 @@
   ### ICML 2024
 </div>
 
----
 <div align="center">
   <img src="imgs/teaser.png"/>
 </div> 
@@ -19,12 +18,13 @@
       <img src='https://img.shields.io/badge/Project-Page-blue?style=plastic&logo=Google%20chrome&logoColor=blue' alt='Project Page'>
     </a>
 </p>
-This is the official repo for the paper:
+This is the official repo for the paper:  
 
-> **[RoboGen: Towards Unleashing Infinite Data for Automated Robot Learning via Generative Simulation](https://robogen-ai.github.io/)**
-> ICML 2024
-> [Yufei Wang*](https://yufeiwang63.github.io/), [Zhou Xian*](https://zhou-xian.com/), [Feng Chen*](https://robogen-ai.github.io/), [Tsun-Hsuan Wang](https://zswang666.github.io/), [Yian Wang](https://wangyian-me.github.io/), [
-Katerina Fragkiadaki](https://www.cs.cmu.edu/~katef/), [Zackory Erickson](https://zackory.com/), [David Held](https://davheld.github.io/), [Chuang Gan](https://people.csail.mit.edu/ganchuang/)   
+
+**[RoboGen: Towards Unleashing Infinite Data for Automated Robot Learning via Generative Simulation](https://robogen-ai.github.io/)**  
+[Yufei Wang*](https://yufeiwang63.github.io/), [Zhou Xian*](https://zhou-xian.com/), [Feng Chen*](https://robogen-ai.github.io/), [Tsun-Hsuan Wang](https://zswang666.github.io/), [Yian Wang](https://wangyian-me.github.io/), [
+Katerina Fragkiadaki](https://www.cs.cmu.edu/~katef/), [Zackory Erickson](https://zackory.com/), [David Held](https://davheld.github.io/), [Chuang Gan](https://people.csail.mit.edu/ganchuang/)  
+published at ICML 2024  
 
 RoboGen is a **self-guided** and **generative** robotic agent that autonomously proposes **new tasks**, generates corresponding **environments**, and acquires **new robotic skills** continuously.
 
