@@ -3,6 +3,7 @@
   <img width="500px" src="imgs/logo.png"/>
   
   # RoboGen: Towards Unleashing Infinite Data for Automated Robot Learning via Generative Simulation
+  ### ICML 2024
 </div>
 
 ---
@@ -20,7 +21,8 @@
 </p>
 This is the official repo for the paper:
 
-> **[RoboGen: Towards Unleashing Infinite Data for Automated Robot Learning via Generative Simulation](https://robogen-ai.github.io/)**  
+> **[RoboGen: Towards Unleashing Infinite Data for Automated Robot Learning via Generative Simulation](https://robogen-ai.github.io/)**
+> ICML 2024
 > [Yufei Wang*](https://yufeiwang63.github.io/), [Zhou Xian*](https://zhou-xian.com/), [Feng Chen*](https://robogen-ai.github.io/), [Tsun-Hsuan Wang](https://zswang666.github.io/), [Yian Wang](https://wangyian-me.github.io/), [
 Katerina Fragkiadaki](https://www.cs.cmu.edu/~katef/), [Zackory Erickson](https://zackory.com/), [David Held](https://davheld.github.io/), [Chuang Gan](https://people.csail.mit.edu/ganchuang/)   
 
