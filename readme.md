@@ -31,8 +31,6 @@ RoboGen is a **self-guided** and **generative** robotic agent that autonomously 
 RoboGen is powered by [Genesis](https://github.com/Genesis-Embodied-AI/Genesis), a multi-material multi-solver generative simulation engine for general-purpose robot learning. 
 Genesis is still under active development and will be released soon. This repo contains a re-implementation of RoboGen using PyBullet, containing generation and learning of rigid manipulation and locomotion tasks. Our full pipeline containing soft-body manipulation and more tasks will be released later together with Genesis.
 
-We are still in the process of cleaning the code & testing, please stay tuned!
-
 ## Table of Contents
 - [Setup](#setup)
   - [RoboGen](#RoboGen)
