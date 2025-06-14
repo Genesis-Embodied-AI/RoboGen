@@ -1,0 +1,96 @@
+[tool.poetry]
+name = "robogen"
+version = "0.1.0"
+description = "A robotics generation and simulation project"
+authors = ["RoboGen Team"]
+readme = "readme.md"
+packages = [{include = "gpt_4"}, {include = "manipulation"}, {include = "locomotion"}, {include = "cem_policy"}, {include = "objaverse_utils"}, {include = "pybullet_ompl"}, {include = "RL"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.11.1"
+
+[tool.poetry.scripts]
+test = "pytest:main"
+tests = "pytest:main"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--cov=gpt_4",
+    "--cov=manipulation", 
+    "--cov=locomotion",
+    "--cov=cem_policy",
+    "--cov=objaverse_utils",
+    "--cov=pybullet_ompl",
+    "--cov=RL",
+    "--cov-branch",
+    "--cov-report=term-missing:skip-covered",
+    "--cov-report=html",
+    "--cov-report=xml",
+    "--cov-fail-under=80",
+]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "unit: marks tests as unit tests (fast, isolated)",
+    "integration: marks tests as integration tests (may require external resources)",
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
+filterwarnings = [
+    "error",
+    "ignore::UserWarning",
+    "ignore::DeprecationWarning",
+]
+norecursedirs = [".git", ".tox", "dist", "build", "*.egg", "__pycache__"]
+
+[tool.coverage.run]
+branch = true
+source = ["gpt_4", "manipulation", "locomotion", "cem_policy", "objaverse_utils", "pybullet_ompl", "RL"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+    "*/site-packages/*",
+    "*/distutils/*",
+    "setup.py",
+    "*/migrations/*",
+    "*/__init__.py",
+]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = true
+fail_under = 80
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.coverage.xml]
+output = "coverage.xml"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
